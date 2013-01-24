@@ -34,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NDesk.Options">
+      <HintPath>..\packages\NDesk.Options.0.2.1\lib\NDesk.Options.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -63,6 +66,14 @@
     <Compile Include="AppStart\NinjectExtensions.cs" />
     <Compile Include="Features\ClientConfiguration\Configuration.cs" />
     <Compile Include="Features\ClientConfiguration\ClientConfigurationManager.cs" />
+    <Compile Include="Features\FeatureSelection\ArgumentParser.cs" />
+    <Compile Include="Features\FeatureSelection\InstanceConfiguration.cs" />
+    <Compile Include="Features\PackageConventions\IConventionFileDiscoverer.cs" />
+    <Compile Include="Features\PackageExtraction\IPackageExtractor.cs" />
+    <Compile Include="Features\PackageExtraction\NuGetPackageExtractor.cs" />
+    <Compile Include="Features\PackageSourcing\FileSystemPackageLocator.cs" />
+    <Compile Include="Features\PackageSourcing\IPackageLocator.cs" />
+    <Compile Include="Features\PackageSourcing\NuGetFeedPackageLocator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -70,11 +81,7 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Features\PackageConventions\" />
-    <Folder Include="Features\PackageExtraction\" />
-    <Folder Include="Features\PackageSourcing\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

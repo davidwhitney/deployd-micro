@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using deployd.AppStart;
+﻿using deployd.AppStart;
 using deployd.Features.ClientConfiguration;
+using deployd.Features.FeatureSelection;
 
 namespace deployd
 {
@@ -16,6 +12,8 @@ namespace deployd
             var configManager = context.Kernel.GetService<ClientConfigurationManager>();
             var configuration = configManager.LoadConfig();
 
+            var argParser = context.Kernel.GetService<ArgumentParser>();
+            var instanceConfiguration = argParser.Parse(args);
         }
     }
 }

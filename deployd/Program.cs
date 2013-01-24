@@ -1,5 +1,4 @@
 ﻿using deployd.AppStart;
-using deployd.Features.ClientConfiguration;
 using deployd.Features.FeatureSelection;
 
 namespace deployd
@@ -9,11 +8,13 @@ namespace deployd
         static void Main(string[] args)
         {
             var context = new ApplicationContext();
-            var configManager = context.Kernel.GetService<ClientConfigurationManager>();
-            var configuration = configManager.LoadConfig();
+            var featureFactory = context.Kernel.GetService<ActiveFeatureFactory>();
+            var chainOfCommands = featureFactory.BuildCommandsFor(args);
 
-            var argParser = context.Kernel.GetService<ArgumentParser>();
-            var instanceConfiguration = argParser.Parse(args);
+            foreach (var command in chainOfCommands)
+            {
+                command.Execute();
+            }
         }
     }
 }

@@ -18,9 +18,6 @@ namespace deployd.AppStart
         private IKernel CreateKernel()
         {
             var kernel = new StandardKernel();
-            kernel.Bind<IKernel>().ToMethod(ctx => Kernel);
-            kernel.Bind<Func<IKernel>>().ToMethod(ctx => () => Kernel);
-
             kernel.Bind(scanner => scanner.FromThisAssembly().Select(IsServiceType).BindDefaultInterfaces());
             kernel.Bind(scanner => scanner.FromAssemblyContaining<IFileSystem>().Select(IsServiceType).BindDefaultInterfaces());
 

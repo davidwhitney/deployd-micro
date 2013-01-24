@@ -66,8 +66,11 @@
     <Compile Include="AppStart\NinjectExtensions.cs" />
     <Compile Include="Features\ClientConfiguration\Configuration.cs" />
     <Compile Include="Features\ClientConfiguration\ClientConfigurationManager.cs" />
+    <Compile Include="Features\FeatureSelection\ActiveFeatureFactory.cs" />
     <Compile Include="Features\FeatureSelection\ArgumentParser.cs" />
     <Compile Include="Features\FeatureSelection\InstanceConfiguration.cs" />
+    <Compile Include="Features\Help\HelpCommand.cs" />
+    <Compile Include="Features\IFeatureCommand.cs" />
     <Compile Include="Features\PackageConventions\IConventionFileDiscoverer.cs" />
     <Compile Include="Features\PackageExtraction\IPackageExtractor.cs" />
     <Compile Include="Features\PackageExtraction\NuGetPackageExtractor.cs" />

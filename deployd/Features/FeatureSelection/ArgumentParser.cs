@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using NDesk.Options;
 
 namespace deployd.Features.FeatureSelection
@@ -21,9 +22,15 @@ namespace deployd.Features.FeatureSelection
                     {"v|verbose", v => cfg.Verbose = v != null},
                     {"h|?|help", v => cfg.Help = v != null},
                 };
+            cfg.OptionSet = p;
+
+            if (args == null || !args.Any())
+            {
+                cfg.Help = true;
+                return cfg;
+            }
 
             cfg.ExtraParams = p.Parse(args);
-
             return cfg;
         }
     }

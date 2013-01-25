@@ -10,14 +10,14 @@ namespace deployd.Features.AppInstallation
         private readonly IFileSystem _fs;
         private readonly InstallHookExecutor _hookExecutor;
 
-        public Configuration Configuration { get; set; }
+        public DeploydConfiguration DeploydConfiguration { get; set; }
         public InstanceConfiguration InstanceConfiguration { get; set; }
 
-        public AppInstallationCommand(IFileSystem fs, Configuration configuration, InstallHookExecutor hookExecutor)
+        public AppInstallationCommand(IFileSystem fs, DeploydConfiguration deploydConfiguration, InstallHookExecutor hookExecutor)
         {
             _fs = fs;
             _hookExecutor = hookExecutor;
-            Configuration = configuration;
+            DeploydConfiguration = deploydConfiguration;
         }
 
         public void Execute()

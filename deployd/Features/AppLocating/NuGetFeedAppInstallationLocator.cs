@@ -12,7 +12,7 @@ namespace deployd.Features.AppLocating
         private readonly ILog _log;
         private readonly IPackageRepository _packageRepository;
 
-        public NuGetFeedAppInstallationLocator(ILog log, Configuration clientConfig, IPackageRepositoryFactory packageRepositoryFactory)
+        public NuGetFeedAppInstallationLocator(ILog log, DeploydConfiguration clientConfig, IPackageRepositoryFactory packageRepositoryFactory)
         {
             _log = log;
             

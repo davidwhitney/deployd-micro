@@ -39,7 +39,7 @@ namespace deployd.AppStart
             kernel.Bind(scanner => scanner.FromAssemblyContaining<IPackageRepositoryFactory>().Select(IsServiceType).BindDefaultInterfaces());
 
             kernel.Bind<InstanceConfiguration>().ToMethod(x => kernel.GetService<IArgumentParser>().Parse(_args)).InSingletonScope();
-            kernel.Bind<Configuration>().ToMethod(x => kernel.GetService<ClientConfigurationManager>().LoadConfig()).InSingletonScope();
+            kernel.Bind<DeploydConfiguration>().ToMethod(x => kernel.GetService<DeploydConfigurationManager>().LoadConfig()).InSingletonScope();
             kernel.Bind<ILog>().ToMethod(x => LogManager.GetLogger("default")).InSingletonScope();
 
             return kernel;

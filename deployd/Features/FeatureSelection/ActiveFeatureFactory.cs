@@ -13,9 +13,9 @@ namespace deployd.Features.FeatureSelection
     {
         private readonly IKernel _kernel;
         private readonly InstanceConfiguration _instanceConfiguration;
-        private readonly Configuration _clientConfig;
+        private readonly DeploydConfiguration _clientConfig;
 
-        public ActiveFeatureFactory(IKernel kernel, InstanceConfiguration instanceConfiguration, Configuration clientConfig)
+        public ActiveFeatureFactory(IKernel kernel, InstanceConfiguration instanceConfiguration, DeploydConfiguration clientConfig)
         {
             _kernel = kernel;
             _instanceConfiguration = instanceConfiguration;
@@ -48,7 +48,7 @@ namespace deployd.Features.FeatureSelection
             where TCommand : IFeatureCommand
         {
             var command = _kernel.GetService<TCommand>();
-            command.Configuration = _clientConfig;
+            command.DeploydConfiguration = _clientConfig;
             command.InstanceConfiguration = _instanceConfiguration;
             return command;
         }

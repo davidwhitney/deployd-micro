@@ -9,13 +9,13 @@ namespace deployd.tests.Features.ClientConfiguration
     public class ClientConfigurationManagerTests
     {
         private Mock<IFileSystem> _fs;
-        private ClientConfigurationManager _cfgManager;
+        private DeploydConfigurationManager _cfgManager;
 
         [SetUp]
         public void SetUp()
         {
             _fs = new Mock<IFileSystem>();
-            _cfgManager = new ClientConfigurationManager(_fs.Object);
+            _cfgManager = new DeploydConfigurationManager(_fs.Object);
         }
 
         [Test]
@@ -34,7 +34,6 @@ namespace deployd.tests.Features.ClientConfiguration
             const string configFileContents = @"
                     { 
                         ""PackageType"" : ""NuGet"", 
-                        ""SourceType"" : ""FileSystem"", 
                         ""PackageSource"" : ""d:\\test"" ,
                         ""InstallRoot"" : ""Apps""
                     }";
@@ -46,7 +45,6 @@ namespace deployd.tests.Features.ClientConfiguration
 
             Assert.That(configuration.DefaultConfiguration, Is.False);
             Assert.That(configuration.PackageType, Is.EqualTo(PackageType.NuGet));
-            Assert.That(configuration.SourceType, Is.EqualTo(PackageSourceType.FileSystem));
             Assert.That(configuration.PackageSource, Is.EqualTo("d:\\test"));
             Assert.That(configuration.InstallRoot, Is.EqualTo("Apps"));
         }

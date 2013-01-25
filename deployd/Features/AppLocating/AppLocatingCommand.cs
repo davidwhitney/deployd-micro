@@ -12,7 +12,7 @@ namespace deployd.Features.AppLocating
         private readonly ILog _log;
         private readonly List<IAppInstallationLocator> _finders;
         
-        public Configuration Configuration { get; set; }
+        public DeploydConfiguration DeploydConfiguration { get; set; }
         public InstanceConfiguration InstanceConfiguration { get; set; }
 
         public AppLocatingCommand(IEnumerable<IAppInstallationLocator> finders, ILog log)

@@ -8,7 +8,7 @@ namespace deployd.Features.Help
 {
     public class HelpCommand : IFeatureCommand
     {
-        public Configuration Configuration { get; set; }
+        public DeploydConfiguration DeploydConfiguration { get; set; }
         public InstanceConfiguration InstanceConfiguration { get; set; }
 
         public void Execute()

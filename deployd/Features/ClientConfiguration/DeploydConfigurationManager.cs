@@ -3,26 +3,26 @@ using Newtonsoft.Json;
 
 namespace deployd.Features.ClientConfiguration
 {
-    public class ClientConfigurationManager
+    public class DeploydConfigurationManager
     {
         private readonly IFileSystem _fileSystem;
 
-        public ClientConfigurationManager(IFileSystem fileSystem)
+        public DeploydConfigurationManager(IFileSystem fileSystem)
         {
             _fileSystem = fileSystem;
         }
 
-        public Configuration LoadConfig()
+        public DeploydConfiguration LoadConfig()
         {
             const string fileName = "config.json";
 
             if (!_fileSystem.File.Exists(fileName))
             {
-                return new Configuration {DefaultConfiguration = true};
+                return new DeploydConfiguration {DefaultConfiguration = true};
             }
 
             var configFileContents = _fileSystem.File.ReadAllText(fileName);
-            return JsonConvert.DeserializeObject<Configuration>(configFileContents);
+            return JsonConvert.DeserializeObject<DeploydConfiguration>(configFileContents);
         }
     }
 }

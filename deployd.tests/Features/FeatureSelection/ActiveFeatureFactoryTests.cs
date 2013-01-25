@@ -14,14 +14,14 @@ namespace deployd.tests.Features.FeatureSelection
     {
         private ActiveFeatureFactory _factory;
         private InstanceConfiguration _instanceConfig;
-        private Configuration _clientConfig;
+        private DeploydConfiguration _clientConfig;
 
         [SetUp]
         public void SetUp()
         {
             var appKernel = new AppStart.ApplicationContext(new string[0]);
             _instanceConfig = new InstanceConfiguration();
-            _clientConfig = new Configuration();
+            _clientConfig = new DeploydConfiguration();
             _factory = new ActiveFeatureFactory(appKernel.Kernel, _instanceConfig, _clientConfig);
         }
 
@@ -55,7 +55,7 @@ namespace deployd.tests.Features.FeatureSelection
 
             foreach (var command in commands)
             {
-                Assert.That(command.Configuration, Is.EqualTo(_clientConfig));
+                Assert.That(command.DeploydConfiguration, Is.EqualTo(_clientConfig));
                 Assert.That(command.InstanceConfiguration, Is.EqualTo(_instanceConfig));
             }
         }

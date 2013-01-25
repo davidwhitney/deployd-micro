@@ -14,16 +14,16 @@ namespace deployd.Features.AppExtraction
         private readonly IFileSystem _fs;
         private readonly IList<IPackageExtractor> _extractors;
 
-        public Configuration Configuration { get; set; }
+        public DeploydConfiguration DeploydConfiguration { get; set; }
         public InstanceConfiguration InstanceConfiguration { get; set; }
 
-        public AppExtractionCommand(IFileSystem fs, IEnumerable<IPackageExtractor> extractors, Configuration configuration)
+        public AppExtractionCommand(IFileSystem fs, IEnumerable<IPackageExtractor> extractors, DeploydConfiguration deploydConfiguration)
         {
             _fs = fs;
             _extractors = extractors.ToList();
-            Configuration = configuration;
+            DeploydConfiguration = deploydConfiguration;
 
-            var installRoot = configuration.InstallRoot.ToAbsolutePath();
+            var installRoot = deploydConfiguration.InstallRoot.ToAbsolutePath();
             _fs.EnsureDirectoryExists(installRoot);
         }
 
@@ -34,7 +34,7 @@ namespace deployd.Features.AppExtraction
                 return;
             }
 
-            var appDirectory = Path.Combine(Configuration.InstallRoot, InstanceConfiguration.AppName).ToAbsolutePath();
+            var appDirectory = Path.Combine(DeploydConfiguration.InstallRoot, InstanceConfiguration.AppName).ToAbsolutePath();
             InstanceConfiguration.AppDirectory = new AppDirectory(appDirectory);
 
             _fs.EnsureDirectoryExists(InstanceConfiguration.AppDirectory.FullPath);

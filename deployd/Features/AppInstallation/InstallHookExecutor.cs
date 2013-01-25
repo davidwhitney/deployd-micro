@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using log4net;
 
 namespace deployd.Features.AppInstallation
 {
     public class InstallHookExecutor
     {
         private readonly HookFinder _finder;
+        private readonly ILog _log;
 
         private Hooks _hooks;
         private Hooks Hooks
@@ -13,9 +16,10 @@ namespace deployd.Features.AppInstallation
             get { return _hooks ?? (_hooks = _finder.DiscoverHooks()); }
         }
 
-        public InstallHookExecutor(HookFinder finder)
+        public InstallHookExecutor(HookFinder finder, ILog log)
         {
             _finder = finder;
+            _log = log;
         }
 
         public void ExecuteFirstInstall()
@@ -43,7 +47,12 @@ namespace deployd.Features.AppInstallation
 
         private void ExecuteHook(string hook)
         {
-            var startInfo = new ProcessStartInfo {FileName = hook};
+            var startInfo = new ProcessStartInfo
+                {
+                    FileName = hook,
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                };
 
             if (hook.EndsWith(".ps1"))
             {
@@ -54,7 +63,14 @@ namespace deployd.Features.AppInstallation
                 startInfo.FileName = "ruby " + startInfo.FileName;
             }
 
-            Process.Start(startInfo);
+            var process = Process.Start(startInfo);
+            using (var outputStream = process.StandardOutput)
+            {
+                process.WaitForExit();
+                _log.Info(outputStream.ReadToEnd());
+            }
+
+
         }
     }
 }

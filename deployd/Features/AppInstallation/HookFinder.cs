@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using deployd.Features.FeatureSelection;
@@ -22,9 +20,9 @@ namespace deployd.Features.AppInstallation
         {
             var searchPath = _configuration.AppDirectory.Staging;
 
-            var firstInstallHooks = _fs.Directory.GetFiles(searchPath, ".first-install*", SearchOption.AllDirectories);
-            var preInstallHooks = _fs.Directory.GetFiles(searchPath, ".pre-install*", SearchOption.AllDirectories);
-            var postInstallHooks = _fs.Directory.GetFiles(searchPath, ".post-install*", SearchOption.AllDirectories);
+            var firstInstallHooks = _fs.Directory.GetFiles(searchPath, "hook-first-install*", SearchOption.AllDirectories);
+            var preInstallHooks = _fs.Directory.GetFiles(searchPath, "hook-pre-install*", SearchOption.AllDirectories);
+            var postInstallHooks = _fs.Directory.GetFiles(searchPath, "hook-post-install*", SearchOption.AllDirectories);
             
             return new Hooks
                 {

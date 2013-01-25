@@ -42,7 +42,7 @@ namespace deployd.Features.AppInstallation
 
         private void MakeStagingActive()
         {
-            _fs.Directory.Move(InstanceConfiguration.AppDirectory.Backup, InstanceConfiguration.AppDirectory.Active);
+            _fs.Directory.Move(InstanceConfiguration.AppDirectory.Staging, InstanceConfiguration.AppDirectory.Active);
         }
 
         private void BackupPreviousInstallation()

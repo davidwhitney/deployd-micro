@@ -21,8 +21,8 @@ namespace deployd.Features.FeatureSelection
 
         public IEnumerable<IFeatureCommand> BuildCommands()
         {
-
-            if (_instanceConfiguration.Help)
+            if (_instanceConfiguration.Help
+                || string.IsNullOrWhiteSpace(_instanceConfiguration.AppName))
             {
                 return new List<IFeatureCommand> {CreateCommand<HelpCommand>(_clientConfig, _instanceConfiguration)};
             }

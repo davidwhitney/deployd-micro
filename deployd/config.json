@@ -1,0 +1,5 @@
+﻿{ 
+    "PackageType" : "NuGet", 
+    "SourceType" : "FileSystem", 
+    "PackageSource" : "..\\..\\..\\test-directory-repo" 
+}

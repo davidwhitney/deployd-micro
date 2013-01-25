@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using Ninject;
-using deployd.AppStart;
+﻿using deployd.AppStart;
 using deployd.Features.AppExtraction;
 using deployd.Features.AppInstallation;
 using deployd.Features.AppLocating;
 using deployd.Features.ClientConfiguration;
 using deployd.Features.Help;
+using Ninject;
+using System.Collections.Generic;
 
 namespace deployd.Features.FeatureSelection
 {

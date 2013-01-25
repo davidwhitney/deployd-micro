@@ -33,6 +33,7 @@ namespace deployd.tests.Features.ClientConfiguration
         {
             const string configFileContents = @"
                     { 
+                        ""PackageType"" : ""NuGet"", 
                         ""SourceType"" : ""FileSystem"", 
                         ""PackageSource"" : ""d:\\test"" 
                     }";
@@ -43,6 +44,7 @@ namespace deployd.tests.Features.ClientConfiguration
             var configuration = _cfgManager.LoadConfig();
 
             Assert.That(configuration.DefaultConfiguration, Is.False);
+            Assert.That(configuration.PackageType, Is.EqualTo(PackageType.NuGet));
             Assert.That(configuration.SourceType, Is.EqualTo(PackageSourceType.FileSystem));
             Assert.That(configuration.PackageSource, Is.EqualTo("d:\\test"));
         }

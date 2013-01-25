@@ -69,6 +69,8 @@
     <Compile Include="AppStart\NinjectExtensions.cs" />
     <Compile Include="Features\ClientConfiguration\Configuration.cs" />
     <Compile Include="Features\ClientConfiguration\ClientConfigurationManager.cs" />
+    <Compile Include="Features\ClientConfiguration\PackageSourceType.cs" />
+    <Compile Include="Features\ClientConfiguration\PackageType.cs" />
     <Compile Include="Features\FeatureSelection\ActiveFeatureFactory.cs" />
     <Compile Include="Features\FeatureSelection\ArgumentParser.cs" />
     <Compile Include="Features\FeatureSelection\IArgumentParser.cs" />
@@ -89,6 +91,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <Content Include="config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

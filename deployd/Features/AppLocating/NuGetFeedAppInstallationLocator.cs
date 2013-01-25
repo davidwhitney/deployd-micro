@@ -15,7 +15,13 @@ namespace deployd.Features.AppLocating
         public NuGetFeedAppInstallationLocator(ILog log, Configuration clientConfig, IPackageRepositoryFactory packageRepositoryFactory)
         {
             _log = log;
-            var repoLocation = clientConfig.PackageSource.ToAbsolutePath();
+            
+            var repoLocation = clientConfig.PackageSource;
+            if (!repoLocation.StartsWith("http"))
+            {
+                repoLocation = repoLocation.ToAbsolutePath();
+            }
+
             _packageRepository = packageRepositoryFactory.CreateRepository(repoLocation);
         }
 
@@ -25,8 +31,8 @@ namespace deployd.Features.AppLocating
             {
                 var all = _packageRepository.GetPackages()
                                             .Where(x => x.Id == appName && x.IsLatestVersion)
-                                            .Reverse()
                                             .ToList();
+                all.Reverse();
 
                 var latestPackage = all.FirstOrDefault();
 
@@ -46,7 +52,7 @@ namespace deployd.Features.AppLocating
         public PackageLocation<object> CanFindPackageAsObject(string appName)
         {
             var inner = CanFindPackage(appName);
-            return new PackageLocation<object>{ PackageDetails = inner.PackageDetails };
+            return inner == null ? null : new PackageLocation<object>{ PackageDetails = inner.PackageDetails };
         }
     }
 }

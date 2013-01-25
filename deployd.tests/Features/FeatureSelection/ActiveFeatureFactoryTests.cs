@@ -1,8 +1,9 @@
-﻿using deployd.Features.ClientConfiguration;
+﻿using deployd.Features.AppExtraction;
+using deployd.Features.AppInstallation;
+using deployd.Features.AppLocating;
+using deployd.Features.ClientConfiguration;
 using deployd.Features.FeatureSelection;
 using deployd.Features.Help;
-using Moq;
-using Ninject;
 using NUnit.Framework;
 using System.Linq;
 
@@ -12,19 +13,16 @@ namespace deployd.tests.Features.FeatureSelection
     public class ActiveFeatureFactoryTests
     {
         private ActiveFeatureFactory _factory;
-        private Mock<IKernel> _kernel;
         private InstanceConfiguration _instanceConfig;
         private Configuration _clientConfig;
 
         [SetUp]
         public void SetUp()
         {
-            _kernel = new Mock<IKernel>();
-            _kernel.Setup(x => x.GetService(typeof(HelpCommand))).Returns(new HelpCommand());
-
+            var appKernel = new AppStart.ApplicationContext(new string[0]);
             _instanceConfig = new InstanceConfiguration();
             _clientConfig = new Configuration();
-            _factory = new ActiveFeatureFactory(_kernel.Object, _instanceConfig, _clientConfig);
+            _factory = new ActiveFeatureFactory(appKernel.Kernel, _instanceConfig, _clientConfig);
         }
 
         [Test]
@@ -79,7 +77,9 @@ namespace deployd.tests.Features.FeatureSelection
 
             var commands = _factory.BuildCommands();
 
-            Assert.Inconclusive("Need to build chains of commands.");
+            Assert.That(commands.First().GetType(), Is.EqualTo(typeof(AppLocatingCommand)));
+            Assert.That(commands.Skip(1).First().GetType(), Is.EqualTo(typeof(AppExtractionCommand)));
+            Assert.That(commands.Skip(2).First().GetType(), Is.EqualTo(typeof(AppInstallationCommand)));
         }
     }
 }

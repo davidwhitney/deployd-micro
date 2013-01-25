@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using Ninject;
 using deployd.AppStart;
+using deployd.Features.AppExtraction;
+using deployd.Features.AppInstallation;
+using deployd.Features.AppLocating;
 using deployd.Features.ClientConfiguration;
 using deployd.Features.Help;
 
@@ -29,7 +32,9 @@ namespace deployd.Features.FeatureSelection
             
             return new List<IFeatureCommand>
                 {
-
+                    CreateCommand<AppLocatingCommand>(),
+                    CreateCommand<AppExtractionCommand>(),
+                    CreateCommand<AppInstallationCommand>(),
                 };
         }
 

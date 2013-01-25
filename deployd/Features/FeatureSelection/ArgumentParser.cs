@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NDesk.Options;
 
@@ -10,7 +11,7 @@ namespace deployd.Features.FeatureSelection
         {
             var cfg = new InstanceConfiguration
                 {
-                    PackageName = string.Empty,
+                    AppName = string.Empty,
                     Help = false,
                     Verbose = false,
                     ExtraParams = new List<string>()
@@ -18,7 +19,7 @@ namespace deployd.Features.FeatureSelection
 
             var p = new OptionSet
                 {
-                    {"file=", v => cfg.PackageName = v},
+                    {"app=", v => cfg.AppName = v},
                     {"v|verbose", v => cfg.Verbose = v != null},
                     {"h|?|help", v => cfg.Help = v != null},
                 };
@@ -31,6 +32,7 @@ namespace deployd.Features.FeatureSelection
             }
 
             cfg.ExtraParams = p.Parse(args);
+            cfg.AppName = cfg.AppName.Trim('"', '\'');
             return cfg;
         }
     }

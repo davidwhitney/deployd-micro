@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Features\ClientConfiguration\ClientConfigurationManagerTests.cs" />
+    <Compile Include="Features\FeatureSelection\ArgumentParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -5,7 +5,7 @@ namespace deployd.Features.FeatureSelection
 {
     public class InstanceConfiguration
     {
-        public string PackageName { get; set; }
+        public string AppName { get; set; }
         public bool Help { get; set; }
         public bool Verbose { get; set; }
         

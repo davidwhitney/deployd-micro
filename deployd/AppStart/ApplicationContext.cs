@@ -3,6 +3,7 @@ using System.Linq;
 using Ninject;
 using Ninject.Extensions.Conventions;
 using NuGet;
+using deployd.Features.AppExtraction;
 using deployd.Features.AppLocating;
 using deployd.Features.ClientConfiguration;
 using deployd.Features.FeatureSelection;
@@ -32,6 +33,7 @@ namespace deployd.AppStart
             var kernel = new StandardKernel();
             kernel.Bind(scanner => scanner.FromThisAssembly().Select(IsServiceType).BindDefaultInterfaces());
             kernel.Bind(scanner => scanner.FromThisAssembly().Select(IsInstallationLocator).BindAllInterfaces());
+            kernel.Bind(scanner => scanner.FromThisAssembly().Select(IsPackageExtractor).BindAllInterfaces());
 
             kernel.Bind(scanner => scanner.FromAssemblyContaining<IFileSystem>().Select(IsServiceType).BindDefaultInterfaces());
             kernel.Bind(scanner => scanner.FromAssemblyContaining<IPackageRepositoryFactory>().Select(IsServiceType).BindDefaultInterfaces());
@@ -50,8 +52,12 @@ namespace deployd.AppStart
 
         private static bool IsInstallationLocator(Type type)
         {
-            return type.IsClass 
-                && type.GetInterfaces().Any(intface => intface.Name == typeof(IAppInstallationLocator).Name);
+            return type.IsClass && type.GetInterfaces().Any(intface => intface.Name == typeof(IAppInstallationLocator).Name);
+        }
+
+        private static bool IsPackageExtractor(Type type)
+        {
+            return type.IsClass && type.GetInterfaces().Any(intface => intface.Name == typeof(IPackageExtractor).Name);
         }
     }
 }

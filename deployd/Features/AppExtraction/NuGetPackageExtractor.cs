@@ -6,6 +6,11 @@ namespace deployd.Features.AppExtraction
 {
     public class NuGetPackageExtractor : IPackageExtractor
     {
+        public bool CanUnpack(object packageInfo)
+        {
+            return packageInfo is IPackage;
+        }
+
         public void Unpack(string targetDirectory, object packageInfo)
         {
             if (!(packageInfo is IPackage))

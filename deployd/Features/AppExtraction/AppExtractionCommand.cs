@@ -1,7 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.IO.Abstractions;
 using deployd.Features.ClientConfiguration;
 using deployd.Features.FeatureSelection;
+using deployd.Infrastructure;
 
 namespace deployd.Features.AppExtraction
 {
@@ -16,9 +18,10 @@ namespace deployd.Features.AppExtraction
             _fs = fs;
             Configuration = configuration;
 
-            if (!_fs.Directory.Exists(configuration.InstallRoot))
+            var installRoot = configuration.InstallRoot.ToAbsolutePath();
+            if (!_fs.Directory.Exists(installRoot))
             {
-                _fs.Directory.CreateDirectory(configuration.InstallRoot);
+                _fs.Directory.CreateDirectory(installRoot);
             }
         }
 
@@ -29,11 +32,29 @@ namespace deployd.Features.AppExtraction
                 return;
             }
 
-            if (!_fs.Directory.Exists(InstanceConfiguration.AppName))
-            {
-                _fs.Directory.CreateDirectory(Path.Combine(Configuration.InstallRoot, InstanceConfiguration.AppName));
-            }
+            var appDirectory = Path.Combine(Configuration.InstallRoot, InstanceConfiguration.AppName).ToAbsolutePath();
+            var installationStaging = Path.Combine(appDirectory, ".installing").ToAbsolutePath();
             
+            EnsureDirectoryExists(appDirectory);
+            EnsureDirectoryExists(installationStaging);
+
+            var packageInfo = InstanceConfiguration.AppInstallationLocation.PackageDetails;
+            var extractor = GetExtractorFor(packageInfo);
+
+            extractor.Unpack(installationStaging, packageInfo);
+        }
+
+        private static IPackageExtractor GetExtractorFor(object packageInfo)
+        {
+            return new NuGetPackageExtractor();
+        }
+
+        public void EnsureDirectoryExists(string fullPath)
+        {
+            if (!_fs.Directory.Exists(fullPath))
+            {
+                _fs.Directory.CreateDirectory(fullPath);
+            }
         }
     }
 }

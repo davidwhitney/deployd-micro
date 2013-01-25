@@ -16,25 +16,10 @@ namespace deployd.Features.AppInstallation
         {
             _fs = fs;
             Configuration = configuration;
-
-            if (!_fs.Directory.Exists(configuration.InstallRoot))
-            {
-                _fs.Directory.CreateDirectory(configuration.InstallRoot);
-            }
         }
 
         public void Execute()
         {
-            if (InstanceConfiguration.AppInstallationLocation == null)
-            {
-                return;
-            }
-
-            if (!_fs.Directory.Exists(InstanceConfiguration.AppName))
-            {
-                _fs.Directory.CreateDirectory(Path.Combine(Configuration.InstallRoot, InstanceConfiguration.AppName));
-            }
-            
         }
     }
 }

@@ -2,5 +2,5 @@
     "PackageType" : "NuGet", 
     "SourceType" : "FileSystem", 
     "PackageSource" : "~\\..\\..\\..\\test-directory-repo",
-    "InstallRoot" : "Apps" 
+    "InstallRoot" : "~\\Apps" 
 }

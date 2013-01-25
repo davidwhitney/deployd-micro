@@ -2,5 +2,6 @@
 {
     public interface IPackageExtractor
     {
+        void Unpack(string targetDirectory, object packageInfo);
     }
 }

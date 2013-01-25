@@ -11,7 +11,7 @@
 
         public Configuration()
         {
-            InstallRoot = "Apps";
+            InstallRoot = "~\\Apps";
         }
     }
 }

@@ -20,6 +20,7 @@ namespace deployd.Features.FeatureSelection
             var p = new OptionSet
                 {
                     {"app=", v => cfg.AppName = v},
+                    {"i|install", v => cfg.Install = v != null},
                     {"v|verbose", v => cfg.Verbose = v != null},
                     {"h|?|help", v => cfg.Help = v != null},
                 };

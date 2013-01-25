@@ -61,19 +61,20 @@ namespace deployd.tests.Features.FeatureSelection
         }
 
         [Test]
-        public void BuildCommands_AppNameSpecifiedAndHelpCommandOmitted_HelpNotProvided()
+        public void BuildCommands_AppNameSpecifiedAndInstallCommandOmitted_HelpProvided()
         {
             _instanceConfig.AppName = "MyApp";
 
             var commands = _factory.BuildCommands();
 
-            Assert.That(commands.FirstOrDefault(x => x.GetType() == typeof (HelpCommand)), Is.Null);
+            Assert.That(commands.First().GetType(), Is.EqualTo(typeof(HelpCommand)));
         }
 
         [Test]
-        public void BuildCommands_AppNameSpecifiedAndHelpCommandOmitted_DeploymentCommandsBuilt()
+        public void BuildCommands_AppNameSpecifiedAndInstallSupplied_DeploymentCommandsBuilt()
         {
             _instanceConfig.AppName = "MyApp";
+            _instanceConfig.Install = true;
 
             var commands = _factory.BuildCommands();
 

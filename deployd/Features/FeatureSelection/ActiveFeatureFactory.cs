@@ -29,7 +29,13 @@ namespace deployd.Features.FeatureSelection
             {
                 return new List<IFeatureCommand> {CreateCommand<HelpCommand>()};
             }
-            
+
+            if (!_instanceConfiguration.Install)
+            {
+                return new List<IFeatureCommand> {CreateCommand<HelpCommand>()};
+                    // TODO: Display info on current version of packages?
+            }
+
             return new List<IFeatureCommand>
                 {
                     CreateCommand<AppLocatingCommand>(),

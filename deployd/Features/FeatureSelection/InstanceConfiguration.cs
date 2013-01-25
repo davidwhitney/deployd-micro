@@ -7,6 +7,7 @@ namespace deployd.Features.FeatureSelection
     public class InstanceConfiguration
     {
         public string AppName { get; set; }
+        public bool Install { get; set; }
         public bool Help { get; set; }
         public bool Verbose { get; set; }
         
@@ -14,5 +15,6 @@ namespace deployd.Features.FeatureSelection
         public OptionSet OptionSet { get; set; }
 
         public PackageLocation<object> AppInstallationLocation { get; set; }
+
     }
 }

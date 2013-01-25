@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="AppStart\ApplicationContext.cs" />
     <Compile Include="AppStart\NinjectExtensions.cs" />
+    <Compile Include="Features\AppLocating\PackageLocation.cs" />
     <Compile Include="Features\ClientConfiguration\Configuration.cs" />
     <Compile Include="Features\ClientConfiguration\ClientConfigurationManager.cs" />
     <Compile Include="Features\ClientConfiguration\PackageSourceType.cs" />
@@ -82,10 +83,11 @@
     <Compile Include="Features\AppExtraction\IPackageExtractor.cs" />
     <Compile Include="Features\AppExtraction\NuGetPackageExtractor.cs" />
     <Compile Include="Features\AppInstallation\AppInstallationCommand.cs" />
-    <Compile Include="Features\AppLocating\FileSystemPackageLocator.cs" />
-    <Compile Include="Features\AppLocating\IPackageLocator.cs" />
-    <Compile Include="Features\AppLocating\NuGetFeedPackageLocator.cs" />
+    <Compile Include="Features\AppLocating\FileSystemAppInstallationLocator.cs" />
+    <Compile Include="Features\AppLocating\IAppInstallationLocator.cs" />
+    <Compile Include="Features\AppLocating\NuGetFeedAppInstallationLocator.cs" />
     <Compile Include="Features\AppLocating\AppLocatingCommand.cs" />
+    <Compile Include="Infrastructure\PathExtensions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

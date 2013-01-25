@@ -35,7 +35,8 @@ namespace deployd.tests.Features.ClientConfiguration
                     { 
                         ""PackageType"" : ""NuGet"", 
                         ""SourceType"" : ""FileSystem"", 
-                        ""PackageSource"" : ""d:\\test"" 
+                        ""PackageSource"" : ""d:\\test"" ,
+                        ""InstallRoot"" : ""Apps""
                     }";
 
             _fs.Setup(x => x.File.Exists("config.json")).Returns(true);
@@ -47,6 +48,7 @@ namespace deployd.tests.Features.ClientConfiguration
             Assert.That(configuration.PackageType, Is.EqualTo(PackageType.NuGet));
             Assert.That(configuration.SourceType, Is.EqualTo(PackageSourceType.FileSystem));
             Assert.That(configuration.PackageSource, Is.EqualTo("d:\\test"));
+            Assert.That(configuration.InstallRoot, Is.EqualTo("Apps"));
         }
     }
 }

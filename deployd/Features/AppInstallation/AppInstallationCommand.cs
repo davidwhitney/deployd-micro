@@ -45,7 +45,7 @@ namespace deployd.Features.AppInstallation
         {
             if (_fs.Directory.Exists(installationBackup))
             {
-                _fs.Directory.Delete(installationBackup);
+                _fs.Directory.Delete(installationBackup, true);
             }
 
             if (_fs.Directory.Exists(installationActive))

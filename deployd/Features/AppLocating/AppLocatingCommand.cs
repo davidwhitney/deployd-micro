@@ -20,7 +20,7 @@ namespace deployd.Features.AppLocating
         public void Execute()
         {
             var location =
-                _finders.Select(locator => locator.CanFindPackage(InstanceConfiguration.AppName))
+                _finders.Select(locator => locator.CanFindPackageAsObject(InstanceConfiguration.AppName))
                         .FirstOrDefault(result => result != null);
 
             if (location != null)

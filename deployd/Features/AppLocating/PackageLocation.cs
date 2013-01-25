@@ -2,8 +2,8 @@
 
 namespace deployd.Features.AppLocating
 {
-    public class PackageLocation
+    public class PackageLocation<TPackageType>
     {
-        public IPackage NuGetPackage { get; set; }
+        public TPackageType PackageDetails { get; set; }
     }
 }

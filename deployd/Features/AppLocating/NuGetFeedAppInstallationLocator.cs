@@ -7,7 +7,7 @@ using deployd.Infrastructure;
 
 namespace deployd.Features.AppLocating
 {
-    public class NuGetFeedAppInstallationLocator : IAppInstallationLocator
+    public class NuGetFeedAppInstallationLocator : IAppInstallationLocator<IPackage>
     {
         private readonly ILog _log;
         private readonly IPackageRepository _packageRepository;
@@ -19,7 +19,7 @@ namespace deployd.Features.AppLocating
             _packageRepository = packageRepositoryFactory.CreateRepository(repoLocation);
         }
 
-        public PackageLocation CanFindPackage(string appName)
+        public PackageLocation<IPackage> CanFindPackage(string appName)
         {
             try
             {
@@ -32,7 +32,7 @@ namespace deployd.Features.AppLocating
 
                 if (latestPackage != null)
                 {
-                    return new PackageLocation {NuGetPackage = latestPackage};
+                    return new PackageLocation<IPackage> { PackageDetails = latestPackage };
                 }
             }
             catch (Exception ex)
@@ -41,6 +41,12 @@ namespace deployd.Features.AppLocating
             }
 
             return null;
+        }
+
+        public PackageLocation<object> CanFindPackageAsObject(string appName)
+        {
+            var inner = CanFindPackage(appName);
+            return new PackageLocation<object>{ PackageDetails = inner.PackageDetails };
         }
     }
 }

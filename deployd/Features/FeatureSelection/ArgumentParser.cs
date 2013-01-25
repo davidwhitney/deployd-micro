@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using NDesk.Options;
 
@@ -7,7 +6,7 @@ namespace deployd.Features.FeatureSelection
 {
     public class ArgumentParser : IArgumentParser
     {
-        public InstanceConfiguration Parse(IEnumerable<string> args)
+        public InstanceConfiguration Parse(IList<string> args)
         {
             var cfg = new InstanceConfiguration
                 {

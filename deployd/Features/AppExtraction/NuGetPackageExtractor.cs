@@ -7,10 +7,12 @@ namespace deployd.Features.AppExtraction
 {
     public class NuGetPackageExtractor : IPackageExtractor
     {
+        private readonly System.IO.Abstractions.IFileSystem _fs;
         private readonly ILog _log;
 
-        public NuGetPackageExtractor(ILog log)
+        public NuGetPackageExtractor(System.IO.Abstractions.IFileSystem fs, ILog log)
         {
+            _fs = fs;
             _log = log;
         }
 
@@ -37,12 +39,12 @@ namespace deployd.Features.AppExtraction
                
                 var directoryPath = Path.GetDirectoryName(fileOutputPath);
 
-                if (!Directory.Exists(directoryPath))
+                if (!_fs.Directory.Exists(directoryPath))
                 {
-                    Directory.CreateDirectory(directoryPath);
+                    _fs.Directory.CreateDirectory(directoryPath);
                 }
 
-                File.WriteAllBytes(fileOutputPath, file.GetStream().ReadAllBytes());
+                _fs.File.WriteAllBytes(fileOutputPath, file.GetStream().ReadAllBytes());
             }
         }
     }

@@ -76,7 +76,7 @@ namespace deployd.tests.Features.FeatureSelection
             _instanceConfig.AppName = "MyApp";
             _instanceConfig.Install = true;
 
-            var commands = _factory.BuildCommands();
+            var commands = _factory.BuildCommands().ToList();
 
             Assert.That(commands.First().GetType(), Is.EqualTo(typeof(AppLocatingCommand)));
             Assert.That(commands.Skip(1).First().GetType(), Is.EqualTo(typeof(AppExtractionCommand)));

@@ -1,6 +1,4 @@
-﻿using NuGet;
-
-namespace deployd.Features.AppLocating
+﻿namespace deployd.Features.AppLocating
 {
     public class PackageLocation<TPackageType>
     {

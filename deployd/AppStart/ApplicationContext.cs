@@ -31,6 +31,7 @@ namespace deployd.AppStart
         private IKernel CreateKernel()
         {
             var kernel = new StandardKernel();
+
             kernel.Bind(scanner => scanner.FromThisAssembly().Select(IsServiceType).BindDefaultInterfaces());
             kernel.Bind(scanner => scanner.FromThisAssembly().Select(IsInstallationLocator).BindAllInterfaces());
             kernel.Bind(scanner => scanner.FromThisAssembly().Select(IsPackageExtractor).BindAllInterfaces());
@@ -40,6 +41,7 @@ namespace deployd.AppStart
 
             kernel.Bind<InstanceConfiguration>().ToMethod(x => kernel.GetService<IArgumentParser>().Parse(_args)).InSingletonScope();
             kernel.Bind<DeploydConfiguration>().ToMethod(x => kernel.GetService<DeploydConfigurationManager>().LoadConfig()).InSingletonScope();
+
             kernel.Bind<ILog>().ToMethod(x => LogManager.GetLogger("default")).InSingletonScope();
 
             return kernel;

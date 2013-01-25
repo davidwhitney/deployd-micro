@@ -4,6 +4,7 @@
     {
         public PackageSourceType SourceType { get; set; }
         public string PackageSource { get; set; }
+        public bool DefaultConfiguration { get; set; }
     }
 
     public enum PackageSourceType

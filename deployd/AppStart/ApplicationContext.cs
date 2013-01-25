@@ -24,8 +24,8 @@ namespace deployd.AppStart
             var kernel = new StandardKernel();
             kernel.Bind(scanner => scanner.FromThisAssembly().Select(IsServiceType).BindDefaultInterfaces());
             kernel.Bind(scanner => scanner.FromAssemblyContaining<IFileSystem>().Select(IsServiceType).BindDefaultInterfaces());
-            kernel.Bind<Configuration>().ToMethod(x => kernel.GetService<ClientConfigurationManager>().LoadConfig()).InSingletonScope();
             kernel.Bind<InstanceConfiguration>().ToMethod(x => kernel.GetService<IArgumentParser>().Parse(_args)).InSingletonScope();
+            kernel.Bind<Configuration>().ToMethod(x => kernel.GetService<ClientConfigurationManager>().LoadConfig()).InSingletonScope();
 
             return kernel;
         }

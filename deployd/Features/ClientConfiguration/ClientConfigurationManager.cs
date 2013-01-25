@@ -18,7 +18,7 @@ namespace deployd.Features.ClientConfiguration
 
             if (!_fileSystem.File.Exists(fileName))
             {
-                return new Configuration();
+                return new Configuration {DefaultConfiguration = true};
             }
 
             var configFileContents = _fileSystem.File.ReadAllText(fileName);

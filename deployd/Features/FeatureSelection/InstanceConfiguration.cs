@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using NDesk.Options;
+using deployd.Features.AppExtraction;
 using deployd.Features.AppLocating;
 
 namespace deployd.Features.FeatureSelection
@@ -14,7 +15,8 @@ namespace deployd.Features.FeatureSelection
         public List<string> ExtraParams { get; set; }
         public OptionSet OptionSet { get; set; }
 
-        public PackageLocation<object> AppInstallationLocation { get; set; }
+        public PackageLocation<object> PackageLocation { get; set; }
 
+        public AppDirectory AppDirectory { get; set; }
     }
 }

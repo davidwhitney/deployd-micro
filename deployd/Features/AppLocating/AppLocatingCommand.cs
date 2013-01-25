@@ -25,7 +25,7 @@ namespace deployd.Features.AppLocating
 
             if (location != null)
             {
-                InstanceConfiguration.AppInstallationLocation = location;
+                InstanceConfiguration.PackageLocation = location;
             }
         }
     }

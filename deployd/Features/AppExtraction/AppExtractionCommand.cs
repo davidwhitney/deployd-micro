@@ -29,21 +29,21 @@ namespace deployd.Features.AppExtraction
 
         public void Execute()
         {
-            if (InstanceConfiguration.AppInstallationLocation == null)
+            if (InstanceConfiguration.PackageLocation == null)
             {
                 return;
             }
 
             var appDirectory = Path.Combine(Configuration.InstallRoot, InstanceConfiguration.AppName).ToAbsolutePath();
-            var installationStaging = Path.Combine(appDirectory, ".staging").ToAbsolutePath();
-            
-            _fs.EnsureDirectoryExists(appDirectory);
-            _fs.EnsureDirectoryExists(installationStaging);
+            InstanceConfiguration.AppDirectory = new AppDirectory(appDirectory);
 
-            var packageInfo = InstanceConfiguration.AppInstallationLocation.PackageDetails;
+            _fs.EnsureDirectoryExists(InstanceConfiguration.AppDirectory.FullPath);
+            _fs.EnsureDirectoryExists(InstanceConfiguration.AppDirectory.Staging);
+
+            var packageInfo = InstanceConfiguration.PackageLocation.PackageDetails;
             var extractor = GetExtractorFor(packageInfo);
 
-            extractor.Unpack(installationStaging, packageInfo);
+            extractor.Unpack(InstanceConfiguration.AppDirectory.Staging, packageInfo);
         }
 
         private IPackageExtractor GetExtractorFor(object packageInfo)

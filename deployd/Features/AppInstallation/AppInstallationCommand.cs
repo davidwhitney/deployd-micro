@@ -1,56 +1,60 @@
-﻿using System;
-using System.IO;
-using System.IO.Abstractions;
-using deployd.Features.ClientConfiguration;
+﻿using deployd.Features.ClientConfiguration;
 using deployd.Features.FeatureSelection;
-using deployd.Infrastructure;
+using System;
+using System.IO.Abstractions;
 
 namespace deployd.Features.AppInstallation
 {
     public class AppInstallationCommand : IFeatureCommand
     {
         private readonly IFileSystem _fs;
+        private readonly InstallHookExecutor _hookExecutor;
 
         public Configuration Configuration { get; set; }
         public InstanceConfiguration InstanceConfiguration { get; set; }
 
-        public AppInstallationCommand(IFileSystem fs, Configuration configuration)
+        public AppInstallationCommand(IFileSystem fs, Configuration configuration, InstallHookExecutor hookExecutor)
         {
             _fs = fs;
+            _hookExecutor = hookExecutor;
             Configuration = configuration;
         }
 
         public void Execute()
         {
-            var appDirectory = Path.Combine(Configuration.InstallRoot, InstanceConfiguration.AppName).ToAbsolutePath();
-            var installationStaging = Path.Combine(appDirectory, ".staging").ToAbsolutePath();
-            var installationBackup = Path.Combine(appDirectory, ".previous").ToAbsolutePath();
-            var installationActive = Path.Combine(appDirectory, ".active").ToAbsolutePath();
-
-            if (!_fs.Directory.Exists(installationStaging))
+            if (!_fs.Directory.Exists(InstanceConfiguration.AppDirectory.Staging))
             {
                 throw new InvalidOperationException("Application isn't staged. Can't install.");
             }
 
-            BackupPreviousInstallation(installationBackup, installationActive);
-            MakeStagingActive(installationStaging, installationActive);
-        }
-
-        private void MakeStagingActive(string installationStaging, string installationActive)
-        {
-            _fs.Directory.Move(installationStaging, installationActive);
-        }
-
-        private void BackupPreviousInstallation(string installationBackup, string installationActive)
-        {
-            if (_fs.Directory.Exists(installationBackup))
+            if (!_fs.Directory.Exists(InstanceConfiguration.AppDirectory.Active))
             {
-                _fs.Directory.Delete(installationBackup, true);
+                _hookExecutor.ExecuteFirstInstall();
             }
 
-            if (_fs.Directory.Exists(installationActive))
+            _hookExecutor.ExecutePreInstall();
+
+            BackupPreviousInstallation();
+            MakeStagingActive();
+
+            _hookExecutor.ExecutePostInstall();
+        }
+
+        private void MakeStagingActive()
+        {
+            _fs.Directory.Move(InstanceConfiguration.AppDirectory.Backup, InstanceConfiguration.AppDirectory.Active);
+        }
+
+        private void BackupPreviousInstallation()
+        {
+            if (_fs.Directory.Exists(InstanceConfiguration.AppDirectory.Backup))
             {
-                _fs.Directory.Move(installationActive, installationBackup);
+                _fs.Directory.Delete(InstanceConfiguration.AppDirectory.Backup, true);
+            }
+
+            if (_fs.Directory.Exists(InstanceConfiguration.AppDirectory.Active))
+            {
+                _fs.Directory.Move(InstanceConfiguration.AppDirectory.Active, InstanceConfiguration.AppDirectory.Backup);
             }
         }
     }

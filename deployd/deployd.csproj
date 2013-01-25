@@ -67,6 +67,10 @@
   <ItemGroup>
     <Compile Include="AppStart\ApplicationContext.cs" />
     <Compile Include="AppStart\NinjectExtensions.cs" />
+    <Compile Include="Features\AppExtraction\AppDirectory.cs" />
+    <Compile Include="Features\AppInstallation\HookFinder.cs" />
+    <Compile Include="Features\AppInstallation\Hooks.cs" />
+    <Compile Include="Features\AppInstallation\InstallHookExecutor.cs" />
     <Compile Include="Features\AppLocating\PackageLocation.cs" />
     <Compile Include="Features\ClientConfiguration\Configuration.cs" />
     <Compile Include="Features\ClientConfiguration\ClientConfigurationManager.cs" />
@@ -79,7 +83,6 @@
     <Compile Include="Features\Help\HelpCommand.cs" />
     <Compile Include="Features\IFeatureCommand.cs" />
     <Compile Include="Features\AppExtraction\AppExtractionCommand.cs" />
-    <Compile Include="Features\AppInstallation\IConventionFileDiscoverer.cs" />
     <Compile Include="Features\AppExtraction\IPackageExtractor.cs" />
     <Compile Include="Features\AppExtraction\NuGetPackageExtractor.cs" />
     <Compile Include="Features\AppInstallation\AppInstallationCommand.cs" />

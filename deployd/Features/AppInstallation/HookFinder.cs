@@ -24,12 +24,20 @@ namespace deployd.Features.AppInstallation
             var preInstallHooks = _fs.Directory.GetFiles(searchPath, "hook-pre-install*", SearchOption.AllDirectories);
             var postInstallHooks = _fs.Directory.GetFiles(searchPath, "hook-post-install*", SearchOption.AllDirectories);
             
-            return new Hooks
+            var hooks = new Hooks
                 {
                     FirstInstall = firstInstallHooks.ToList(),
                     PreInstall = preInstallHooks.ToList(),
                     PostInstall = postInstallHooks.ToList()
                 };
+
+            for (var index = 0; index < hooks.PostInstall.Count; index++)
+            {
+                var hook = hooks.PostInstall[index];
+                hooks.PostInstall[index] = hook.Replace(".staging", ".active");
+            }
+
+            return hooks;
         }
     }
 }

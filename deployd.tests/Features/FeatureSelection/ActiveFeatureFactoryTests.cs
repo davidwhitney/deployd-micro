@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Moq;
-using NUnit.Framework;
-using Ninject;
-using deployd.Features;
-using deployd.Features.ClientConfiguration;
+﻿using deployd.Features.ClientConfiguration;
 using deployd.Features.FeatureSelection;
 using deployd.Features.Help;
+using Moq;
+using Ninject;
+using NUnit.Framework;
+using System.Linq;
 
 namespace deployd.tests.Features.FeatureSelection
 {
@@ -52,6 +47,31 @@ namespace deployd.tests.Features.FeatureSelection
             Assert.That(commands.FirstOrDefault(x => x.GetType() == typeof (HelpCommand)), Is.Not.Null);
         }
 
+        [TestCase("")]
+        [TestCase("AppName")]
+        public void BuildCommands_AnyCommandBuilt_ConfigurationObjectsBound(string appName)
+        {
+            _instanceConfig.AppName = appName;
+
+            var commands = _factory.BuildCommands();
+
+            foreach (var command in commands)
+            {
+                Assert.That(command.Configuration, Is.EqualTo(_clientConfig));
+                Assert.That(command.InstanceConfiguration, Is.EqualTo(_instanceConfig));
+            }
+        }
+
+        [Test]
+        public void BuildCommands_AppNameSpecifiedAndHelpCommandOmitted_HelpNotProvided()
+        {
+            _instanceConfig.AppName = "MyApp";
+
+            var commands = _factory.BuildCommands();
+
+            Assert.That(commands.FirstOrDefault(x => x.GetType() == typeof (HelpCommand)), Is.Null);
+        }
+
         [Test]
         public void BuildCommands_AppNameSpecifiedAndHelpCommandOmitted_DeploymentCommandsBuilt()
         {
@@ -59,7 +79,7 @@ namespace deployd.tests.Features.FeatureSelection
 
             var commands = _factory.BuildCommands();
 
-            Assert.That(commands.FirstOrDefault(x => x.GetType() == typeof (HelpCommand)), Is.Null);
+            Assert.Inconclusive("Need to build chains of commands.");
         }
     }
 }

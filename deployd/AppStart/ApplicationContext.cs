@@ -5,6 +5,7 @@ using Ninject;
 using Ninject.Extensions.Conventions;
 using deployd.Features.ClientConfiguration;
 using deployd.Features.FeatureSelection;
+using log4net;
 
 namespace deployd.AppStart
 {
@@ -17,6 +18,11 @@ namespace deployd.AppStart
         {
             _args = args;
             Kernel = CreateKernel();
+
+            log4net.Config.XmlConfigurator.Configure();
+            var log = Kernel.GetService<ILog>();
+            log.Info("deployd-mini");
+            log.Info("version: " + GetType().Assembly.GetName().Version);
         }
 
         private IKernel CreateKernel()
@@ -26,7 +32,7 @@ namespace deployd.AppStart
             kernel.Bind(scanner => scanner.FromAssemblyContaining<IFileSystem>().Select(IsServiceType).BindDefaultInterfaces());
             kernel.Bind<InstanceConfiguration>().ToMethod(x => kernel.GetService<IArgumentParser>().Parse(_args)).InSingletonScope();
             kernel.Bind<Configuration>().ToMethod(x => kernel.GetService<ClientConfigurationManager>().LoadConfig()).InSingletonScope();
-
+            kernel.Bind<ILog>().ToMethod(x => LogManager.GetLogger("default")).InSingletonScope();
             return kernel;
         }
 

@@ -24,7 +24,7 @@ namespace deployd.Features.FeatureSelection
             if (_instanceConfiguration.Help
                 || string.IsNullOrWhiteSpace(_instanceConfiguration.AppName))
             {
-                return new List<IFeatureCommand> {CreateCommand<HelpCommand>(_clientConfig, _instanceConfiguration)};
+                return new List<IFeatureCommand> {CreateCommand<HelpCommand>()};
             }
             
             return new List<IFeatureCommand>
@@ -33,12 +33,12 @@ namespace deployd.Features.FeatureSelection
                 };
         }
 
-        public TCommand CreateCommand<TCommand>(Configuration config, InstanceConfiguration instanceConfig)
+        public TCommand CreateCommand<TCommand>()
             where TCommand : IFeatureCommand
         {
             var command = _kernel.GetService<TCommand>();
-            command.Configuration = config;
-            command.InstanceConfiguration = instanceConfig;
+            command.Configuration = _clientConfig;
+            command.InstanceConfiguration = _instanceConfiguration;
             return command;
         }
     }

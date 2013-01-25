@@ -54,6 +54,18 @@ namespace deployd.Features.AppInstallation
                     UseShellExecute = false,
                 };
 
+            BuildInterpreterPrefixes(hook, startInfo);
+
+            var process = Process.Start(startInfo);
+            using (var outputStream = process.StandardOutput)
+            {
+                process.WaitForExit();
+                _log.Info(outputStream.ReadToEnd());
+            }
+        }
+
+        private static void BuildInterpreterPrefixes(string hook, ProcessStartInfo startInfo)
+        {
             if (hook.EndsWith(".ps1"))
             {
                 startInfo.FileName = "powershell " + startInfo.FileName;
@@ -62,15 +74,22 @@ namespace deployd.Features.AppInstallation
             {
                 startInfo.FileName = "ruby " + startInfo.FileName;
             }
-
-            var process = Process.Start(startInfo);
-            using (var outputStream = process.StandardOutput)
+            else if (hook.EndsWith(".py"))
             {
-                process.WaitForExit();
-                _log.Info(outputStream.ReadToEnd());
+                startInfo.FileName = "python " + startInfo.FileName;
             }
-
-
+            else if (hook.EndsWith(".cgi"))
+            {
+                startInfo.FileName = "perl " + startInfo.FileName;
+            }
+            else if (hook.EndsWith(".php"))
+            {
+                startInfo.FileName = "php " + startInfo.FileName;
+            }
+            else if (hook.EndsWith(".js"))
+            {
+                startInfo.FileName = "node " + startInfo.FileName;
+            }
         }
     }
 }

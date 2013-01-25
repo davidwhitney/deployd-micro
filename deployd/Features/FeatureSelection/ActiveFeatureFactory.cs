@@ -9,24 +9,22 @@ namespace deployd.Features.FeatureSelection
     public class ActiveFeatureFactory
     {
         private readonly IKernel _kernel;
-        private readonly ArgumentParser _argumentParser;
-        private readonly ClientConfigurationManager _clientConfigurationManager;
+        private readonly InstanceConfiguration _instanceConfiguration;
+        private readonly Configuration _clientConfig;
 
-        public ActiveFeatureFactory(IKernel kernel, ArgumentParser argumentParser, ClientConfigurationManager clientConfigurationManager)
+        public ActiveFeatureFactory(IKernel kernel, InstanceConfiguration instanceConfiguration, Configuration clientConfig)
         {
             _kernel = kernel;
-            _argumentParser = argumentParser;
-            _clientConfigurationManager = clientConfigurationManager;
+            _instanceConfiguration = instanceConfiguration;
+            _clientConfig = clientConfig;
         }
 
-        public IEnumerable<IFeatureCommand> BuildCommandsFor(string[] commandLineArguments)
+        public IEnumerable<IFeatureCommand> BuildCommands()
         {
-            var configuration = _clientConfigurationManager.LoadConfig();
-            var instanceConfiguration = _argumentParser.Parse(commandLineArguments);
 
-            if (instanceConfiguration.Help)
+            if (_instanceConfiguration.Help)
             {
-                return new List<IFeatureCommand> {CreateCommand<HelpCommand>(configuration, instanceConfiguration)};
+                return new List<IFeatureCommand> {CreateCommand<HelpCommand>(_clientConfig, _instanceConfiguration)};
             }
             
             return new List<IFeatureCommand>

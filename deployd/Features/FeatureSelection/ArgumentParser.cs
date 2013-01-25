@@ -4,7 +4,7 @@ using NDesk.Options;
 
 namespace deployd.Features.FeatureSelection
 {
-    public class ArgumentParser
+    public class ArgumentParser : IArgumentParser
     {
         public InstanceConfiguration Parse(IEnumerable<string> args)
         {

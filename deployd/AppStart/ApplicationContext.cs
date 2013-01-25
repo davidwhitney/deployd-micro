@@ -3,15 +3,19 @@ using System.IO.Abstractions;
 using System.Linq;
 using Ninject;
 using Ninject.Extensions.Conventions;
+using deployd.Features.ClientConfiguration;
+using deployd.Features.FeatureSelection;
 
 namespace deployd.AppStart
 {
     public class ApplicationContext
     {
+        private readonly string[] _args;
         public IKernel Kernel { get; set; }
 
-        public ApplicationContext()
+        public ApplicationContext(string[] args)
         {
+            _args = args;
             Kernel = CreateKernel();
         }
 
@@ -20,6 +24,8 @@ namespace deployd.AppStart
             var kernel = new StandardKernel();
             kernel.Bind(scanner => scanner.FromThisAssembly().Select(IsServiceType).BindDefaultInterfaces());
             kernel.Bind(scanner => scanner.FromAssemblyContaining<IFileSystem>().Select(IsServiceType).BindDefaultInterfaces());
+            kernel.Bind<Configuration>().ToMethod(x => kernel.GetService<ClientConfigurationManager>().LoadConfig()).InSingletonScope();
+            kernel.Bind<InstanceConfiguration>().ToMethod(x => kernel.GetService<IArgumentParser>().Parse(_args)).InSingletonScope();
 
             return kernel;
         }

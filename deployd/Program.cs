@@ -7,9 +7,9 @@ namespace deployd
     {
         static void Main(string[] args)
         {
-            var context = new ApplicationContext();
+            var context = new ApplicationContext(args);
             var featureFactory = context.Kernel.GetService<ActiveFeatureFactory>();
-            var chainOfCommands = featureFactory.BuildCommandsFor(args);
+            var chainOfCommands = featureFactory.BuildCommands();
 
             foreach (var command in chainOfCommands)
             {

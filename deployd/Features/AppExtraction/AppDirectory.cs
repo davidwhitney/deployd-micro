@@ -9,6 +9,9 @@ namespace deployd.Features.AppExtraction
         public string Staging { get; set; }
         public string Backup { get; set; }
         public string Active { get; set; }
+        public string Lockfile { get; set; }
+
+        public FileStream Lock { get; set; }
 
         public AppDirectory(string fullPath)
         {
@@ -16,6 +19,7 @@ namespace deployd.Features.AppExtraction
             Staging = Path.Combine(FullPath, ".staging").ToAbsolutePath();
             Backup = Path.Combine(fullPath, ".previous").ToAbsolutePath();
             Active = Path.Combine(fullPath, ".active").ToAbsolutePath();
+            Lockfile = Path.Combine(fullPath, "lock.deployd").ToAbsolutePath();
         }
     }
 }

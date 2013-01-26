@@ -36,24 +36,26 @@ namespace deployd.Features.FeatureSelection
                 ((log4net.Repository.Hierarchy.Logger)_log.Logger).Level = heir.LevelMap["DEBUG"];
             }
 
+            var commandCollection = _kernel.GetService<CommandCollection>();
+
             if (_instanceConfiguration.Help
                 || string.IsNullOrWhiteSpace(_instanceConfiguration.AppName))
             {
-                return new CommandCollection(_log) { CreateCommand<HelpCommand>() };
+                commandCollection.Add(CreateCommand<HelpCommand>());
+                return commandCollection;
             }
 
             if (!_instanceConfiguration.Install)
             {
-                return new CommandCollection(_log) { CreateCommand<HelpCommand>() };
+                commandCollection.Add(CreateCommand<HelpCommand>());
+                return commandCollection;
                     // TODO: Display info on current version of packages?
             }
 
-            return new CommandCollection(_log)
-                {
-                    CreateCommand<AppLocatingCommand>(),
-                    CreateCommand<AppExtractionCommand>(),
-                    CreateCommand<AppInstallationCommand>(),
-                };
+            commandCollection.Add(CreateCommand<AppLocatingCommand>());
+            commandCollection.Add(CreateCommand<AppExtractionCommand>());
+            commandCollection.Add(CreateCommand<AppInstallationCommand>());
+            return commandCollection;
         }
 
         public TCommand CreateCommand<TCommand>()

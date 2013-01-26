@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
+using System.Threading;
 using deployd.Features.ClientConfiguration;
 using deployd.Features.FeatureSelection;
 using deployd.Infrastructure;
@@ -45,12 +46,25 @@ namespace deployd.Features.AppExtraction
             _fs.EnsureDirectoryExists(InstanceConfiguration.AppDirectory.FullPath);
             _fs.EnsureDirectoryExists(InstanceConfiguration.AppDirectory.Staging);
 
+            LockInstall();
+
             var packageInfo = InstanceConfiguration.PackageLocation.PackageDetails;
             var extractor = GetExtractorFor(packageInfo);
 
             _log.Info("Unpacking into staging area...");
 
             extractor.Unpack(InstanceConfiguration.AppDirectory.Staging, packageInfo);
+        }
+
+        private void LockInstall()
+        {
+            if (!_fs.File.Exists(InstanceConfiguration.AppDirectory.Lockfile))
+            {
+                _fs.File.WriteAllText(InstanceConfiguration.AppDirectory.Lockfile, string.Empty);
+            }
+
+            InstanceConfiguration.AppDirectory.Lock = File.Open(InstanceConfiguration.AppDirectory.Lockfile,
+                                                                FileMode.Open, FileAccess.Read, FileShare.None);
         }
 
         private IPackageExtractor GetExtractorFor(object packageInfo)

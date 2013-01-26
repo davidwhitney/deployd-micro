@@ -4,9 +4,8 @@ using deployd.Features.AppInstallation;
 using deployd.Features.AppLocating;
 using deployd.Features.ClientConfiguration;
 using deployd.Features.Help;
-using Ninject;
-using System.Collections.Generic;
 using log4net;
+using Ninject;
 
 namespace deployd.Features.FeatureSelection
 {

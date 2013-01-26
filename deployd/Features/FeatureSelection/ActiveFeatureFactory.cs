@@ -27,6 +27,13 @@ namespace deployd.Features.FeatureSelection
 
         public CommandCollection BuildCommands()
         {
+            if (_instanceConfiguration.Verbose)
+            {
+                var heir =
+                    (((log4net.Repository.Hierarchy.Logger) _log.Logger).Repository) as log4net.Repository.Hierarchy.Hierarchy;
+                ((log4net.Repository.Hierarchy.Logger)_log.Logger).Level = heir.LevelMap["DEBUG"];
+            }
+
             if (_instanceConfiguration.Help
                 || string.IsNullOrWhiteSpace(_instanceConfiguration.AppName))
             {

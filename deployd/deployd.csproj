@@ -34,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ionic.Zip">
+      <HintPath>..\packages\DotNetZip.1.9.1.8\lib\net20\Ionic.Zip.dll</HintPath>
+    </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
     </Reference>
@@ -68,6 +71,7 @@
     <Compile Include="AppStart\ApplicationContext.cs" />
     <Compile Include="AppStart\NinjectExtensions.cs" />
     <Compile Include="Features\AppExtraction\AppDirectory.cs" />
+    <Compile Include="Features\AppExtraction\ZipFilePackageExtractor.cs" />
     <Compile Include="Features\AppInstallation\HookFinder.cs" />
     <Compile Include="Features\AppInstallation\Hooks.cs" />
     <Compile Include="Features\AppInstallation\InstallHookExecutor.cs" />

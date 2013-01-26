@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using NuGet;
+using deployd.Infrastructure;
 using log4net;
 
 namespace deployd.Features.AppExtraction
@@ -38,12 +39,7 @@ namespace deployd.Features.AppExtraction
                 _log.DebugFormat("Writing file {0} to {1}...", file.Path, fileOutputPath);
                
                 var directoryPath = Path.GetDirectoryName(fileOutputPath);
-
-                if (!_fs.Directory.Exists(directoryPath))
-                {
-                    _fs.Directory.CreateDirectory(directoryPath);
-                }
-
+                _fs.EnsureDirectoryExists(directoryPath);
                 _fs.File.WriteAllBytes(fileOutputPath, file.GetStream().ReadAllBytes());
             }
         }

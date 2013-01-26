@@ -23,18 +23,22 @@ namespace deployd.Features.AppLocating
 
         public void Execute()
         {
+            _log.Info("Serching for package: " + InstanceConfiguration.AppName);
+
             var location =
                 _finders.Select(locator => locator.CanFindPackageAsObject(InstanceConfiguration.AppName))
                         .FirstOrDefault(result => result != null);
 
             if (location != null)
             {
+                _log.Info("Package found.");
                 InstanceConfiguration.PackageLocation = location;
                 return;
             }
             
             _log.Info("No package matching " + InstanceConfiguration.AppName + " found.");
-            Environment.Exit(0);
+
+            Environment.Exit(-1);
         }
     }
 }

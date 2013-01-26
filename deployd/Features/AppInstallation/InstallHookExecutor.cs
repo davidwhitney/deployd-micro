@@ -40,6 +40,7 @@ namespace deployd.Features.AppInstallation
         {
             foreach (var hook in hookFiles)
             {
+                _log.Info("Executing package hook: " + hook);
                 ExecuteHook(hook);
             }
         }

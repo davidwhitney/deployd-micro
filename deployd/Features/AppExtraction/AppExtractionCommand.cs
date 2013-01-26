@@ -36,9 +36,11 @@ namespace deployd.Features.AppExtraction
             {
                 return;
             }
-
+            
             var appDirectory = Path.Combine(DeploydConfiguration.InstallRoot, InstanceConfiguration.AppName).ToAbsolutePath();
             InstanceConfiguration.AppDirectory = new AppDirectory(appDirectory);
+            
+            _log.Info("Active App directory: " + InstanceConfiguration.AppDirectory.FullPath);
 
             _fs.EnsureDirectoryExists(InstanceConfiguration.AppDirectory.FullPath);
             _fs.EnsureDirectoryExists(InstanceConfiguration.AppDirectory.Staging);
@@ -47,6 +49,7 @@ namespace deployd.Features.AppExtraction
             var extractor = GetExtractorFor(packageInfo);
 
             _log.Info("Unpacking into staging area...");
+
             extractor.Unpack(InstanceConfiguration.AppDirectory.Staging, packageInfo);
         }
 

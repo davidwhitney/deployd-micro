@@ -1,4 +1,5 @@
-﻿using deployd.Features.AppExtraction;
+﻿using Moq;
+using deployd.Features.AppExtraction;
 using deployd.Features.AppInstallation;
 using deployd.Features.AppLocating;
 using deployd.Features.ClientConfiguration;
@@ -6,6 +7,7 @@ using deployd.Features.FeatureSelection;
 using deployd.Features.Help;
 using NUnit.Framework;
 using System.Linq;
+using log4net;
 
 namespace deployd.tests.Features.FeatureSelection
 {
@@ -15,14 +17,16 @@ namespace deployd.tests.Features.FeatureSelection
         private ActiveFeatureFactory _factory;
         private InstanceConfiguration _instanceConfig;
         private DeploydConfiguration _clientConfig;
+        private Mock<ILog> _log;
 
         [SetUp]
         public void SetUp()
         {
             var appKernel = new AppStart.ApplicationContext(new string[0]);
+            _log = new Mock<ILog>();
             _instanceConfig = new InstanceConfiguration();
             _clientConfig = new DeploydConfiguration();
-            _factory = new ActiveFeatureFactory(appKernel.Kernel, _instanceConfig, _clientConfig);
+            _factory = new ActiveFeatureFactory(appKernel.Kernel, _instanceConfig, _clientConfig, _log.Object);
         }
 
         [Test]

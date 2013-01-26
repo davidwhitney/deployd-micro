@@ -6,20 +6,23 @@ using System.Linq;
 using deployd.Features.ClientConfiguration;
 using deployd.Features.FeatureSelection;
 using deployd.Infrastructure;
+using log4net;
 
 namespace deployd.Features.AppExtraction
 {
     public class AppExtractionCommand : IFeatureCommand
     {
         private readonly IFileSystem _fs;
+        private readonly ILog _log;
         private readonly IList<IPackageExtractor> _extractors;
 
         public DeploydConfiguration DeploydConfiguration { get; set; }
         public InstanceConfiguration InstanceConfiguration { get; set; }
 
-        public AppExtractionCommand(IFileSystem fs, IEnumerable<IPackageExtractor> extractors, DeploydConfiguration deploydConfiguration)
+        public AppExtractionCommand(IFileSystem fs, IEnumerable<IPackageExtractor> extractors, DeploydConfiguration deploydConfiguration, ILog log)
         {
             _fs = fs;
+            _log = log;
             _extractors = extractors.ToList();
             DeploydConfiguration = deploydConfiguration;
 
@@ -43,6 +46,7 @@ namespace deployd.Features.AppExtraction
             var packageInfo = InstanceConfiguration.PackageLocation.PackageDetails;
             var extractor = GetExtractorFor(packageInfo);
 
+            _log.Info("Unpacking into staging area...");
             extractor.Unpack(InstanceConfiguration.AppDirectory.Staging, packageInfo);
         }
 

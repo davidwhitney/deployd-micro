@@ -6,6 +6,7 @@ using deployd.Features.ClientConfiguration;
 using deployd.Features.Help;
 using Ninject;
 using System.Collections.Generic;
+using log4net;
 
 namespace deployd.Features.FeatureSelection
 {
@@ -14,29 +15,31 @@ namespace deployd.Features.FeatureSelection
         private readonly IKernel _kernel;
         private readonly InstanceConfiguration _instanceConfiguration;
         private readonly DeploydConfiguration _clientConfig;
+        private readonly ILog _log;
 
-        public ActiveFeatureFactory(IKernel kernel, InstanceConfiguration instanceConfiguration, DeploydConfiguration clientConfig)
+        public ActiveFeatureFactory(IKernel kernel, InstanceConfiguration instanceConfiguration, DeploydConfiguration clientConfig, ILog log)
         {
             _kernel = kernel;
             _instanceConfiguration = instanceConfiguration;
             _clientConfig = clientConfig;
+            _log = log;
         }
 
-        public IEnumerable<IFeatureCommand> BuildCommands()
+        public CommandCollection BuildCommands()
         {
             if (_instanceConfiguration.Help
                 || string.IsNullOrWhiteSpace(_instanceConfiguration.AppName))
             {
-                return new List<IFeatureCommand> {CreateCommand<HelpCommand>()};
+                return new CommandCollection(_log) { CreateCommand<HelpCommand>() };
             }
 
             if (!_instanceConfiguration.Install)
             {
-                return new List<IFeatureCommand> {CreateCommand<HelpCommand>()};
+                return new CommandCollection(_log) { CreateCommand<HelpCommand>() };
                     // TODO: Display info on current version of packages?
             }
 
-            return new List<IFeatureCommand>
+            return new CommandCollection(_log)
                 {
                     CreateCommand<AppLocatingCommand>(),
                     CreateCommand<AppExtractionCommand>(),

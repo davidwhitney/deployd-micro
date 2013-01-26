@@ -29,8 +29,11 @@ namespace deployd.Features.FeatureSelection
         {
             if (_instanceConfiguration.Verbose)
             {
+                // yes, for real...
                 var heir =
-                    (((log4net.Repository.Hierarchy.Logger) _log.Logger).Repository) as log4net.Repository.Hierarchy.Hierarchy;
+                    (log4net.Repository.Hierarchy.Hierarchy)
+                    (((log4net.Repository.Hierarchy.Logger) _log.Logger).Repository);
+
                 ((log4net.Repository.Hierarchy.Logger)_log.Logger).Level = heir.LevelMap["DEBUG"];
             }
 

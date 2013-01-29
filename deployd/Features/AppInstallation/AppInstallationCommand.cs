@@ -31,7 +31,7 @@ namespace deployd.Features.AppInstallation
                 throw new InvalidOperationException("Application isn't staged. Can't install.");
             }
 
-            if (!_fs.Directory.Exists(Config.DirectoryMaps.Active))
+            if (!_fs.File.Exists(Config.DirectoryMaps.VersionFile))
             {
                 _hookExecutor.ExecuteFirstInstall();
             }

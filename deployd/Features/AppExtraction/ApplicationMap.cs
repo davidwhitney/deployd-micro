@@ -3,7 +3,7 @@ using deployd.Infrastructure;
 
 namespace deployd.Features.AppExtraction
 {
-    public class AppDirectory
+    public class ApplicationMap
     {
         public string FullPath { get; set; }
         public string Staging { get; set; }
@@ -13,7 +13,7 @@ namespace deployd.Features.AppExtraction
 
         public FileStream Lock { get; set; }
 
-        public AppDirectory(string fullPath)
+        public ApplicationMap(string fullPath)
         {
             FullPath = fullPath;
             Staging = Path.Combine(FullPath, "Staging").ToAbsolutePath();

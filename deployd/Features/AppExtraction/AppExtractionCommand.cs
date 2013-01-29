@@ -39,12 +39,12 @@ namespace deployd.Features.AppExtraction
             }
             
             var appDirectory = Path.Combine(DeploydConfiguration.InstallRoot, Config.AppName).ToAbsolutePath();
-            Config.DirectoryMaps = new AppDirectory(appDirectory);
+            Config.ApplicationMap = new ApplicationMap(appDirectory);
             
-            _log.Info("Active App directory: " + Config.DirectoryMaps.FullPath);
+            _log.Info("Active App directory: " + Config.ApplicationMap.FullPath);
 
-            _fs.EnsureDirectoryExists(Config.DirectoryMaps.FullPath);
-            _fs.EnsureDirectoryExists(Config.DirectoryMaps.Staging);
+            _fs.EnsureDirectoryExists(Config.ApplicationMap.FullPath);
+            _fs.EnsureDirectoryExists(Config.ApplicationMap.Staging);
 
             LockInstall();
 
@@ -53,17 +53,17 @@ namespace deployd.Features.AppExtraction
 
             _log.Info("Unpacking into staging area...");
 
-            extractor.Unpack(Config.DirectoryMaps.Staging, packageInfo);
+            extractor.Unpack(Config.ApplicationMap.Staging, packageInfo);
         }
 
         private void LockInstall()
         {
-            if (!_fs.File.Exists(Config.DirectoryMaps.Lockfile))
+            if (!_fs.File.Exists(Config.ApplicationMap.Lockfile))
             {
-                _fs.File.WriteAllText(Config.DirectoryMaps.Lockfile, string.Empty);
+                _fs.File.WriteAllText(Config.ApplicationMap.Lockfile, string.Empty);
             }
 
-            Config.DirectoryMaps.Lock = File.Open(Config.DirectoryMaps.Lockfile,
+            Config.ApplicationMap.Lock = File.Open(Config.ApplicationMap.Lockfile,
                                                                 FileMode.Open, FileAccess.Read, FileShare.None);
         }
 

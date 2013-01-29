@@ -26,12 +26,12 @@ namespace deployd.Features.AppInstallation
 
         public void Execute()
         {
-            if (!_fs.Directory.Exists(Config.DirectoryMaps.Staging))
+            if (!_fs.Directory.Exists(Config.ApplicationMap.Staging))
             {
                 throw new InvalidOperationException("Application isn't staged. Can't install.");
             }
 
-            if (!_fs.File.Exists(Config.DirectoryMaps.VersionFile))
+            if (!_fs.File.Exists(Config.ApplicationMap.VersionFile))
             {
                 _hookExecutor.ExecuteFirstInstall();
             }
@@ -42,7 +42,7 @@ namespace deployd.Features.AppInstallation
             MakeStagingActive();
 
             _fs.File.WriteAllText(
-                Config.DirectoryMaps.VersionFile,
+                Config.ApplicationMap.VersionFile,
                 Config.PackageLocation.PackageVersion);
 
             _hookExecutor.ExecutePostInstall();
@@ -51,19 +51,19 @@ namespace deployd.Features.AppInstallation
         private void MakeStagingActive()
         {
             _log.Info("Activating staged install...");
-            _fs.Directory.Move(Config.DirectoryMaps.Staging, Config.DirectoryMaps.Active);
+            _fs.Directory.Move(Config.ApplicationMap.Staging, Config.ApplicationMap.Active);
         }
 
         private void BackupPreviousInstallation()
         {
-            if (!_fs.File.Exists(Config.DirectoryMaps.VersionFile))
+            if (!_fs.File.Exists(Config.ApplicationMap.VersionFile))
             {
                 // No version file? No previous install!
                 return;
             }
 
-            var currentInstalledVersion = _fs.File.ReadAllText(Config.DirectoryMaps.VersionFile);
-            var backupPath = Path.Combine(Config.DirectoryMaps.FullPath, currentInstalledVersion);
+            var currentInstalledVersion = _fs.File.ReadAllText(Config.ApplicationMap.VersionFile);
+            var backupPath = Path.Combine(Config.ApplicationMap.FullPath, currentInstalledVersion);
 
             if (_fs.Directory.Exists(backupPath))
             {
@@ -71,10 +71,10 @@ namespace deployd.Features.AppInstallation
                 _fs.Directory.Move(backupPath, newPath);
             }
 
-            if (_fs.Directory.Exists(Config.DirectoryMaps.Active))
+            if (_fs.Directory.Exists(Config.ApplicationMap.Active))
             {
                 _log.Info("Backing up current installation...");
-                _fs.Directory.Move(Config.DirectoryMaps.Active, backupPath);
+                _fs.Directory.Move(Config.ApplicationMap.Active, backupPath);
             }
         }
     }

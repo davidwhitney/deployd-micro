@@ -70,7 +70,7 @@
   <ItemGroup>
     <Compile Include="AppStart\ApplicationContext.cs" />
     <Compile Include="AppStart\NinjectExtensions.cs" />
-    <Compile Include="Features\AppExtraction\AppDirectory.cs" />
+    <Compile Include="Features\AppExtraction\ApplicationMap.cs" />
     <Compile Include="Features\AppExtraction\ZipFilePackageExtractor.cs" />
     <Compile Include="Features\AppInstallation\HookFinder.cs" />
     <Compile Include="Features\AppInstallation\Hooks.cs" />

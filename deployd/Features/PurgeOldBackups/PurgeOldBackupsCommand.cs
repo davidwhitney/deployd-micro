@@ -24,7 +24,7 @@ namespace deployd.Features.PurgeOldBackups
 
         public void Execute()
         {
-            var backups = _fs.Directory.GetDirectories(_config.DirectoryMaps.FullPath);
+            var backups = _fs.Directory.GetDirectories(_config.ApplicationMap.FullPath);
             if (backups.Length <= 10)
             {
                 return;

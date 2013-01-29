@@ -18,7 +18,7 @@ namespace deployd.Features.AppInstallation
 
         public Hooks DiscoverHooks()
         {
-            var searchPath = _configuration.DirectoryMaps.Staging;
+            var searchPath = _configuration.ApplicationMap.Staging;
 
             var firstInstallHooks = _fs.Directory.GetFiles(searchPath, "hook-first-install*", SearchOption.AllDirectories);
             var preInstallHooks = _fs.Directory.GetFiles(searchPath, "hook-pre-install*", SearchOption.AllDirectories);
@@ -34,8 +34,8 @@ namespace deployd.Features.AppInstallation
             for (var index = 0; index < hooks.PostInstall.Count; index++)
             {
                 var hook = hooks.PostInstall[index];
-                hooks.PostInstall[index] = hook.Replace(_configuration.DirectoryMaps.Staging,
-                                                        _configuration.DirectoryMaps.Active);
+                hooks.PostInstall[index] = hook.Replace(_configuration.ApplicationMap.Staging,
+                                                        _configuration.ApplicationMap.Active);
             }
 
             return hooks;

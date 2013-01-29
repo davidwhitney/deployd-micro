@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using log4net;
 
@@ -6,34 +7,30 @@ namespace deployd.Features.AppInstallation
 {
     public class InstallHookExecutor
     {
-        private readonly HookFinder _finder;
         private readonly ILog _log;
-
-        private Hooks _hooks;
-        private Hooks Hooks
-        {
-            get { return _hooks ?? (_hooks = _finder.DiscoverHooks()); }
-        }
+        private readonly HookFinder _finder;
+        private readonly Lazy<Hooks> _hooks;
 
         public InstallHookExecutor(HookFinder finder, ILog log)
         {
-            _finder = finder;
             _log = log;
+            _finder = finder;
+            _hooks = new Lazy<Hooks>(() => _finder.DiscoverHooks());
         }
 
         public void ExecuteFirstInstall()
         {
-            RunHooks(Hooks.FirstInstall);
+            RunHooks(_hooks.Value.FirstInstall);
         }
 
         public void ExecutePreInstall()
         {
-            RunHooks(Hooks.PreInstall);
+            RunHooks(_hooks.Value.PreInstall);
         }
 
         public void ExecutePostInstall()
         {
-            RunHooks(Hooks.PostInstall);
+            RunHooks(_hooks.Value.PostInstall);
         }
 
         private void RunHooks(IEnumerable<string> hookFiles)

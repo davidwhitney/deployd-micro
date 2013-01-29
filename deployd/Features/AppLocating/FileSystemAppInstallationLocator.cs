@@ -21,6 +21,11 @@ namespace deployd.Features.AppLocating
             _log = log;
         }
 
+        public bool SupportsPathType()
+        {
+            return _fs.Directory.Exists(_configuration.InstallRoot);
+        }
+
         public PackageLocation<PackagePointer> CanFindPackage(string appName)
         {
             try

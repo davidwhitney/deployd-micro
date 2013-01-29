@@ -8,5 +8,6 @@
     public interface IAppInstallationLocator
     {
         PackageLocation<object> CanFindPackageAsObject(string appName);
+        bool SupportsPathType();
     }
 }

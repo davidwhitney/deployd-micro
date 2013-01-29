@@ -25,9 +25,11 @@ namespace deployd.Features.AppLocating
         {
             _log.Info("Serching for package: " + Config.AppName);
 
+            var activeFinders = _finders.Where(x => x.SupportsPathType()).ToList();
+
             var location =
-                _finders.Select(locator => locator.CanFindPackageAsObject(Config.AppName))
-                        .FirstOrDefault(result => result != null);
+                activeFinders.Select(locator => locator.CanFindPackageAsObject(Config.AppName))
+                             .FirstOrDefault(result => result != null);
 
             if (location != null)
             {

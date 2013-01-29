@@ -4,18 +4,23 @@ using NuGet;
 using deployd.Features.ClientConfiguration;
 using log4net;
 using deployd.Infrastructure;
+using IFileSystem = System.IO.Abstractions.IFileSystem;
 
 namespace deployd.Features.AppLocating
 {
     public class NuGetFeedAppInstallationLocator : IAppInstallationLocator<IPackage>
     {
         private readonly ILog _log;
+        private readonly IFileSystem _fs;
+        private readonly DeploydConfiguration _clientConfig;
         private readonly IPackageRepository _packageRepository;
 
-        public NuGetFeedAppInstallationLocator(ILog log, DeploydConfiguration clientConfig, IPackageRepositoryFactory packageRepositoryFactory)
+        public NuGetFeedAppInstallationLocator(ILog log, System.IO.Abstractions.IFileSystem fs, DeploydConfiguration clientConfig, IPackageRepositoryFactory packageRepositoryFactory)
         {
             _log = log;
-            
+            _fs = fs;
+            _clientConfig = clientConfig;
+
             var repoLocation = clientConfig.PackageSource;
             if (!repoLocation.StartsWith("http"))
             {
@@ -23,6 +28,12 @@ namespace deployd.Features.AppLocating
             }
 
             _packageRepository = packageRepositoryFactory.CreateRepository(repoLocation);
+        }
+        
+        public bool SupportsPathType()
+        {
+            return _clientConfig.PackageSource.StartsWith("http") 
+                    || _fs.Directory.Exists(_clientConfig.PackageSource.ToAbsolutePath());
         }
 
         public PackageLocation<IPackage> CanFindPackage(string appName)

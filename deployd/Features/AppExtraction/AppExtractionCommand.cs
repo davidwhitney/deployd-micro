@@ -39,7 +39,7 @@ namespace deployd.Features.AppExtraction
             }
             
             var appDirectory = Path.Combine(DeploydConfiguration.InstallRoot, Config.AppName).ToAbsolutePath();
-            Config.ApplicationMap = new ApplicationMap(appDirectory);
+            Config.ApplicationMap = new ApplicationMap(Config.AppName, appDirectory);
             
             _log.Info("Active App directory: " + Config.ApplicationMap.FullPath);
 

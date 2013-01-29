@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using deployd.Features.FeatureSelection;
 using log4net;
 
 namespace deployd.Features.AppInstallation
@@ -8,12 +10,14 @@ namespace deployd.Features.AppInstallation
     public class InstallHookExecutor
     {
         private readonly ILog _log;
+        private readonly InstanceConfiguration _config;
         private readonly HookFinder _finder;
         private readonly Lazy<Hooks> _hooks;
 
-        public InstallHookExecutor(HookFinder finder, ILog log)
+        public InstallHookExecutor(HookFinder finder, ILog log, InstanceConfiguration config)
         {
             _log = log;
+            _config = config;
             _finder = finder;
             _hooks = new Lazy<Hooks>(() => _finder.DiscoverHooks());
         }
@@ -50,6 +54,15 @@ namespace deployd.Features.AppInstallation
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
                 };
+
+            var envrs = _config.ApplicationMap.GetType().GetProperties()
+                               .Select(fi => new {Field = fi.Name, Value = fi.GetValue(_config.ApplicationMap)})
+                               .ToList();
+
+            foreach (var variable in envrs)
+            {
+                startInfo.EnvironmentVariables.Add("Deployd." + variable.Field, variable.Value.ToString());
+            }
 
             BuildInterpreterPrefixes(hook, startInfo);
 

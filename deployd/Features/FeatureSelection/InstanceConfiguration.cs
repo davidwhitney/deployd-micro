@@ -17,6 +17,6 @@ namespace deployd.Features.FeatureSelection
 
         public PackageLocation<object> PackageLocation { get; set; }
 
-        public AppDirectory AppDirectory { get; set; }
+        public AppDirectory DirectoryMaps { get; set; }
     }
 }

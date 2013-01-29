@@ -40,12 +40,12 @@ namespace deployd.Features.FeatureSelection
 
         private void UnlockAppInstallation()
         {
-            if (_instanceConfiguration.AppDirectory != null
-                && _instanceConfiguration.AppDirectory.Lock != null)
+            if (_instanceConfiguration.DirectoryMaps != null
+                && _instanceConfiguration.DirectoryMaps.Lock != null)
             {
-                _instanceConfiguration.AppDirectory.Lock.Close();
-                _instanceConfiguration.AppDirectory.Lock.Dispose();
-                _fs.File.Delete(_instanceConfiguration.AppDirectory.Lockfile);
+                _instanceConfiguration.DirectoryMaps.Lock.Close();
+                _instanceConfiguration.DirectoryMaps.Lock.Dispose();
+                _fs.File.Delete(_instanceConfiguration.DirectoryMaps.Lockfile);
             }
         }
     }

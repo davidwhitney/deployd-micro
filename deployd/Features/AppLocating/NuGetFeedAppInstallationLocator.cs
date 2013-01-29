@@ -38,7 +38,11 @@ namespace deployd.Features.AppLocating
 
                 if (latestPackage != null)
                 {
-                    return new PackageLocation<IPackage> { PackageDetails = latestPackage };
+                    return new PackageLocation<IPackage>
+                        {
+                            PackageDetails = latestPackage,
+                            PackageVersion = latestPackage.Version.Version.ToString()
+                        };
                 }
             }
             catch (Exception ex)
@@ -52,7 +56,13 @@ namespace deployd.Features.AppLocating
         public PackageLocation<object> CanFindPackageAsObject(string appName)
         {
             var inner = CanFindPackage(appName);
-            return inner == null ? null : new PackageLocation<object>{ PackageDetails = inner.PackageDetails };
+            return inner == null
+                       ? null
+                       : new PackageLocation<object>
+                           {
+                               PackageDetails = inner.PackageDetails,
+                               PackageVersion = inner.PackageVersion
+                           };
         }
     }
 }

@@ -60,7 +60,7 @@ namespace deployd.tests.Features.FeatureSelection
             foreach (var command in commands)
             {
                 Assert.That(command.DeploydConfiguration, Is.EqualTo(_clientConfig));
-                Assert.That(command.InstanceConfiguration, Is.EqualTo(_instanceConfig));
+                Assert.That(command.Config, Is.EqualTo(_instanceConfig));
             }
         }
 

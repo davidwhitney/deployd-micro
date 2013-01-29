@@ -6,7 +6,7 @@ namespace deployd.Features
     public interface IFeatureCommand
     {
         DeploydConfiguration DeploydConfiguration { get; set; }
-        InstanceConfiguration InstanceConfiguration { get; set; }
+        InstanceConfiguration Config { get; set; }
         void Execute();
     }
 }

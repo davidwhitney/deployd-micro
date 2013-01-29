@@ -18,7 +18,7 @@ namespace deployd.Features.AppExtraction
         private readonly IList<IPackageExtractor> _extractors;
 
         public DeploydConfiguration DeploydConfiguration { get; set; }
-        public InstanceConfiguration InstanceConfiguration { get; set; }
+        public InstanceConfiguration Config { get; set; }
 
         public AppExtractionCommand(IFileSystem fs, IEnumerable<IPackageExtractor> extractors, DeploydConfiguration deploydConfiguration, ILog log)
         {
@@ -33,37 +33,37 @@ namespace deployd.Features.AppExtraction
 
         public void Execute()
         {
-            if (InstanceConfiguration.PackageLocation == null)
+            if (Config.PackageLocation == null)
             {
                 return;
             }
             
-            var appDirectory = Path.Combine(DeploydConfiguration.InstallRoot, InstanceConfiguration.AppName).ToAbsolutePath();
-            InstanceConfiguration.AppDirectory = new AppDirectory(appDirectory);
+            var appDirectory = Path.Combine(DeploydConfiguration.InstallRoot, Config.AppName).ToAbsolutePath();
+            Config.DirectoryMaps = new AppDirectory(appDirectory);
             
-            _log.Info("Active App directory: " + InstanceConfiguration.AppDirectory.FullPath);
+            _log.Info("Active App directory: " + Config.DirectoryMaps.FullPath);
 
-            _fs.EnsureDirectoryExists(InstanceConfiguration.AppDirectory.FullPath);
-            _fs.EnsureDirectoryExists(InstanceConfiguration.AppDirectory.Staging);
+            _fs.EnsureDirectoryExists(Config.DirectoryMaps.FullPath);
+            _fs.EnsureDirectoryExists(Config.DirectoryMaps.Staging);
 
             LockInstall();
 
-            var packageInfo = InstanceConfiguration.PackageLocation.PackageDetails;
+            var packageInfo = Config.PackageLocation.PackageDetails;
             var extractor = GetExtractorFor(packageInfo);
 
             _log.Info("Unpacking into staging area...");
 
-            extractor.Unpack(InstanceConfiguration.AppDirectory.Staging, packageInfo);
+            extractor.Unpack(Config.DirectoryMaps.Staging, packageInfo);
         }
 
         private void LockInstall()
         {
-            if (!_fs.File.Exists(InstanceConfiguration.AppDirectory.Lockfile))
+            if (!_fs.File.Exists(Config.DirectoryMaps.Lockfile))
             {
-                _fs.File.WriteAllText(InstanceConfiguration.AppDirectory.Lockfile, string.Empty);
+                _fs.File.WriteAllText(Config.DirectoryMaps.Lockfile, string.Empty);
             }
 
-            InstanceConfiguration.AppDirectory.Lock = File.Open(InstanceConfiguration.AppDirectory.Lockfile,
+            Config.DirectoryMaps.Lock = File.Open(Config.DirectoryMaps.Lockfile,
                                                                 FileMode.Open, FileAccess.Read, FileShare.None);
         }
 

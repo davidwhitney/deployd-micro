@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
@@ -36,7 +35,8 @@ namespace deployd.Features.AppLocating
                 {
                     return new PackageLocation<PackagePointer>
                         {
-                            PackageDetails = new PackagePointer {PathAndFileName = latestPackage.ToAbsolutePath()}
+                            PackageDetails = new PackagePointer {PathAndFileName = latestPackage.ToAbsolutePath()},
+                            PackageVersion = string.Empty
                         };
                 }
             }

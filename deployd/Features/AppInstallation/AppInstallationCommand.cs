@@ -1,4 +1,5 @@
-﻿using deployd.Features.ClientConfiguration;
+﻿using System.IO;
+using deployd.Features.ClientConfiguration;
 using deployd.Features.FeatureSelection;
 using System;
 using System.IO.Abstractions;
@@ -13,7 +14,7 @@ namespace deployd.Features.AppInstallation
         private readonly ILog _log;
 
         public DeploydConfiguration DeploydConfiguration { get; set; }
-        public InstanceConfiguration InstanceConfiguration { get; set; }
+        public InstanceConfiguration Config { get; set; }
 
         public AppInstallationCommand(IFileSystem fs, DeploydConfiguration deploydConfiguration, InstallHookExecutor hookExecutor, ILog log)
         {
@@ -25,12 +26,12 @@ namespace deployd.Features.AppInstallation
 
         public void Execute()
         {
-            if (!_fs.Directory.Exists(InstanceConfiguration.AppDirectory.Staging))
+            if (!_fs.Directory.Exists(Config.DirectoryMaps.Staging))
             {
                 throw new InvalidOperationException("Application isn't staged. Can't install.");
             }
 
-            if (!_fs.Directory.Exists(InstanceConfiguration.AppDirectory.Active))
+            if (!_fs.Directory.Exists(Config.DirectoryMaps.Active))
             {
                 _hookExecutor.ExecuteFirstInstall();
             }
@@ -40,27 +41,40 @@ namespace deployd.Features.AppInstallation
             BackupPreviousInstallation();
             MakeStagingActive();
 
+            _fs.File.WriteAllText(
+                Config.DirectoryMaps.VersionFile,
+                Config.PackageLocation.PackageVersion);
+
             _hookExecutor.ExecutePostInstall();
         }
 
         private void MakeStagingActive()
         {
             _log.Info("Activating staged install...");
-            _fs.Directory.Move(InstanceConfiguration.AppDirectory.Staging, InstanceConfiguration.AppDirectory.Active);
+            _fs.Directory.Move(Config.DirectoryMaps.Staging, Config.DirectoryMaps.Active);
         }
 
         private void BackupPreviousInstallation()
         {
-            if (_fs.Directory.Exists(InstanceConfiguration.AppDirectory.Backup))
+            if (!_fs.File.Exists(Config.DirectoryMaps.VersionFile))
             {
-                _log.Info("Removing last backup...");
-                _fs.Directory.Delete(InstanceConfiguration.AppDirectory.Backup, true);
+                // No version file? No previous install!
+                return;
             }
 
-            if (_fs.Directory.Exists(InstanceConfiguration.AppDirectory.Active))
+            var currentInstalledVersion = _fs.File.ReadAllText(Config.DirectoryMaps.VersionFile);
+            var backupPath = Path.Combine(Config.DirectoryMaps.FullPath, currentInstalledVersion);
+
+            if (_fs.Directory.Exists(backupPath))
+            {
+                var newPath = backupPath + "-" + Guid.NewGuid().ToString();
+                _fs.Directory.Move(backupPath, newPath);
+            }
+
+            if (_fs.Directory.Exists(Config.DirectoryMaps.Active))
             {
                 _log.Info("Backing up current installation...");
-                _fs.Directory.Move(InstanceConfiguration.AppDirectory.Active, InstanceConfiguration.AppDirectory.Backup);
+                _fs.Directory.Move(Config.DirectoryMaps.Active, backupPath);
             }
         }
     }

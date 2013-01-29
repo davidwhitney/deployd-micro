@@ -63,7 +63,7 @@ namespace deployd.Features.FeatureSelection
         {
             var command = _kernel.GetService<TCommand>();
             command.DeploydConfiguration = _clientConfig;
-            command.InstanceConfiguration = _instanceConfiguration;
+            command.Config = _instanceConfiguration;
             return command;
         }
     }

@@ -9,14 +9,14 @@ namespace deployd.Features.Help
     public class HelpCommand : IFeatureCommand
     {
         public DeploydConfiguration DeploydConfiguration { get; set; }
-        public InstanceConfiguration InstanceConfiguration { get; set; }
+        public InstanceConfiguration Config { get; set; }
 
         public void Execute()
         {
             var output = new StringBuilder();
             using (var textWriter = new StringWriter(output))
             {
-                InstanceConfiguration.OptionSet.WriteOptionDescriptions(textWriter);
+                Config.OptionSet.WriteOptionDescriptions(textWriter);
             }
 
             Console.WriteLine(output);

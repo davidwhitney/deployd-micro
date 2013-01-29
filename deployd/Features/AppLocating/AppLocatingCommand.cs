@@ -13,7 +13,7 @@ namespace deployd.Features.AppLocating
         private readonly List<IAppInstallationLocator> _finders;
         
         public DeploydConfiguration DeploydConfiguration { get; set; }
-        public InstanceConfiguration InstanceConfiguration { get; set; }
+        public InstanceConfiguration Config { get; set; }
 
         public AppLocatingCommand(IEnumerable<IAppInstallationLocator> finders, ILog log)
         {
@@ -23,20 +23,20 @@ namespace deployd.Features.AppLocating
 
         public void Execute()
         {
-            _log.Info("Serching for package: " + InstanceConfiguration.AppName);
+            _log.Info("Serching for package: " + Config.AppName);
 
             var location =
-                _finders.Select(locator => locator.CanFindPackageAsObject(InstanceConfiguration.AppName))
+                _finders.Select(locator => locator.CanFindPackageAsObject(Config.AppName))
                         .FirstOrDefault(result => result != null);
 
             if (location != null)
             {
                 _log.Info("Package found.");
-                InstanceConfiguration.PackageLocation = location;
+                Config.PackageLocation = location;
                 return;
             }
             
-            _log.Info("No package matching " + InstanceConfiguration.AppName + " found.");
+            _log.Info("No package matching " + Config.AppName + " found.");
 
             Environment.Exit(-1);
         }

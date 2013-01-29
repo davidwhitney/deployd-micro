@@ -4,6 +4,7 @@ using deployd.Features.AppInstallation;
 using deployd.Features.AppLocating;
 using deployd.Features.ClientConfiguration;
 using deployd.Features.Help;
+using deployd.Features.PurgeOldBackups;
 using log4net;
 using Ninject;
 
@@ -55,6 +56,7 @@ namespace deployd.Features.FeatureSelection
             commandCollection.Add(CreateCommand<AppLocatingCommand>());
             commandCollection.Add(CreateCommand<AppExtractionCommand>());
             commandCollection.Add(CreateCommand<AppInstallationCommand>());
+            commandCollection.Add(CreateCommand<PurgeOldBackupsCommand>());
             return commandCollection;
         }
 

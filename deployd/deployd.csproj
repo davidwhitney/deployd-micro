@@ -94,6 +94,7 @@
     <Compile Include="Features\AppLocating\IAppInstallationLocator.cs" />
     <Compile Include="Features\AppLocating\NuGetFeedAppInstallationLocator.cs" />
     <Compile Include="Features\AppLocating\AppLocatingCommand.cs" />
+    <Compile Include="Features\PurgeOldBackups\PurgeOldBackupsCommand.cs" />
     <Compile Include="Infrastructure\DirectoryExtensions.cs" />
     <Compile Include="Infrastructure\PathExtensions.cs" />
     <Compile Include="Program.cs" />

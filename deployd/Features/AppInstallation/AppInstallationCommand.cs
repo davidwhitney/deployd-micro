@@ -67,7 +67,7 @@ namespace deployd.Features.AppInstallation
 
             if (_fs.Directory.Exists(backupPath))
             {
-                var newPath = backupPath + "-" + Guid.NewGuid().ToString();
+                var newPath = backupPath + "-duplicate-" + Guid.NewGuid().ToString();
                 _fs.Directory.Move(backupPath, newPath);
             }
 

@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO.Abstractions;
+﻿using System.IO.Abstractions;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using deployd.Features.ClientConfiguration;
 using deployd.Features.FeatureSelection;
 
@@ -17,6 +13,9 @@ namespace deployd.Features.PurgeOldBackups
         public DeploydConfiguration DeploydConfiguration { get; set; }
         public InstanceConfiguration Config { get; set; }
 
+        private const int TotalBackupsToKeep = 10;
+
+
         public PurgeOldBackupsCommand(IFileSystem fs, InstanceConfiguration config)
         {
             _fs = fs;
@@ -26,16 +25,13 @@ namespace deployd.Features.PurgeOldBackups
         public void Execute()
         {
             var backups = _fs.Directory.GetDirectories(_config.DirectoryMaps.FullPath);
-
-            var totalBackupsToKeep = 10;
-
             if (backups.Length <= 10)
             {
                 return;
             }
 
             var oldestFirst = backups.Reverse().ToArray();
-            var itemsToRemove = oldestFirst.Skip(totalBackupsToKeep + 1).ToList();
+            var itemsToRemove = oldestFirst.Skip(TotalBackupsToKeep + 1).ToList();
 
             foreach (var item in itemsToRemove)
             {

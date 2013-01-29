@@ -54,10 +54,16 @@ namespace deployd.Features.AppInstallation
             BuildInterpreterPrefixes(hook, startInfo);
 
             var process = Process.Start(startInfo);
+
             using (var outputStream = process.StandardOutput)
             {
                 process.WaitForExit();
                 _log.Info(outputStream.ReadToEnd());
+            }
+
+            if (process.ExitCode != 0)
+            {
+                throw new Exception("Execution of hook failed. Exit code " + process.ExitCode);
             }
         }
 

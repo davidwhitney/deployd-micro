@@ -22,7 +22,7 @@ namespace deployd.watchman.Services
 
         public string DeploymentPath()
         {
-            return LoadConfiguration().InstallRoot.ToAbsolutePath().Replace("deployd.watchman", "deployd");
+            return LoadConfiguration().InstallRoot.ToAbsolutePath();
         }
 
         public IApplicationMap AppMapFor(string appName)

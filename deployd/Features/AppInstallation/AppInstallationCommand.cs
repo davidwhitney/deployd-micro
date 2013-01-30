@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using deployd.Extensibility.Configuration;
-using deployd.Features.ClientConfiguration;
 using System;
 using System.IO.Abstractions;
 using log4net;

@@ -77,9 +77,6 @@
     <Compile Include="Features\AppInstallation\Hooks\HookType.cs" />
     <Compile Include="Features\AppInstallation\Hooks\IHook.cs" />
     <Compile Include="Features\AppInstallation\InstallHookExecutor.cs" />
-    <Compile Include="Features\ClientConfiguration\DeploydConfiguration.cs" />
-    <Compile Include="Features\ClientConfiguration\DeploydConfigurationManager.cs" />
-    <Compile Include="Features\ClientConfiguration\PackageType.cs" />
     <Compile Include="Features\FeatureSelection\ActiveFeatureFactory.cs" />
     <Compile Include="Features\FeatureSelection\ArgumentParser.cs" />
     <Compile Include="Features\FeatureSelection\CommandCollection.cs" />

@@ -1,4 +1,4 @@
-﻿namespace deployd.Features.ClientConfiguration
+﻿namespace deployd.Extensibility.Configuration
 {
     public class DeploydConfiguration
     {

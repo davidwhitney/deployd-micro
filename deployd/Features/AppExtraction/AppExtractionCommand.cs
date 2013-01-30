@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading;
 using deployd.Extensibility;
 using deployd.Extensibility.Configuration;
-using deployd.Features.ClientConfiguration;
 using deployd.Features.FeatureSelection;
 using deployd.Infrastructure;
 using log4net;

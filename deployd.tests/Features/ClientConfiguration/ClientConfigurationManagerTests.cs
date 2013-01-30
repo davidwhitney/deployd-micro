@@ -1,7 +1,7 @@
 ﻿using Moq;
 using NUnit.Framework;
-using deployd.Features.ClientConfiguration;
 using System.IO.Abstractions;
+using deployd.Extensibility.Configuration;
 
 namespace deployd.tests.Features.ClientConfiguration
 {

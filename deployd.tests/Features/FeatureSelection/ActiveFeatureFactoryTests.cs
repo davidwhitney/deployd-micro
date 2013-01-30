@@ -3,7 +3,6 @@ using deployd.Extensibility.Configuration;
 using deployd.Features.AppExtraction;
 using deployd.Features.AppInstallation;
 using deployd.Features.AppLocating;
-using deployd.Features.ClientConfiguration;
 using deployd.Features.FeatureSelection;
 using deployd.Features.Help;
 using NUnit.Framework;

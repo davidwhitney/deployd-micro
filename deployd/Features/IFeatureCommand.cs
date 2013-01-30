@@ -1,5 +1,4 @@
 ﻿using deployd.Extensibility.Configuration;
-using deployd.Features.ClientConfiguration;
 
 namespace deployd.Features
 {

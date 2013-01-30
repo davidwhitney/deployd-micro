@@ -2,7 +2,6 @@
 using System.IO.Abstractions;
 using deployd.Extensibility;
 using deployd.Extensibility.Configuration;
-using deployd.Features.ClientConfiguration;
 
 namespace deployd.watchman.Services
 {

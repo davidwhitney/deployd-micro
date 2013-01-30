@@ -6,7 +6,6 @@ using NuGet;
 using deployd.Extensibility.Configuration;
 using deployd.Features.AppExtraction;
 using deployd.Features.AppLocating;
-using deployd.Features.ClientConfiguration;
 using deployd.Features.FeatureSelection;
 using log4net;
 using IFileSystem = System.IO.Abstractions.IFileSystem;

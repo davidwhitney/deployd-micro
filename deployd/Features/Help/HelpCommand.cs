@@ -2,7 +2,6 @@
 using System.IO;
 using System.Text;
 using deployd.Extensibility.Configuration;
-using deployd.Features.ClientConfiguration;
 using deployd.Features.FeatureSelection;
 
 namespace deployd.Features.Help

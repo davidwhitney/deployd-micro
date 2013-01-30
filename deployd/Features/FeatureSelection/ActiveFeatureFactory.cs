@@ -3,7 +3,6 @@ using deployd.Extensibility.Configuration;
 using deployd.Features.AppExtraction;
 using deployd.Features.AppInstallation;
 using deployd.Features.AppLocating;
-using deployd.Features.ClientConfiguration;
 using deployd.Features.Help;
 using deployd.Features.PurgeOldBackups;
 using log4net;

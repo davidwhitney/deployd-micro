@@ -36,8 +36,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NDesk.Options.0.2.1\lib\NDesk.Options.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Abstractions">
+      <HintPath>..\packages\System.IO.Abstractions.1.4.0.40\lib\net35\System.IO.Abstractions.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -46,9 +52,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\ApplicationMap.cs" />
+    <Compile Include="Configuration\DeploydConfiguration.cs" />
+    <Compile Include="Configuration\DeploydConfigurationManager.cs" />
     <Compile Include="Configuration\IApplicationMap.cs" />
     <Compile Include="Configuration\IInstanceConfiguration.cs" />
     <Compile Include="Configuration\PackageLocation.cs" />
+    <Compile Include="Configuration\PackageType.cs" />
     <Compile Include="Hooks\IFirstInstallHook.cs" />
     <Compile Include="Hooks\IHook.cs" />
     <Compile Include="Hooks\IPostInstallHook.cs" />

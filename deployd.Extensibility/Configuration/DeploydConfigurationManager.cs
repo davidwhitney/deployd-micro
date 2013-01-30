@@ -1,7 +1,7 @@
 ﻿using System.IO.Abstractions;
 using Newtonsoft.Json;
 
-namespace deployd.Features.ClientConfiguration
+namespace deployd.Extensibility.Configuration
 {
     public class DeploydConfigurationManager
     {

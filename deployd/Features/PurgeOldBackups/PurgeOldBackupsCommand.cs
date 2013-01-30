@@ -1,7 +1,6 @@
 ﻿using System.IO.Abstractions;
 using System.Linq;
 using deployd.Extensibility.Configuration;
-using deployd.Features.ClientConfiguration;
 using deployd.Features.FeatureSelection;
 
 namespace deployd.Features.PurgeOldBackups

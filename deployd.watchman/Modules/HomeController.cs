@@ -6,11 +6,7 @@ namespace deployd.watchman.Modules
     {
         public HomeController()
         {
-            Get["/"] = x =>
-            {
-                
-                return View["index.cshtml"];
-            };
+            Get["/"] = x => Response.AsText("deployd watchman");
         }
     }
 }

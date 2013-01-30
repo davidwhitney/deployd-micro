@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\ApplicationMap.cs" />
     <Compile Include="Configuration\IApplicationMap.cs" />
     <Compile Include="Configuration\IInstanceConfiguration.cs" />
     <Compile Include="Configuration\PackageLocation.cs" />
@@ -52,6 +53,7 @@
     <Compile Include="Hooks\IHook.cs" />
     <Compile Include="Hooks\IPostInstallHook.cs" />
     <Compile Include="Hooks\IPreInstallHook.cs" />
+    <Compile Include="PathExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using NuGet;
+using deployd.Extensibility;
 using deployd.Extensibility.Configuration;
 using deployd.Features.ClientConfiguration;
 using log4net;

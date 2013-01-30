@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace deployd.Infrastructure
+namespace deployd.Extensibility
 {
     public static class PathExtensions
     {

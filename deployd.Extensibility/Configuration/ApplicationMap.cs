@@ -1,8 +1,6 @@
 ﻿using System.IO;
-using deployd.Extensibility.Configuration;
-using deployd.Infrastructure;
 
-namespace deployd.Features.AppExtraction
+namespace deployd.Extensibility.Configuration
 {
     public class ApplicationMap : IApplicationMap
     {

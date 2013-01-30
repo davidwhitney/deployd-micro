@@ -16,6 +16,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "deployd.Extensibility", "de
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "deployd.watchman", "deployd.watchman\deployd.watchman.csproj", "{621A9609-9780-4DCD-AB38-A17C0F201FDB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "deployd-package", "deployd-package\deployd-package.csproj", "{6A70BE0E-B296-4A41-92B2-3E8F4301EA41}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "deployd-remote", "deployd-remote\deployd-remote.csproj", "{72868C4C-4FF5-4EF5-94FB-E83040259542}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +42,14 @@ Global
 		{621A9609-9780-4DCD-AB38-A17C0F201FDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{621A9609-9780-4DCD-AB38-A17C0F201FDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{621A9609-9780-4DCD-AB38-A17C0F201FDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A70BE0E-B296-4A41-92B2-3E8F4301EA41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A70BE0E-B296-4A41-92B2-3E8F4301EA41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A70BE0E-B296-4A41-92B2-3E8F4301EA41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A70BE0E-B296-4A41-92B2-3E8F4301EA41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72868C4C-4FF5-4EF5-94FB-E83040259542}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72868C4C-4FF5-4EF5-94FB-E83040259542}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72868C4C-4FF5-4EF5-94FB-E83040259542}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72868C4C-4FF5-4EF5-94FB-E83040259542}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

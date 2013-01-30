@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using NDesk.Options;
-using deployd.Features.AppExtraction;
+using deployd.Extensibility.Configuration;
 using deployd.Features.AppLocating;
 
 namespace deployd.Features.FeatureSelection
 {
-    public class InstanceConfiguration
+
+    public class InstanceConfiguration : IInstanceConfiguration
     {
         public string AppName { get; set; }
         public bool Install { get; set; }
@@ -17,6 +18,6 @@ namespace deployd.Features.FeatureSelection
 
         public PackageLocation<object> PackageLocation { get; set; }
 
-        public ApplicationMap ApplicationMap { get; set; }
+        public IApplicationMap ApplicationMap { get; set; }
     }
 }

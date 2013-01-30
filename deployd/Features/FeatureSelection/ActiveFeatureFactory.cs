@@ -1,4 +1,5 @@
 ﻿using deployd.AppStart;
+using deployd.Extensibility.Configuration;
 using deployd.Features.AppExtraction;
 using deployd.Features.AppInstallation;
 using deployd.Features.AppLocating;
@@ -13,11 +14,11 @@ namespace deployd.Features.FeatureSelection
     public class ActiveFeatureFactory
     {
         private readonly IKernel _kernel;
-        private readonly InstanceConfiguration _instanceConfiguration;
+        private readonly IInstanceConfiguration _instanceConfiguration;
         private readonly DeploydConfiguration _clientConfig;
         private readonly ILog _log;
 
-        public ActiveFeatureFactory(IKernel kernel, InstanceConfiguration instanceConfiguration, DeploydConfiguration clientConfig, ILog log)
+        public ActiveFeatureFactory(IKernel kernel, IInstanceConfiguration instanceConfiguration, DeploydConfiguration clientConfig, ILog log)
         {
             _kernel = kernel;
             _instanceConfiguration = instanceConfiguration;

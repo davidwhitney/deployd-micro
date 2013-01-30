@@ -1,12 +1,12 @@
-﻿using deployd.Features.ClientConfiguration;
-using deployd.Features.FeatureSelection;
+﻿using deployd.Extensibility.Configuration;
+using deployd.Features.ClientConfiguration;
 
 namespace deployd.Features
 {
     public interface IFeatureCommand
     {
         DeploydConfiguration DeploydConfiguration { get; set; }
-        InstanceConfiguration Config { get; set; }
+        IInstanceConfiguration Config { get; set; }
         void Execute();
     }
 }

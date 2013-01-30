@@ -1,7 +1,5 @@
 ﻿
-using System;
-
-namespace deployd.Features.AppLocating
+namespace deployd.Extensibility.Configuration
 {
     public class PackageLocation<TPackageType>
     {

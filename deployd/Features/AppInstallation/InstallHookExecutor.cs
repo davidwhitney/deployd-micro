@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using deployd.Features.AppInstallation.Hooks;
 using deployd.Features.FeatureSelection;
 using log4net;
 
@@ -12,14 +13,14 @@ namespace deployd.Features.AppInstallation
         private readonly ILog _log;
         private readonly InstanceConfiguration _config;
         private readonly HookFinder _finder;
-        private readonly Lazy<Hooks> _hooks;
+        private readonly Lazy<Hooks.Hooks> _hooks;
 
         public InstallHookExecutor(HookFinder finder, ILog log, InstanceConfiguration config)
         {
             _log = log;
             _config = config;
             _finder = finder;
-            _hooks = new Lazy<Hooks>(() => _finder.DiscoverHooks());
+            _hooks = new Lazy<Hooks.Hooks>(() => _finder.DiscoverHooks());
         }
 
         public void ExecuteFirstInstall()
@@ -37,12 +38,19 @@ namespace deployd.Features.AppInstallation
             RunHooks(_hooks.Value.PostInstall);
         }
 
-        private void RunHooks(IEnumerable<string> hookFiles)
+        private void RunHooks(IEnumerable<Hook> hookFiles)
         {
-            foreach (var hook in hookFiles)
+            foreach (var hook in hookFiles.Where(x=>x.Type == HookType.File))
             {
                 _log.Info("Executing package hook: " + hook);
-                ExecuteHook(hook);
+                ExecuteHook(hook.FileName);
+            }
+
+            foreach (var hook in hookFiles.Where(x=>x.Type == HookType.Class))
+            {
+                _log.Info("Executing plugin hook: " + hook);
+                var classs = (IHook)Activator.CreateInstance(hook.GetType());
+                classs.Execute(_config);
             }
         }
 

@@ -1,6 +1,6 @@
 ﻿using System.IO;
+using deployd.Extensibility.Configuration;
 using deployd.Features.ClientConfiguration;
-using deployd.Features.FeatureSelection;
 using System;
 using System.IO.Abstractions;
 using log4net;
@@ -14,7 +14,7 @@ namespace deployd.Features.AppInstallation
         private readonly ILog _log;
 
         public DeploydConfiguration DeploydConfiguration { get; set; }
-        public InstanceConfiguration Config { get; set; }
+        public IInstanceConfiguration Config { get; set; }
 
         public AppInstallationCommand(IFileSystem fs, DeploydConfiguration deploydConfiguration, InstallHookExecutor hookExecutor, ILog log)
         {

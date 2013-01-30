@@ -1,4 +1,6 @@
-﻿namespace deployd.Features.AppLocating
+﻿using deployd.Extensibility.Configuration;
+
+namespace deployd.Features.AppLocating
 {
     public interface IAppInstallationLocator<TPackageType> : IAppInstallationLocator
     {

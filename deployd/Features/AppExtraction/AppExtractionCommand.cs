@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Threading;
+using deployd.Extensibility.Configuration;
 using deployd.Features.ClientConfiguration;
 using deployd.Features.FeatureSelection;
 using deployd.Infrastructure;
@@ -18,7 +19,7 @@ namespace deployd.Features.AppExtraction
         private readonly IList<IPackageExtractor> _extractors;
 
         public DeploydConfiguration DeploydConfiguration { get; set; }
-        public InstanceConfiguration Config { get; set; }
+        public IInstanceConfiguration Config { get; set; }
 
         public AppExtractionCommand(IFileSystem fs, IEnumerable<IPackageExtractor> extractors, DeploydConfiguration deploydConfiguration, ILog log)
         {

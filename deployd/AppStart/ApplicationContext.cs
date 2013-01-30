@@ -3,6 +3,7 @@ using System.Linq;
 using Ninject;
 using Ninject.Extensions.Conventions;
 using NuGet;
+using deployd.Extensibility.Configuration;
 using deployd.Features.AppExtraction;
 using deployd.Features.AppLocating;
 using deployd.Features.ClientConfiguration;
@@ -39,7 +40,8 @@ namespace deployd.AppStart
             kernel.Bind(scanner => scanner.FromAssemblyContaining<IFileSystem>().Select(IsServiceType).BindDefaultInterfaces());
             kernel.Bind(scanner => scanner.FromAssemblyContaining<IPackageRepositoryFactory>().Select(IsServiceType).BindDefaultInterfaces());
 
-            kernel.Bind<InstanceConfiguration>().ToMethod(x => kernel.GetService<IArgumentParser>().Parse(_args)).InSingletonScope();
+            kernel.Rebind<IInstanceConfiguration>().ToMethod(x => kernel.GetService<IArgumentParser>().Parse(_args)).InSingletonScope();
+            kernel.Bind<InstanceConfiguration>().ToMethod(x => kernel.GetService<IInstanceConfiguration>() as InstanceConfiguration);
             kernel.Bind<DeploydConfiguration>().ToMethod(x => kernel.GetService<DeploydConfigurationManager>().LoadConfig()).InSingletonScope();
 
             kernel.Bind<ILog>().ToMethod(x => LogManager.GetLogger("default")).InSingletonScope();

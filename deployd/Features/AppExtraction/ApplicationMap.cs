@@ -1,9 +1,10 @@
 ﻿using System.IO;
+using deployd.Extensibility.Configuration;
 using deployd.Infrastructure;
 
 namespace deployd.Features.AppExtraction
 {
-    public class ApplicationMap
+    public class ApplicationMap : IApplicationMap
     {
         public string AppName { get; set; }
         public string FullPath { get; set; }

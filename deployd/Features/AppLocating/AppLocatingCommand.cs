@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using deployd.Extensibility.Configuration;
 using deployd.Features.ClientConfiguration;
 using deployd.Features.FeatureSelection;
 using log4net;
@@ -13,7 +14,7 @@ namespace deployd.Features.AppLocating
         private readonly List<IAppInstallationLocator> _finders;
         
         public DeploydConfiguration DeploydConfiguration { get; set; }
-        public InstanceConfiguration Config { get; set; }
+        public IInstanceConfiguration Config { get; set; }
 
         public AppLocatingCommand(IEnumerable<IAppInstallationLocator> finders, ILog log)
         {

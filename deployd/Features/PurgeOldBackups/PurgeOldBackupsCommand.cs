@@ -1,5 +1,6 @@
 ﻿using System.IO.Abstractions;
 using System.Linq;
+using deployd.Extensibility.Configuration;
 using deployd.Features.ClientConfiguration;
 using deployd.Features.FeatureSelection;
 
@@ -11,7 +12,7 @@ namespace deployd.Features.PurgeOldBackups
         private readonly InstanceConfiguration _config;
 
         public DeploydConfiguration DeploydConfiguration { get; set; }
-        public InstanceConfiguration Config { get; set; }
+        public IInstanceConfiguration Config { get; set; }
 
         private const int TotalBackupsToKeep = 10;
 

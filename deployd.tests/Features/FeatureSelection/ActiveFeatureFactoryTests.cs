@@ -1,4 +1,5 @@
 ﻿using Moq;
+using deployd.Extensibility.Configuration;
 using deployd.Features.AppExtraction;
 using deployd.Features.AppInstallation;
 using deployd.Features.AppLocating;
@@ -15,7 +16,7 @@ namespace deployd.tests.Features.FeatureSelection
     public class ActiveFeatureFactoryTests
     {
         private ActiveFeatureFactory _factory;
-        private InstanceConfiguration _instanceConfig;
+        private IInstanceConfiguration _instanceConfig;
         private DeploydConfiguration _clientConfig;
         private Mock<ILog> _log;
 

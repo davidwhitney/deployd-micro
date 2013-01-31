@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using NDesk.Options;
 using RestSharp;
 
@@ -32,7 +28,9 @@ namespace deployd_remote
             }
 
             var restClient = new RestClient("http://" + hostName + ":9000");
-            var request = new RestRequest("/api/v1/" + appName, Method.PUT).AddBody(new {});
+            var request = new RestRequest("/api/v1/apps/" + appName, Method.PUT);
+            request.RequestFormat = DataFormat.Json;
+            request.AddBody(new { @null = string.Empty });
             var response = restClient.Put(request);
 
             if (response.StatusCode == HttpStatusCode.Created)

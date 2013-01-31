@@ -102,10 +102,6 @@
       <Project>{DCF4EA8F-C4FB-40FA-8A8D-C4D11CC100C9}</Project>
       <Name>deployd.Extensibility</Name>
     </ProjectReference>
-    <ProjectReference Include="..\deployd\deployd.csproj">
-      <Project>{d11caa47-7f7c-4252-a5ab-e415a433e20a}</Project>
-      <Name>deployd</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

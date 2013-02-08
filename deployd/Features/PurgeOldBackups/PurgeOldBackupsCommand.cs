@@ -1,6 +1,5 @@
 ﻿using System.IO.Abstractions;
 using System.Linq;
-using deployd.Extensibility.Configuration;
 using deployd.Features.FeatureSelection;
 
 namespace deployd.Features.PurgeOldBackups
@@ -9,12 +8,7 @@ namespace deployd.Features.PurgeOldBackups
     {
         private readonly IFileSystem _fs;
         private readonly InstanceConfiguration _config;
-
-        public DeploydConfiguration DeploydConfiguration { get; set; }
-        public IInstanceConfiguration Config { get; set; }
-
         private const int TotalBackupsToKeep = 10;
-
 
         public PurgeOldBackupsCommand(IFileSystem fs, InstanceConfiguration config)
         {

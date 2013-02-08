@@ -11,26 +11,24 @@ namespace deployd.Features.AppInstallation
         private readonly IFileSystem _fs;
         private readonly InstallHookExecutor _hookExecutor;
         private readonly ILog _log;
+        private readonly IInstanceConfiguration _config;
 
-        public DeploydConfiguration DeploydConfiguration { get; set; }
-        public IInstanceConfiguration Config { get; set; }
-
-        public AppInstallationCommand(IFileSystem fs, DeploydConfiguration deploydConfiguration, InstallHookExecutor hookExecutor, ILog log)
+        public AppInstallationCommand(IFileSystem fs, InstallHookExecutor hookExecutor, ILog log, IInstanceConfiguration config)
         {
             _fs = fs;
             _hookExecutor = hookExecutor;
             _log = log;
-            DeploydConfiguration = deploydConfiguration;
+            _config = config;
         }
 
         public void Execute()
         {
-            if (!_fs.Directory.Exists(Config.ApplicationMap.Staging))
+            if (!_fs.Directory.Exists(_config.ApplicationMap.Staging))
             {
                 throw new InvalidOperationException("Application isn't staged. Can't install.");
             }
 
-            if (!_fs.File.Exists(Config.ApplicationMap.VersionFile))
+            if (!_fs.File.Exists(_config.ApplicationMap.VersionFile))
             {
                 _hookExecutor.ExecuteFirstInstall();
             }
@@ -41,8 +39,8 @@ namespace deployd.Features.AppInstallation
             MakeStagingActive();
 
             _fs.File.WriteAllText(
-                Config.ApplicationMap.VersionFile,
-                Config.PackageLocation.PackageVersion);
+                _config.ApplicationMap.VersionFile,
+                _config.PackageLocation.PackageVersion);
 
             _hookExecutor.ExecutePostInstall();
         }
@@ -50,19 +48,19 @@ namespace deployd.Features.AppInstallation
         private void MakeStagingActive()
         {
             _log.Info("Activating staged install...");
-            _fs.Directory.Move(Config.ApplicationMap.Staging, Config.ApplicationMap.Active);
+            _fs.Directory.Move(_config.ApplicationMap.Staging, _config.ApplicationMap.Active);
         }
 
         private void BackupPreviousInstallation()
         {
-            if (!_fs.File.Exists(Config.ApplicationMap.VersionFile))
+            if (!_fs.File.Exists(_config.ApplicationMap.VersionFile))
             {
                 // No version file? No previous install!
                 return;
             }
 
-            var currentInstalledVersion = _fs.File.ReadAllText(Config.ApplicationMap.VersionFile);
-            var backupPath = Path.Combine(Config.ApplicationMap.FullPath, currentInstalledVersion);
+            var currentInstalledVersion = _fs.File.ReadAllText(_config.ApplicationMap.VersionFile);
+            var backupPath = Path.Combine(_config.ApplicationMap.FullPath, currentInstalledVersion);
 
             if (_fs.Directory.Exists(backupPath))
             {
@@ -70,10 +68,10 @@ namespace deployd.Features.AppInstallation
                 _fs.Directory.Move(backupPath, newPath);
             }
 
-            if (_fs.Directory.Exists(Config.ApplicationMap.Active))
+            if (_fs.Directory.Exists(_config.ApplicationMap.Active))
             {
                 _log.Info("Backing up current installation...");
-                _fs.Directory.Move(Config.ApplicationMap.Active, backupPath);
+                _fs.Directory.Move(_config.ApplicationMap.Active, backupPath);
             }
         }
     }

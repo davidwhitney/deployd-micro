@@ -16,7 +16,6 @@ namespace deployd.tests.Features.FeatureSelection
     {
         private ActiveFeatureFactory _factory;
         private IInstanceConfiguration _instanceConfig;
-        private DeploydConfiguration _clientConfig;
         private Mock<ILog> _log;
 
         [SetUp]
@@ -25,8 +24,7 @@ namespace deployd.tests.Features.FeatureSelection
             var appKernel = new AppStart.ApplicationContext(new string[0]);
             _log = new Mock<ILog>();
             _instanceConfig = new InstanceConfiguration();
-            _clientConfig = new DeploydConfiguration();
-            _factory = new ActiveFeatureFactory(appKernel.Kernel, _instanceConfig, _clientConfig, _log.Object);
+            _factory = new ActiveFeatureFactory(appKernel.Kernel, _instanceConfig, _log.Object);
         }
 
         [Test]
@@ -47,21 +45,6 @@ namespace deployd.tests.Features.FeatureSelection
             var commands = _factory.BuildCommands();
 
             Assert.That(commands.FirstOrDefault(x => x.GetType() == typeof (HelpCommand)), Is.Not.Null);
-        }
-
-        [TestCase("")]
-        [TestCase("AppName")]
-        public void BuildCommands_AnyCommandBuilt_ConfigurationObjectsBound(string appName)
-        {
-            _instanceConfig.AppName = appName;
-
-            var commands = _factory.BuildCommands();
-
-            foreach (var command in commands)
-            {
-                Assert.That(command.DeploydConfiguration, Is.EqualTo(_clientConfig));
-                Assert.That(command.Config, Is.EqualTo(_instanceConfig));
-            }
         }
 
         [Test]

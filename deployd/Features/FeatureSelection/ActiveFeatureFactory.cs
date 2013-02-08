@@ -14,14 +14,12 @@ namespace deployd.Features.FeatureSelection
     {
         private readonly IKernel _kernel;
         private readonly IInstanceConfiguration _instanceConfiguration;
-        private readonly DeploydConfiguration _clientConfig;
         private readonly ILog _log;
 
-        public ActiveFeatureFactory(IKernel kernel, IInstanceConfiguration instanceConfiguration, DeploydConfiguration clientConfig, ILog log)
+        public ActiveFeatureFactory(IKernel kernel, IInstanceConfiguration instanceConfiguration, ILog log)
         {
             _kernel = kernel;
             _instanceConfiguration = instanceConfiguration;
-            _clientConfig = clientConfig;
             _log = log;
         }
 
@@ -42,31 +40,22 @@ namespace deployd.Features.FeatureSelection
             if (_instanceConfiguration.Help
                 || string.IsNullOrWhiteSpace(_instanceConfiguration.AppName))
             {
-                commandCollection.Add(CreateCommand<HelpCommand>());
+                commandCollection.Add(_kernel.GetService<HelpCommand>());
                 return commandCollection;
             }
 
             if (!_instanceConfiguration.Install)
             {
-                commandCollection.Add(CreateCommand<HelpCommand>());
+                commandCollection.Add(_kernel.GetService<HelpCommand>());
                 return commandCollection;
                     // TODO: Display info on current version of packages?
             }
 
-            commandCollection.Add(CreateCommand<AppLocatingCommand>());
-            commandCollection.Add(CreateCommand<AppExtractionCommand>());
-            commandCollection.Add(CreateCommand<AppInstallationCommand>());
-            commandCollection.Add(CreateCommand<PurgeOldBackupsCommand>());
+            commandCollection.Add(_kernel.GetService<AppLocatingCommand>());
+            commandCollection.Add(_kernel.GetService<AppExtractionCommand>());
+            commandCollection.Add(_kernel.GetService<AppInstallationCommand>());
+            commandCollection.Add(_kernel.GetService<PurgeOldBackupsCommand>());
             return commandCollection;
-        }
-
-        public TCommand CreateCommand<TCommand>()
-            where TCommand : IFeatureCommand
-        {
-            var command = _kernel.GetService<TCommand>();
-            command.DeploydConfiguration = _clientConfig;
-            command.Config = _instanceConfiguration;
-            return command;
         }
     }
 }

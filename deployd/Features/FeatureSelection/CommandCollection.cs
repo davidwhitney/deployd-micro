@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
+using deployd.Features.AppLocating;
 using log4net;
 
 namespace deployd.Features.FeatureSelection
@@ -26,6 +27,11 @@ namespace deployd.Features.FeatureSelection
                 {
                     command.Execute();
                 }
+            }
+            catch (NoPackageFoundException ex)
+            {
+                _log.Info(ex.Message);
+                Environment.Exit(-2);
             }
             catch (Exception ex)
             {

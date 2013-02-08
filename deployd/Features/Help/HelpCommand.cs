@@ -8,17 +8,21 @@ namespace deployd.Features.Help
 {
     public class HelpCommand : IFeatureCommand
     {
-        public DeploydConfiguration DeploydConfiguration { get; set; }
-        public IInstanceConfiguration Config { get; set; }
+        private readonly IInstanceConfiguration _config;
+
+        public HelpCommand(IInstanceConfiguration config)
+        {
+            _config = config;
+        }
 
         public void Execute()
         {
-            if (!(Config is InstanceConfiguration))
+            if (!(_config is InstanceConfiguration))
             {
                 return;
             }
 
-            var cfg = (InstanceConfiguration)Config;
+            var cfg = (InstanceConfiguration)_config;
 
             var output = new StringBuilder();
             using (var textWriter = new StringWriter(output))

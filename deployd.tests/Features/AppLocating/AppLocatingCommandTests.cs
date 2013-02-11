@@ -60,7 +60,7 @@ namespace deployd.tests.Features.AppLocating
 
             mockFinder.Verify(x => x.CanFindPackageAsObject(_instanceConfig.AppName));
         }
-        
+
         [Test]
         public void Invoked_LocatorFindsPackage_PackageLocationSetInConfigurationForUseBySubsequentCommands()
         {
@@ -75,11 +75,25 @@ namespace deployd.tests.Features.AppLocating
 
             Assert.That(_instanceConfig.PackageLocation, Is.EqualTo(package));
         }
+
+        [Test]
+        public void Invoked_LocatorFindsPackage_LogMessageWritten()
+        {
+            var package = new PackageLocation<object>();
+            var mockFinder = new Mock<IAppInstallationLocator>();
+            _finders.Add(mockFinder.Object);
+
+            mockFinder.Setup(x => x.SupportsPathType()).Returns(true);
+            mockFinder.Setup(x => x.CanFindPackageAsObject(_instanceConfig.AppName)).Returns(package);
+
+            _cmd.Execute();
+
+            _logger.Verify(x => x.Info("Package found."));
+        }
         
         [Test]
         public void Invoked_LocatorFindsNothing_PackageLocationNotSet()
         {
-            var package = new PackageLocation<object>();
             var mockFinder = new Mock<IAppInstallationLocator>();
             _finders.Add(mockFinder.Object);
 

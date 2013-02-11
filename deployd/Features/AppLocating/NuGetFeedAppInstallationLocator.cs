@@ -3,66 +3,42 @@ using System.Linq;
 using NuGet;
 using deployd.Extensibility;
 using deployd.Extensibility.Configuration;
-using log4net;
-using deployd.Infrastructure;
 using IFileSystem = System.IO.Abstractions.IFileSystem;
 
 namespace deployd.Features.AppLocating
 {
     public class NuGetFeedAppInstallationLocator : IAppInstallationLocator<IPackage>
     {
-        private readonly ILog _log;
-        private readonly IFileSystem _fs;
         private readonly DeploydConfiguration _clientConfig;
-        private readonly IPackageRepository _packageRepository;
+        private readonly IFileSystem _fs;
+        private readonly IGetLatestNuGetPackageByNameQuery _query;
 
-        public NuGetFeedAppInstallationLocator(ILog log, System.IO.Abstractions.IFileSystem fs, DeploydConfiguration clientConfig, IPackageRepositoryFactory packageRepositoryFactory)
+        public bool IsHttp { get { return _clientConfig.PackageSource.StartsWith("http"); } }
+        public string PackageLocation { get { return IsHttp ? _clientConfig.PackageSource : _clientConfig.PackageSource.ToAbsolutePath(); } }
+
+        public NuGetFeedAppInstallationLocator(DeploydConfiguration clientConfig, IFileSystem fs, IGetLatestNuGetPackageByNameQuery query)
         {
-            _log = log;
-            _fs = fs;
             _clientConfig = clientConfig;
-
-            var repoLocation = clientConfig.PackageSource;
-            if (!repoLocation.StartsWith("http"))
-            {
-                repoLocation = repoLocation.ToAbsolutePath();
-            }
-
-            _packageRepository = packageRepositoryFactory.CreateRepository(repoLocation);
+            _fs = fs;
+            _query = query;
         }
         
         public bool SupportsPathType()
         {
-            return _clientConfig.PackageSource.StartsWith("http") 
-                    || _fs.Directory.Exists(_clientConfig.PackageSource.ToAbsolutePath());
+            return IsHttp || _fs.Directory.Exists(PackageLocation);
         }
 
         public PackageLocation<IPackage> CanFindPackage(string appName)
         {
-            try
-            {
-                var all = _packageRepository.GetPackages()
-                                            .Where(x => x.Id == appName && x.IsLatestVersion)
-                                            .ToList();
-                all.Reverse();
+            var latestPackage = _query.GetLatestVersionOf(appName, PackageLocation);
 
-                var latestPackage = all.FirstOrDefault();
-
-                if (latestPackage != null)
-                {
-                    return new PackageLocation<IPackage>
-                        {
-                            PackageDetails = latestPackage,
-                            PackageVersion = latestPackage.Version.Version.ToString()
-                        };
-                }
-            }
-            catch (Exception ex)
-            {
-                _log.Error("Could not get packages", ex);
-            }
-
-            return null;
+            return latestPackage == null
+                       ? null
+                       : new PackageLocation<IPackage>
+                           {
+                               PackageDetails = latestPackage,
+                               PackageVersion = latestPackage.Version.Version.ToString()
+                           };
         }
 
         public PackageLocation<object> CanFindPackageAsObject(string appName)

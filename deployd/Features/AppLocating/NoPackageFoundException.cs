@@ -8,7 +8,7 @@ namespace deployd.Features.AppLocating
 
         public override string Message
         {
-            get { return "No package matching " + _packageName + " found."; }
+            get { return "No package matching '" + _packageName + "' found."; }
         }
 
         public NoPackageFoundException(string packageName)

@@ -4,7 +4,6 @@ using System.IO.Abstractions;
 using System.Linq;
 using deployd.Extensibility;
 using deployd.Extensibility.Configuration;
-using deployd.Infrastructure;
 using log4net;
 
 namespace deployd.Features.AppLocating
@@ -59,10 +58,5 @@ namespace deployd.Features.AppLocating
             var inner = CanFindPackage(appName);
             return inner == null ? null : new PackageLocation<object> { PackageDetails = inner.PackageDetails };
         }
-    }
-
-    public class PackagePointer
-    {
-        public string PathAndFileName { get; set; }
     }
 }

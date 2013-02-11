@@ -7,19 +7,16 @@ namespace deployd.Features.AppExtraction
 {
     public class ZipFilePackageExtractor : IPackageExtractor
     {
-        private readonly System.IO.Abstractions.IFileSystem _fs;
         private readonly ILog _log;
 
-        public ZipFilePackageExtractor(System.IO.Abstractions.IFileSystem fs, ILog log)
+        public ZipFilePackageExtractor(ILog log)
         {
-            _fs = fs;
             _log = log;
         }
 
         public bool CanUnpack(object packageInfo)
         {
-            return packageInfo is PackagePointer
-                && ((PackagePointer)packageInfo).PathAndFileName.ToLower().EndsWith(".zip");
+            return packageInfo is PackagePointer && ((PackagePointer)packageInfo).IsZipFile;
         }
 
         public void Unpack(string targetDirectory, object packageInfo)

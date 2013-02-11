@@ -40,7 +40,7 @@ namespace deployd.Features.AppLocating
                 {
                     return new PackageLocation<PackagePointer>
                         {
-                            PackageDetails = new PackagePointer {PathAndFileName = latestPackage.ToAbsolutePath()},
+                            PackageDetails = new PackagePointer(latestPackage.ToAbsolutePath()),
                             PackageVersion = string.Empty
                         };
                 }

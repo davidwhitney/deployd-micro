@@ -65,6 +65,7 @@
     <Compile Include="Features\AppLocating\AppLocatingCommandTests.cs" />
     <Compile Include="Features\AppLocating\NoPackageFoundExceptionTests.cs" />
     <Compile Include="Features\AppLocating\NuGetFeedAppInstallationLocatorTests.cs" />
+    <Compile Include="Features\AppLocating\PackagePointerTests.cs" />
     <Compile Include="Features\ClientConfiguration\ClientConfigurationManagerTests.cs" />
     <Compile Include="Features\FeatureSelection\ActiveFeatureFactoryTests.cs" />
     <Compile Include="Features\FeatureSelection\ArgumentParserTests.cs" />

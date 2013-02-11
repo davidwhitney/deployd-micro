@@ -9,13 +9,13 @@ namespace deployd.Features.AppLocating
     {
         private readonly ILog _log;
         private readonly IInstanceConfiguration _config;
-        private readonly List<IAppInstallationLocator> _finders;
+        private readonly IEnumerable<IAppInstallationLocator> _finders;
         
         public AppLocatingCommand(IEnumerable<IAppInstallationLocator> finders, ILog log, IInstanceConfiguration config)
         {
             _log = log;
             _config = config;
-            _finders = finders.ToList();
+            _finders = finders;
         }
 
         public void Execute()

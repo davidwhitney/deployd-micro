@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using deployd.Extensibility.Configuration;
+using deployd.Features.AppInstallation;
 using deployd.Infrastructure;
 using log4net;
 

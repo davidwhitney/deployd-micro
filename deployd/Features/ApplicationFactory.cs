@@ -1,5 +1,6 @@
 using System.IO.Abstractions;
 using deployd.Extensibility.Configuration;
+using deployd.Features.AppInstallation;
 using log4net;
 
 namespace deployd.Features

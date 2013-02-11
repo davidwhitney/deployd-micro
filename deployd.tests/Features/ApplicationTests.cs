@@ -4,6 +4,7 @@ using Moq;
 using NUnit.Framework;
 using deployd.Extensibility.Configuration;
 using deployd.Features;
+using deployd.Features.AppInstallation;
 using deployd.Features.FeatureSelection;
 using log4net;
 

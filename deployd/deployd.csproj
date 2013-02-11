@@ -87,7 +87,8 @@
     <Compile Include="Features\FeatureSelection\ArgumentParser.cs" />
     <Compile Include="Features\FeatureSelection\CommandCollection.cs" />
     <Compile Include="Features\FeatureSelection\IArgumentParser.cs" />
-    <Compile Include="Features\InstallationPadLock.cs" />
+    <Compile Include="Features\AppInstallation\IInstallationPadLock.cs" />
+    <Compile Include="Features\AppInstallation\InstallationPadLock.cs" />
     <Compile Include="Features\FeatureSelection\InstanceConfiguration.cs" />
     <Compile Include="Features\Help\HelpCommand.cs" />
     <Compile Include="Features\IApplication.cs" />

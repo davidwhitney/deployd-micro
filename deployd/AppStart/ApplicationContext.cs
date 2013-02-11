@@ -41,6 +41,7 @@ namespace deployd.AppStart
             kernel.Bind(scanner => scanner.FromAssemblyContaining<IPackageRepositoryFactory>().Select(IsServiceType).BindDefaultInterfaces());
 
             kernel.Rebind<IApplication>().ToMethod(x => kernel.GetService<ApplicationFactory>().GetCurrent()).InSingletonScope();
+            kernel.Rebind<IApplicationMap>().ToMethod(x => kernel.GetService<IInstanceConfiguration>().ApplicationMap).InSingletonScope();
             
             kernel.Rebind<IInstanceConfiguration>().ToMethod(x => kernel.GetService<IArgumentParser>().Parse(_args)).InSingletonScope();
             kernel.Bind<InstanceConfiguration>().ToMethod(x => kernel.GetService<IInstanceConfiguration>() as InstanceConfiguration);

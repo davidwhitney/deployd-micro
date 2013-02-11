@@ -49,6 +49,41 @@ namespace deployd.tests.Features
         }
 
         [Test]
+        public void PruneBackups_LessThanTenBackups_NothingHappens()
+        {
+            var listOfDirectories = new[] { "App.1.0.0.0", "App.1.1.0.0" };
+            _fs.Setup(x => x.Directory.GetDirectories(FullPath)).Returns(listOfDirectories);
+
+            _app.PruneBackups();
+
+            _fs.Verify(x => x.Directory.Delete(It.IsAny<string>(), true), Times.Never());
+        }
+
+        [Test]
+        public void PruneBackups_MoreThanTenBackups_OldestItemRemoved()
+        {
+            var listOfDirectories = new[]
+                {
+                    "App.1.0.0.0", 
+                    "App.1.1.0.0",
+                    "App.1.2.0.0",
+                    "App.1.3.0.0",
+                    "App.1.4.0.0",
+                    "App.1.5.0.0",
+                    "App.1.6.0.0",
+                    "App.1.7.0.0",
+                    "App.1.8.0.0",
+                    "App.1.9.0.0",
+                    "App.1.10.0.0",
+                };
+            _fs.Setup(x => x.Directory.GetDirectories(FullPath)).Returns(listOfDirectories);
+
+            _app.PruneBackups();
+
+            _fs.Verify(x => x.Directory.Delete("App.1.0.0.0", true), Times.Once());
+        }
+
+        [Test]
         public void EnsureDataDirectoryExists_CreatesDirectoriesWhenTheyDontExist()
         {
             _fs.Setup(x => x.Directory.Exists(FullPath)).Returns(false);

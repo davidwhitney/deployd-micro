@@ -94,7 +94,7 @@ namespace deployd.Features
             }
 
             var oldestFirst = backups.Reverse().ToArray();
-            var itemsToRemove = oldestFirst.Skip(TotalBackupsToKeep + 1).ToList();
+            var itemsToRemove = oldestFirst.Skip(TotalBackupsToKeep).ToList();
 
             foreach (var item in itemsToRemove)
             {

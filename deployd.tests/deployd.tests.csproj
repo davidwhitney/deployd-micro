@@ -73,6 +73,7 @@
     <Compile Include="Features\ClientConfiguration\ClientConfigurationManagerTests.cs" />
     <Compile Include="Features\FeatureSelection\ActiveFeatureFactoryTests.cs" />
     <Compile Include="Features\FeatureSelection\ArgumentParserTests.cs" />
+    <Compile Include="Features\FeatureSelection\CommandCollectionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

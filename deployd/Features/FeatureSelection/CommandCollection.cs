@@ -9,9 +9,9 @@ namespace deployd.Features.FeatureSelection
     public class CommandCollection : List<IFeatureCommand>
     {
         private readonly ILog _log;
-        private readonly InstallationPadLock _padlock;
+        private readonly IInstallationPadLock _padlock;
 
-        public CommandCollection(ILog log, InstallationPadLock padlock)
+        public CommandCollection(ILog log, IInstallationPadLock padlock)
         {
             _log = log;
             _padlock = padlock;

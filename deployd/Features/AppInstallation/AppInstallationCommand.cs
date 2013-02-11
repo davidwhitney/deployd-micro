@@ -22,7 +22,7 @@ namespace deployd.Features.AppInstallation
 
         public void Execute()
         {
-            var app = new Application(_fs, _config.ApplicationMap, _log);
+            var app = new Application(_config.ApplicationMap, _fs, _log);
 
             if (!app.IsStaged)
             {

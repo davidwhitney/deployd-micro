@@ -14,7 +14,7 @@ namespace deployd.Features.AppLocating
         private readonly DeploydConfiguration _configuration;
         private readonly ILog _log;
 
-        public FileSystemAppInstallationLocator(IFileSystem fs, DeploydConfiguration configuration, ILog log)
+        public FileSystemAppInstallationLocator(DeploydConfiguration configuration, IFileSystem fs, ILog log)
         {
             _fs = fs;
             _configuration = configuration;

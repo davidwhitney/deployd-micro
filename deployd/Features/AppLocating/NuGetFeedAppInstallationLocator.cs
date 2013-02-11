@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using NuGet;
+﻿using NuGet;
 using deployd.Extensibility;
 using deployd.Extensibility.Configuration;
 using IFileSystem = System.IO.Abstractions.IFileSystem;

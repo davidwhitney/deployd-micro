@@ -28,7 +28,7 @@ namespace deployd.tests.Features.AppLocating
             _packageList = new List<string>();
             _fs.Setup(x => x.Directory.GetFiles(It.IsAny<string>(), It.IsAny<string>(), SearchOption.AllDirectories))
                .Returns(_packageList.ToArray);
-            _locator = new FileSystemAppInstallationLocator(_fs.Object, _config, _log.Object);
+            _locator = new FileSystemAppInstallationLocator(_config, _fs.Object, _log.Object);
         }
 
         [Test]

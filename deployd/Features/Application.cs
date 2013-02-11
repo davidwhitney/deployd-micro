@@ -15,7 +15,7 @@ namespace deployd.Features
         public bool IsInstalled { get { return _fs.File.Exists(_appMap.VersionFile); } }
         public bool IsStaged { get { return _fs.Directory.Exists(_appMap.Staging); } }
 
-        public Application(IFileSystem fs, IApplicationMap appMap, ILog log)
+        public Application(IApplicationMap appMap, IFileSystem fs, ILog log)
         {
             _fs = fs;
             _appMap = appMap;

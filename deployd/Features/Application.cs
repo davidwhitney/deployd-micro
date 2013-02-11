@@ -3,6 +3,8 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using deployd.Extensibility.Configuration;
+using deployd.Features.AppInstallation;
+using deployd.Infrastructure;
 using log4net;
 
 namespace deployd.Features
@@ -13,30 +15,33 @@ namespace deployd.Features
         private readonly IApplicationMap _appMap;
         private readonly ILog _log;
         private readonly IInstanceConfiguration _config;
+        private readonly InstallationPadLock _installationLock;
 
-        public bool IsInstalled
-        {
-            get
-            {
-                return _fs.File.Exists(_appMap.VersionFile);
-            }
-        }
-        public bool IsStaged
-        {
-            get
-            {
-                return _fs.Directory.Exists(_appMap.Staging);
-            }
-        }
+        public bool IsInstalled { get { return _fs.File.Exists(_appMap.VersionFile); } }
+        public bool IsStaged { get { return _fs.Directory.Exists(_appMap.Staging); } }
         
         private const int TotalBackupsToKeep = 10;
 
-        public Application(IApplicationMap appMap, IFileSystem fs, ILog log, IInstanceConfiguration config)
+        public Application(IApplicationMap appMap, IFileSystem fs, ILog log, IInstanceConfiguration config, InstallationPadLock installationLock)
         {
             _fs = fs;
             _appMap = appMap;
             _log = log;
             _config = config;
+            _installationLock = installationLock;
+
+            _log.Info("App directory: " + _config.ApplicationMap.FullPath);
+        }
+
+        public void EnsureDataDirectoriesExist()
+        {
+            _fs.EnsureDirectoryExists(_config.ApplicationMap.FullPath);
+            _fs.EnsureDirectoryExists(_config.ApplicationMap.Staging);
+        }
+
+        public void LockForInstall()
+        {
+            _installationLock.LockAppInstallation();            
         }
 
         public void UpdateToLatestRevision()

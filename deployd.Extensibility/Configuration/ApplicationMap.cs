@@ -15,10 +15,10 @@ namespace deployd.Extensibility.Configuration
 
         public ApplicationMap(string appName, string fullPath)
         {
-            For(appName, fullPath);
+            Configure(appName, fullPath);
         }
 
-        public IApplicationMap For(string appName, string fullPath)
+        public IApplicationMap Configure(string appName, string fullPath)
         {
             AppName = appName;
             FullPath = fullPath;

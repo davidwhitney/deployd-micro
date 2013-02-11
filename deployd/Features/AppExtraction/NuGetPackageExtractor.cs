@@ -29,6 +29,8 @@ namespace deployd.Features.AppExtraction
                 throw new InvalidOperationException("Somehow selected the wrong unpacker");
             }
 
+            _log.Info("Unpacking NuGet package...");
+
             var nugetPackage = packageInfo as IPackage;
             var files = nugetPackage.GetFiles();
             

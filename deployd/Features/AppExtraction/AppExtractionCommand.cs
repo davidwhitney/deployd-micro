@@ -1,42 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Abstractions;
 using System.Linq;
 using deployd.Extensibility;
 using deployd.Extensibility.Configuration;
-using deployd.Features.AppInstallation;
 using deployd.Features.AppLocating;
-using deployd.Infrastructure;
-using log4net;
 
 namespace deployd.Features.AppExtraction
 {
     public class AppExtractionCommand : IFeatureCommand
     {
-        private readonly IFileSystem _fs;
-        private readonly ILog _log;
-        private readonly InstallationPadLock _installationLock;
+        private readonly IApplicationFactory _appFactory;
+        private readonly IInstallationRoot _installRoot;
         private readonly IList<IPackageExtractor> _extractors;
-        private readonly DeploydConfiguration _deploydConfiguration;
         private readonly IInstanceConfiguration _config;
 
-        public AppExtractionCommand(IFileSystem fs, 
-            IEnumerable<IPackageExtractor> extractors, 
-            DeploydConfiguration deploydConfiguration, 
-            IInstanceConfiguration config, 
-            ILog log,
-            InstallationPadLock installationLock)
+        public AppExtractionCommand(IEnumerable<IPackageExtractor> extractors, 
+            IInstanceConfiguration config,
+            IApplicationFactory appFactory, 
+            IInstallationRoot installRoot)
         {
-            _fs = fs;
-            _log = log;
-            _installationLock = installationLock;
+            _appFactory = appFactory;
+            _installRoot = installRoot;
             _extractors = extractors.ToList();
-            _deploydConfiguration = deploydConfiguration;
             _config = config;
 
-            var installRoot = deploydConfiguration.InstallRoot.ToAbsolutePath();
-            _fs.EnsureDirectoryExists(installRoot);
+            _installRoot.EnsureInstallationDirectoryExists();
         }
 
         public void Execute()
@@ -46,20 +35,15 @@ namespace deployd.Features.AppExtraction
                 throw new NoPackageFoundException(_config.AppName);
             }
 
-            var appDirectory = Path.Combine(_deploydConfiguration.InstallRoot, _config.AppName).ToAbsolutePath();
-            _config.ApplicationMap.For(_config.AppName, appDirectory);
-
-            _log.Info("Active App directory: " + _config.ApplicationMap.FullPath);
-
-            _fs.EnsureDirectoryExists(_config.ApplicationMap.FullPath);
-            _fs.EnsureDirectoryExists(_config.ApplicationMap.Staging);
-
-            _installationLock.LockAppInstallation();
+            var appDirectory = Path.Combine(_installRoot.Path, _config.AppName).ToAbsolutePath();
+            _config.ApplicationMap.Configure(_config.AppName, appDirectory);
+            
+            var currentApp = _appFactory.GetCurrent();
+            currentApp.EnsureDataDirectoriesExist();
+            currentApp.LockForInstall();
 
             var packageInfo = _config.PackageLocation.PackageDetails;
             var extractor = GetExtractorFor(packageInfo);
-
-            _log.Info("Unpacking into staging area...");
 
             extractor.Unpack(_config.ApplicationMap.Staging, packageInfo);
         }

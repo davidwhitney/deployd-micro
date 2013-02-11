@@ -100,6 +100,8 @@
     <Compile Include="Features\AppLocating\IAppInstallationLocator.cs" />
     <Compile Include="Features\AppLocating\NuGetFeedAppInstallationLocator.cs" />
     <Compile Include="Features\AppLocating\AppLocatingCommand.cs" />
+    <Compile Include="Features\IInstallationRoot.cs" />
+    <Compile Include="Features\InstallationRoot.cs" />
     <Compile Include="Features\PurgeOldBackups\PurgeOldBackupsCommand.cs" />
     <Compile Include="Infrastructure\DirectoryExtensions.cs" />
     <Compile Include="Program.cs" />

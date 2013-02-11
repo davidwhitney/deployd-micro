@@ -28,6 +28,8 @@ namespace deployd.Features.AppExtraction
 
             var pointer = (PackagePointer) packageInfo;
 
+            _log.Info("Unpacking zip...");
+
             using (var zip = ZipFile.Read(pointer.PathAndFileName))
             {
                 foreach (var e in zip)

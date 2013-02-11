@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
 using NDesk.Options;
 using deployd.Extensibility.Configuration;
-using deployd.Features.AppLocating;
 
 namespace deployd.Features.FeatureSelection
 {
-
     public class InstanceConfiguration : IInstanceConfiguration
     {
         public string AppName { get; set; }

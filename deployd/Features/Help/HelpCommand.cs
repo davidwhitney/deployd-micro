@@ -2,7 +2,6 @@
 using System.IO;
 using System.Text;
 using deployd.Extensibility.Configuration;
-using deployd.Features.FeatureSelection;
 
 namespace deployd.Features.Help
 {
@@ -17,17 +16,10 @@ namespace deployd.Features.Help
 
         public void Execute()
         {
-            if (!(_config is InstanceConfiguration))
-            {
-                return;
-            }
-
-            var cfg = (InstanceConfiguration)_config;
-
             var output = new StringBuilder();
             using (var textWriter = new StringWriter(output))
             {
-                cfg.OptionSet.WriteOptionDescriptions(textWriter);
+                _config.OptionSet.WriteOptionDescriptions(textWriter);
             }
 
             Console.WriteLine(output);

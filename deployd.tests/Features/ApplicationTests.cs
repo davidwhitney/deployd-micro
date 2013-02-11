@@ -42,6 +42,38 @@ namespace deployd.tests.Features
         }
 
         [Test]
+        public void IsInstalled_IfVersionFileExists_ReturnsTrue()
+        {
+            _fs.Setup(x => x.File.Exists(VersionFile)).Returns(true);
+
+            Assert.That(_app.IsInstalled, Is.True);
+        }
+
+        [Test]
+        public void IsInstalled_IfVersionFileDoesntExist_ReturnsFalse()
+        {
+            _fs.Setup(x => x.File.Exists(VersionFile)).Returns(false);
+
+            Assert.That(_app.IsInstalled, Is.False);
+        }
+
+        [Test]
+        public void IsStaged_IfStagingDirectoryExists_ReturnsTrue()
+        {
+            _fs.Setup(x => x.Directory.Exists(StagingDir)).Returns(true);
+
+            Assert.That(_app.IsStaged, Is.True);
+        }
+
+        [Test]
+        public void IsStaged_IfStagingDirectoryDoesntExist_ReturnsFalse()
+        {
+            _fs.Setup(x => x.Directory.Exists(StagingDir)).Returns(false);
+
+            Assert.That(_app.IsStaged, Is.False);
+        }
+
+        [Test]
         public void ActivateStaging_MovedStagingToActiveDirectory()
         {
             _fs.Setup(x => x.Directory.Move(StagingDir, ActiveDir));
@@ -122,7 +154,7 @@ namespace deployd.tests.Features
                     "App.1.7.0.0",
                     "App.1.8.0.0",
                     "App.1.9.0.0",
-                    "App.1.10.0.0",
+                    "App.1.10.0.0"
                 };
             _fs.Setup(x => x.Directory.GetDirectories(FullPath)).Returns(listOfDirectories);
 
@@ -155,6 +187,50 @@ namespace deployd.tests.Features
 
             _fs.Verify(x => x.Directory.Exists(FullPath));
             _fs.Verify(x => x.Directory.Exists(StagingDir));
+        }
+
+        [Test]
+        public void LockForInstall_WhenCalled_InvokesVersionLock()
+        {
+            _app.LockForInstall();
+
+            _installationLock.Verify(x=>x.LockAppInstallation());
+        }
+
+        [Test]
+        public void WriteUpdatedManifest_WritesVersionFileWithPassedSemanticVersion()
+        {
+            const string version = "1.2.3.4";
+            _fs.Setup(x => x.File.WriteAllText(VersionFile, version));
+
+            _app.WriteUpdatedManifest(version);
+
+            _fs.Verify(x => x.File.WriteAllText(VersionFile, version));
+        }
+
+        [Test]
+        public void UpdateToLatestRevision_PerformsThreeStepInstall()
+        {
+            const string versionInstalled = "1.0.0.0";
+            const string newVersion = "1.2.0.0";
+            _instanceConfig.PackageLocation = new PackageLocation<object> {PackageVersion = newVersion};
+
+            // Backup
+            var backupPath = Path.Combine(FullPath, versionInstalled);
+            _fs.Setup(x => x.File.Exists(VersionFile)).Returns(true);
+            _fs.Setup(x => x.File.ReadAllText(VersionFile)).Returns(versionInstalled);
+            _fs.Setup(x => x.Directory.Exists(backupPath)).Returns(false); // No existing backup
+            _fs.Setup(x => x.Directory.Exists(ActiveDir)).Returns(true);
+
+            // Move staging to active
+            _fs.Setup(x => x.Directory.Move(StagingDir, ActiveDir));
+
+            // Write version
+            _fs.Setup(x => x.File.WriteAllText(VersionFile, newVersion));
+            
+            _app.UpdateToLatestRevision();
+
+            _fs.VerifyAll();
         }
     }
 }

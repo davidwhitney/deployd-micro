@@ -2,9 +2,15 @@
 using System.IO.Abstractions;
 using deployd.Features.FeatureSelection;
 
-namespace deployd.Features.AppInstallation
+namespace deployd.Features
 {
-    public class InstallationPadLock
+    public interface IInstallationPadLock
+    {
+        void LockAppInstallation();
+        void UnlockAppInstallation();
+    }
+
+    public class InstallationPadLock : IInstallationPadLock
     {
         private readonly InstanceConfiguration _instanceConfiguration;
         private readonly IFileSystem _fs;

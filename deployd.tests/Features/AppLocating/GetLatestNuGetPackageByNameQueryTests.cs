@@ -60,9 +60,21 @@ namespace deployd.tests.Features.AppLocating
             _packageList.Add(packageThree);
             _packageList.Add(packageTwo);
 
-            var package =_query.GetLatestVersionOf("app", "c:\\location");
+            var package = _query.GetLatestVersionOf("app", "c:\\location");
 
             Assert.That(package, Is.EqualTo(packageThree));
+        }
+
+        [Test]
+        public void GetLatestVersionOf_NuGetRepoThrows_ReturnsLogsErrorAndReturnsNull()
+        {
+            var ex = new Exception();
+            _repo.Setup(x => x.GetPackages()).Throws(ex);
+
+            var result = _query.GetLatestVersionOf("app", "c:\\location");
+
+            Assert.That(result, Is.Null);
+            _log.Verify(x => x.Error("Could not get packages", ex));
         }
 
 

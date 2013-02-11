@@ -1,4 +1,5 @@
-﻿using System.IO.Abstractions;
+﻿using System.IO;
+using System.IO.Abstractions;
 using Moq;
 using NUnit.Framework;
 using deployd.Extensibility.Configuration;
@@ -21,6 +22,7 @@ namespace deployd.tests.Features
         private const string FullPath = "c:\\fullPath";
         private const string ActiveDir = "c:\\active";
         private const string StagingDir = "c:\\staging";
+        private const string VersionFile = "c:\\fullPath\version";
 
         [SetUp]
         public void SetUp()
@@ -29,6 +31,7 @@ namespace deployd.tests.Features
             _appMap.Setup(x => x.FullPath).Returns(FullPath);
             _appMap.Setup(x => x.Active).Returns(ActiveDir);
             _appMap.Setup(x => x.Staging).Returns(StagingDir);
+            _appMap.Setup(x => x.VersionFile).Returns(VersionFile);
 
             _fs = new Mock<IFileSystem>();
             _log = new Mock<ILog>();
@@ -46,6 +49,51 @@ namespace deployd.tests.Features
             _app.ActivateStaging();
 
             _fs.Verify(x=>x.Directory.Move(StagingDir, ActiveDir));
+        }
+
+        [Test]
+        public void BackupCurrentVersion_NotCurrentlyInstalled_DoesntMoveAnyDirectories()
+        {
+            _fs.Setup(x => x.File.Exists(VersionFile)).Returns(false);
+
+            _app.BackupCurrentVersion();
+
+            _fs.Verify(x => x.Directory.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never());
+        }
+
+        [Test]
+        public void BackupCurrentVersion_AppIsInstalled_MovesCurrentAppToVersionedBackup()
+        {
+            const string versionInstalled = "1.0.0.0";
+            var backupPath = Path.Combine(FullPath, versionInstalled);
+
+            _fs.Setup(x => x.File.Exists(VersionFile)).Returns(true);
+            _fs.Setup(x => x.File.ReadAllText(VersionFile)).Returns(versionInstalled);
+            _fs.Setup(x => x.Directory.Exists(backupPath)).Returns(false); // No existing backup
+            _fs.Setup(x => x.Directory.Exists(ActiveDir)).Returns(true);
+
+            _app.BackupCurrentVersion();
+
+            _fs.Verify(x => x.Directory.Move(ActiveDir, backupPath), Times.Once());
+        }
+
+        [Test]
+        public void BackupCurrentVersion_AlreadyABackupForThisVersion_MovesOldBackupFirst()
+        {
+            const string versionInstalled = "1.0.0.0";
+            var backupPath = Path.Combine(FullPath, versionInstalled);
+
+            _fs.Setup(x => x.File.Exists(VersionFile)).Returns(true);
+            _fs.Setup(x => x.File.ReadAllText(VersionFile)).Returns(versionInstalled);
+            _fs.Setup(x => x.Directory.Exists(backupPath)).Returns(true); // Existing backup found
+            _fs.Setup(x => x.Directory.Exists(ActiveDir)).Returns(true);
+
+            _app.BackupCurrentVersion();
+
+            _fs.Verify(
+                x =>
+                x.Directory.Move(backupPath, It.Is<string>(y => y.StartsWith(backupPath) && y.Contains("-duplicate-"))),
+                Times.Once());
         }
 
         [Test]

@@ -23,7 +23,7 @@ namespace deployd.Features.AppLocating
 
         public bool SupportsPathType()
         {
-            return _fs.Directory.Exists(_configuration.InstallRoot);
+            return _fs.Directory.Exists(_configuration.PackageSource);
         }
 
         public PackageLocation<PackagePointer> CanFindPackage(string appName)
@@ -31,7 +31,11 @@ namespace deployd.Features.AppLocating
             try
             {
                 var searchPath = _configuration.PackageSource;
-                var matching = _fs.Directory.GetFiles(searchPath, appName + ".*.zip", SearchOption.AllDirectories).ToList();
+                var matching =
+                    _fs.Directory.GetFiles(searchPath, appName + ".*.zip", SearchOption.AllDirectories)
+                       .OrderBy(x => x)
+                       .ToList();
+
                 matching.Reverse();
 
                 var latestPackage = matching.FirstOrDefault();

@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Features\AppLocating\AppLocatingCommandTests.cs" />
+    <Compile Include="Features\AppLocating\FileSystemAppInstallationLocatorTests.cs" />
     <Compile Include="Features\AppLocating\GetLatestNuGetPackageByNameQueryTests.cs" />
     <Compile Include="Features\AppLocating\NoPackageFoundExceptionTests.cs" />
     <Compile Include="Features\AppLocating\NuGetFeedAppInstallationLocatorTests.cs" />

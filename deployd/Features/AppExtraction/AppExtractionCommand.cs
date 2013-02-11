@@ -5,6 +5,7 @@ using System.IO.Abstractions;
 using System.Linq;
 using deployd.Extensibility;
 using deployd.Extensibility.Configuration;
+using deployd.Features.AppInstallation;
 using deployd.Features.AppLocating;
 using deployd.Infrastructure;
 using log4net;
@@ -15,14 +16,21 @@ namespace deployd.Features.AppExtraction
     {
         private readonly IFileSystem _fs;
         private readonly ILog _log;
+        private readonly InstallationPadLock _installationLock;
         private readonly IList<IPackageExtractor> _extractors;
         private readonly DeploydConfiguration _deploydConfiguration;
         private readonly IInstanceConfiguration _config;
 
-        public AppExtractionCommand(IFileSystem fs, IEnumerable<IPackageExtractor> extractors, DeploydConfiguration deploydConfiguration, IInstanceConfiguration config, ILog log)
+        public AppExtractionCommand(IFileSystem fs, 
+            IEnumerable<IPackageExtractor> extractors, 
+            DeploydConfiguration deploydConfiguration, 
+            IInstanceConfiguration config, 
+            ILog log,
+            InstallationPadLock installationLock)
         {
             _fs = fs;
             _log = log;
+            _installationLock = installationLock;
             _extractors = extractors.ToList();
             _deploydConfiguration = deploydConfiguration;
             _config = config;
@@ -46,7 +54,7 @@ namespace deployd.Features.AppExtraction
             _fs.EnsureDirectoryExists(_config.ApplicationMap.FullPath);
             _fs.EnsureDirectoryExists(_config.ApplicationMap.Staging);
 
-            LockInstall();
+            _installationLock.LockAppInstallation();
 
             var packageInfo = _config.PackageLocation.PackageDetails;
             var extractor = GetExtractorFor(packageInfo);
@@ -54,17 +62,6 @@ namespace deployd.Features.AppExtraction
             _log.Info("Unpacking into staging area...");
 
             extractor.Unpack(_config.ApplicationMap.Staging, packageInfo);
-        }
-
-        private void LockInstall()
-        {
-            if (!_fs.File.Exists(_config.ApplicationMap.Lockfile))
-            {
-                _fs.File.WriteAllText(_config.ApplicationMap.Lockfile, string.Empty);
-            }
-
-            _config.ApplicationMap.Lock = File.Open(_config.ApplicationMap.Lockfile,
-                                                                FileMode.Open, FileAccess.Read, FileShare.None);
         }
 
         private IPackageExtractor GetExtractorFor(object packageInfo)

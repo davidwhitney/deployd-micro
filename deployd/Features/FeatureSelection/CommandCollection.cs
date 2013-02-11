@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO.Abstractions;
+using deployd.Features.AppInstallation;
 using deployd.Features.AppLocating;
 using log4net;
 
@@ -9,17 +9,15 @@ namespace deployd.Features.FeatureSelection
     public class CommandCollection : List<IFeatureCommand>
     {
         private readonly ILog _log;
-        private readonly InstanceConfiguration _instanceConfiguration;
-        private readonly IFileSystem _fs;
+        private readonly InstallationPadLock _padlock;
 
-        public CommandCollection(ILog log, InstanceConfiguration instanceConfiguration, IFileSystem fs)
+        public CommandCollection(ILog log, InstallationPadLock padlock)
         {
             _log = log;
-            _instanceConfiguration = instanceConfiguration;
-            _fs = fs;
+            _padlock = padlock;
         }
 
-        public void RunAll()
+        public int RunAll()
         {
             try
             {
@@ -31,28 +29,20 @@ namespace deployd.Features.FeatureSelection
             catch (NoPackageFoundException ex)
             {
                 _log.Info(ex.Message);
-                Environment.Exit(-2);
+                return -2;
             }
             catch (Exception ex)
             {
                 _log.Fatal(ex.ToString());
-                Environment.Exit(-1);
+                return -1;
             }
             finally
             {
-                UnlockAppInstallation();
+                _padlock.UnlockAppInstallation();
             }
+
+            return 0;
         }
 
-        private void UnlockAppInstallation()
-        {
-            if (_instanceConfiguration.ApplicationMap != null
-                && _instanceConfiguration.ApplicationMap.Lock != null)
-            {
-                _instanceConfiguration.ApplicationMap.Lock.Close();
-                _instanceConfiguration.ApplicationMap.Lock.Dispose();
-                _fs.File.Delete(_instanceConfiguration.ApplicationMap.Lockfile);
-            }
-        }
     }
 }

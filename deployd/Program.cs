@@ -1,4 +1,5 @@
-﻿using deployd.AppStart;
+﻿using System;
+using deployd.AppStart;
 using deployd.Features.FeatureSelection;
 
 namespace deployd
@@ -10,7 +11,9 @@ namespace deployd
             var context = new ApplicationContext(args);
             var featureFactory = context.Kernel.GetService<ActiveFeatureFactory>();
             var chainOfCommands = featureFactory.BuildCommands();
-            chainOfCommands.RunAll();
+            var returnCode = chainOfCommands.RunAll();
+
+            Environment.Exit(returnCode);
         }
     }
 }

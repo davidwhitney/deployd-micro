@@ -78,6 +78,7 @@
     <Compile Include="Features\AppInstallation\Hooks\HookType.cs" />
     <Compile Include="Features\AppInstallation\Hooks\IHook.cs" />
     <Compile Include="Features\AppInstallation\InstallHookExecutor.cs" />
+    <Compile Include="Features\ApplicationFactory.cs" />
     <Compile Include="Features\AppLocating\GetLatestNuGetPackageByNameQuery.cs" />
     <Compile Include="Features\AppLocating\IGetLatestNuGetPackageByNameQuery.cs" />
     <Compile Include="Features\AppLocating\NoPackageFoundException.cs" />
@@ -89,6 +90,7 @@
     <Compile Include="Features\AppInstallation\InstallationPadLock.cs" />
     <Compile Include="Features\FeatureSelection\InstanceConfiguration.cs" />
     <Compile Include="Features\Help\HelpCommand.cs" />
+    <Compile Include="Features\IApplication.cs" />
     <Compile Include="Features\IFeatureCommand.cs" />
     <Compile Include="Features\AppExtraction\AppExtractionCommand.cs" />
     <Compile Include="Features\AppExtraction\IPackageExtractor.cs" />

@@ -15,13 +15,18 @@ namespace deployd.Extensibility.Configuration
 
         public ApplicationMap(string appName, string fullPath)
         {
+            For(appName, fullPath);
+        }
+
+        public IApplicationMap For(string appName, string fullPath)
+        {
             AppName = appName;
             FullPath = fullPath;
             Staging = Path.Combine(FullPath, "Staging").ToAbsolutePath();
             Active = Path.Combine(fullPath, "Active").ToAbsolutePath();
             Lockfile = Path.Combine(fullPath, "installing.deployd").ToAbsolutePath();
             VersionFile = Path.Combine(fullPath, "version.deployd").ToAbsolutePath();
+            return this;
         }
-
     }
 }

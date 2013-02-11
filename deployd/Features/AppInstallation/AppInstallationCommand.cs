@@ -1,43 +1,32 @@
-﻿using deployd.Extensibility.Configuration;
-using System;
-using System.IO.Abstractions;
-using log4net;
+﻿using System;
 
 namespace deployd.Features.AppInstallation
 {
     public class AppInstallationCommand : IFeatureCommand
     {
-        private readonly IFileSystem _fs;
+        private readonly IApplication _app;
         private readonly InstallHookExecutor _hookExecutor;
-        private readonly ILog _log;
-        private readonly IInstanceConfiguration _config;
 
-        public AppInstallationCommand(IFileSystem fs, InstallHookExecutor hookExecutor, ILog log, IInstanceConfiguration config)
+        public AppInstallationCommand(IApplication app, InstallHookExecutor hookExecutor)
         {
-            _fs = fs;
+            _app = app;
             _hookExecutor = hookExecutor;
-            _log = log;
-            _config = config;
         }
 
         public void Execute()
         {
-            var app = new Application(_config.ApplicationMap, _fs, _log);
-
-            if (!app.IsStaged)
+            if (!_app.IsStaged)
             {
                 throw new InvalidOperationException("Application isn't staged. Can't install.");
             }
 
-            if (!app.IsInstalled)
+            if (!_app.IsInstalled)
             {
                 _hookExecutor.ExecuteFirstInstall();
             }
 
             _hookExecutor.ExecutePreInstall();
-
-            app.UpdateToVersion(_config.PackageLocation.PackageVersion);
-
+            _app.UpdateToLatestRevision();
             _hookExecutor.ExecutePostInstall();
         }
     }

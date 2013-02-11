@@ -19,5 +19,10 @@ namespace deployd.Features.FeatureSelection
         public PackageLocation<object> PackageLocation { get; set; }
 
         public IApplicationMap ApplicationMap { get; set; }
+
+        public InstanceConfiguration()
+        {
+            ApplicationMap = new ApplicationMap(string.Empty, string.Empty);
+        }
     }
 }

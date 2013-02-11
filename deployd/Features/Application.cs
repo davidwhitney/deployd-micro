@@ -1,32 +1,49 @@
 ﻿using System;
 using System.IO;
 using System.IO.Abstractions;
+using System.Linq;
 using deployd.Extensibility.Configuration;
 using log4net;
 
 namespace deployd.Features
 {
-    public class Application
+    public class Application : IApplication
     {
         private readonly IFileSystem _fs;
         private readonly IApplicationMap _appMap;
         private readonly ILog _log;
+        private readonly IInstanceConfiguration _config;
 
-        public bool IsInstalled { get { return _fs.File.Exists(_appMap.VersionFile); } }
-        public bool IsStaged { get { return _fs.Directory.Exists(_appMap.Staging); } }
+        public bool IsInstalled
+        {
+            get
+            {
+                return _fs.File.Exists(_appMap.VersionFile);
+            }
+        }
+        public bool IsStaged
+        {
+            get
+            {
+                return _fs.Directory.Exists(_appMap.Staging);
+            }
+        }
+        
+        private const int TotalBackupsToKeep = 10;
 
-        public Application(IApplicationMap appMap, IFileSystem fs, ILog log)
+        public Application(IApplicationMap appMap, IFileSystem fs, ILog log, IInstanceConfiguration config)
         {
             _fs = fs;
             _appMap = appMap;
             _log = log;
+            _config = config;
         }
 
-        public void UpdateToVersion(string version)
+        public void UpdateToLatestRevision()
         {
             BackupCurrentVersion();
             ActivateStaging();
-            WriteUpdatedManifest(version);
+            WriteUpdatedManifest(_config.PackageLocation.PackageVersion);
         }
 
         public void ActivateStaging()
@@ -62,6 +79,23 @@ namespace deployd.Features
         public void WriteUpdatedManifest(string newVersion)
         {
             _fs.File.WriteAllText(_appMap.VersionFile, newVersion);
+        }
+
+        public void PruneBackups()
+        {
+            var backups = _fs.Directory.GetDirectories(_appMap.FullPath);
+            if (backups.Length <= 10)
+            {
+                return;
+            }
+
+            var oldestFirst = backups.Reverse().ToArray();
+            var itemsToRemove = oldestFirst.Skip(TotalBackupsToKeep + 1).ToList();
+
+            foreach (var item in itemsToRemove)
+            {
+                _fs.Directory.Delete(item, true);
+            }
         }
     }
 }

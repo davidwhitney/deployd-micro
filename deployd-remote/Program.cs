@@ -28,8 +28,7 @@ namespace deployd_remote
             }
 
             var restClient = new RestClient("http://" + hostName + ":9000");
-            var request = new RestRequest("/api/v1/apps/" + appName, Method.PUT);
-            request.RequestFormat = DataFormat.Json;
+            var request = new RestRequest("/api/v1/apps/" + appName, Method.PUT) {RequestFormat = DataFormat.Json};
             request.AddBody(new { @null = string.Empty });
             var response = restClient.Put(request);
 

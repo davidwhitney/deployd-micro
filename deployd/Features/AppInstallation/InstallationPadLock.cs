@@ -22,7 +22,7 @@ namespace deployd.Features.AppInstallation
                 _fs.File.WriteAllText(_appMap.Lockfile, string.Empty);
             }
 
-            _appMap.Lock = File.Open(_appMap.Lockfile, FileMode.Open, FileAccess.Read, FileShare.None);
+            _appMap.Lock = _fs.File.Open(_appMap.Lockfile, FileMode.Open, FileAccess.Read, FileShare.None);
         }
 
         public void UnlockAppInstallation()

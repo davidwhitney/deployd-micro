@@ -10,7 +10,7 @@ namespace deployd.Extensibility.Configuration
         string Active { get; set; }
         string Lockfile { get; set; }
         string VersionFile { get; set; }
-        FileStream Lock { get; set; }
+        Stream Lock { get; set; }
         IApplicationMap Configure(string appName, string fullPath);
     }
 }

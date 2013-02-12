@@ -51,7 +51,7 @@ namespace deployd.Features.AppInstallation.HookExecution
             StartProcess(hookFilename, startInfo);
         }
 
-        private int StartProcess(string hookFileName, ProcessStartInfo startInfo)
+        private void StartProcess(string hookFileName, ProcessStartInfo startInfo)
         {
             var process = Process.Start(startInfo);
 
@@ -61,13 +61,6 @@ namespace deployd.Features.AppInstallation.HookExecution
                 _log.Info(outputStream.ReadToEnd());
             }
 
-            VerifyProcessExitCode(hookFileName, process);
-
-            return process.ExitCode;
-        }
-
-        private void VerifyProcessExitCode(string hookFileName, Process process)
-        {
             if (process.ExitCode != 0)
             {
                 throw new HookFailureException(hookFileName, process.ExitCode);

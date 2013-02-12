@@ -35,7 +35,7 @@ namespace deployd.Features.AppInstallation.HookExecution
 
         public void ExecuteHook(Hook hook)
         {
-            _log.Info("Executing package hook: " + hook.FileName);
+            _log.Info("Executing package hookFileName: " + hook.FileName);
 
             var hookFilename = hook.FileName;
             var startInfo = new ProcessStartInfo
@@ -45,12 +45,12 @@ namespace deployd.Features.AppInstallation.HookExecution
                     UseShellExecute = false,
                 };
 
-            CopyVariablesToEnvironment(startInfo);
+            CopyVariablesToEnvironment(startInfo, _config);
             PrefixCommonScriptRuntimes(hookFilename, startInfo);
             StartProcess(hookFilename, startInfo);
         }
 
-        private void StartProcess(string hook, ProcessStartInfo startInfo)
+        private void StartProcess(string hookFileName, ProcessStartInfo startInfo)
         {
             var process = Process.Start(startInfo);
 
@@ -60,25 +60,30 @@ namespace deployd.Features.AppInstallation.HookExecution
                 _log.Info(outputStream.ReadToEnd());
             }
 
+            VerifyProcessExitCode(hookFileName, process);
+        }
+
+        public static void VerifyProcessExitCode(string hookFileName, Process process)
+        {
             if (process.ExitCode != 0)
             {
-                throw new HookFailureException(hook, process.ExitCode);
+                throw new HookFailureException(hookFileName, process.ExitCode);
             }
         }
 
-        private static void PrefixCommonScriptRuntimes(string hook, ProcessStartInfo startInfo)
+        public static void PrefixCommonScriptRuntimes(string hookFileName, ProcessStartInfo startInfo)
         {
-            foreach (var extension in ExecutableMap.Where(ext => hook.EndsWith("." + ext.Key)))
+            foreach (var extension in ExecutableMap.Where(ext => hookFileName.EndsWith("." + ext.Key)))
             {
                 startInfo.FileName = extension.Value + " " + startInfo.FileName;
             }
         }
 
-        private void CopyVariablesToEnvironment(ProcessStartInfo startInfo)
+        public static void CopyVariablesToEnvironment(ProcessStartInfo startInfo, IInstanceConfiguration config)
         {
-            var envrs = _config.ApplicationMap.GetType().GetProperties()
-                               .Select(fi => new { Field = fi.Name, Value = fi.GetValue(_config.ApplicationMap) })
-                               .ToList();
+            var envrs = config.ApplicationMap.GetType().GetProperties()
+                              .Select(fi => new {Field = fi.Name, Value = fi.GetValue(config.ApplicationMap)})
+                              .ToList();
 
             foreach (var variable in envrs)
             {

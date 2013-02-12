@@ -57,5 +57,13 @@ namespace deployd.tests.Features.AppInstallation
             Assert.That(memStream.CanRead, Is.False);  // Is disposed
             _fs.VerifyAll();
         }
+
+        [Test]
+        public void UnlockAppInstallation_AppMapIsNull_Exits()
+        {
+            _appMap = null;
+
+            _lock.UnlockAppInstallation();
+        }
     }
 }

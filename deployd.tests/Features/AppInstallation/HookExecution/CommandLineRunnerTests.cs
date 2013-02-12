@@ -11,9 +11,10 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
     [TestFixture]
     public class CommandLineRunnerTests
     {
-        private Mock<ILog> _log;
-        private Mock<IInstanceConfiguration> _config;
-        private CommandLineRunner _runner;
+        private readonly Mock<ILog> _log;
+        private readonly Mock<IInstanceConfiguration> _config;
+        private readonly CommandLineRunner _runner;
+        const string HookFileName = "internal-use-only.ps1";
 
         public CommandLineRunnerTests()
         {
@@ -25,14 +26,29 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
         [Test]
         public void VerifyProcessExitCode_WhenProcessExitsWithNoneZeroCode_Throws()
         {
-            const string hookFileName = "internal-use-only.ps1";
             const int exitCode = -1;
             var process = RunProcessThatReturns(exitCode);
 
-            var ex = Assert.Throws<HookFailureException>(() => _runner.VerifyProcessExitCode(hookFileName, process));
+            var ex = Assert.Throws<HookFailureException>(() => _runner.VerifyProcessExitCode(HookFileName, process));
 
-            Assert.That(ex.HookFile, Is.EqualTo(hookFileName));
+            Assert.That(ex.HookFile, Is.EqualTo(HookFileName));
             Assert.That(ex.ExitCode, Is.EqualTo(exitCode));
+        }
+
+        [TestCase("ps1", "powershell")]
+        [TestCase("rb", "ruby")]
+        [TestCase("py", "python")]
+        [TestCase("cgi", "perl")]
+        [TestCase("php", "php")]
+        [TestCase("js", "node")]
+        public void PrefixCommonScriptRuntimes_WhenGivenKnownScript_PrefixesKnownInterpreter(string extension, string interpreterExpected)
+        {
+            var script = "script." + extension;
+            var startInfo = new ProcessStartInfo { FileName = script };
+
+            _runner.PrefixCommonScriptRuntimes(script, startInfo);
+
+            Assert.That(startInfo.FileName, Is.EqualTo(interpreterExpected + " " + script));
         }
 
         private static Process RunProcessThatReturns(int exitCode)

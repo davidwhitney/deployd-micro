@@ -73,20 +73,13 @@ namespace deployd.Features.AppInstallation
                     UseShellExecute = false,
                 };
 
-            var envrs = _config.ApplicationMap.GetType().GetProperties()
-                               .Select(fi => new {Field = fi.Name, Value = fi.GetValue(_config.ApplicationMap)})
-                               .ToList();
+            CopyVariablesToEnvironment(startInfo);
+            PrefixCommonScriptRuntimes(hook, startInfo);
+            StartProcess(hook, startInfo);
+        }
 
-            foreach (var variable in envrs)
-            {
-                startInfo.EnvironmentVariables.Add("Deployd." + variable.Field, variable.Value.ToString());
-            }
-
-            foreach (var extension in ExecutableMap.Where(ext => hook.EndsWith("." + ext.Key)))
-            {
-                startInfo.FileName = extension.Value + " " + startInfo.FileName;
-            }
-
+        private void StartProcess(string hook, ProcessStartInfo startInfo)
+        {
             var process = Process.Start(startInfo);
 
             using (var outputStream = process.StandardOutput)
@@ -98,6 +91,26 @@ namespace deployd.Features.AppInstallation
             if (process.ExitCode != 0)
             {
                 throw new HookFailureException(hook, process.ExitCode);
+            }
+        }
+
+        private static void PrefixCommonScriptRuntimes(string hook, ProcessStartInfo startInfo)
+        {
+            foreach (var extension in ExecutableMap.Where(ext => hook.EndsWith("." + ext.Key)))
+            {
+                startInfo.FileName = extension.Value + " " + startInfo.FileName;
+            }
+        }
+
+        private void CopyVariablesToEnvironment(ProcessStartInfo startInfo)
+        {
+            var envrs = _config.ApplicationMap.GetType().GetProperties()
+                               .Select(fi => new {Field = fi.Name, Value = fi.GetValue(_config.ApplicationMap)})
+                               .ToList();
+
+            foreach (var variable in envrs)
+            {
+                startInfo.EnvironmentVariables.Add("Deployd." + variable.Field, variable.Value.ToString());
             }
         }
     }

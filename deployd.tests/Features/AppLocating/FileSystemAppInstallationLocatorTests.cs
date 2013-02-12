@@ -97,5 +97,29 @@ namespace deployd.tests.Features.AppLocating
             _log.Verify(x=>x.Error("Could not get package from file system", ex));
             Assert.That(returnedPackage, Is.Null);
         }
+
+        [Test]
+        public void CanFindPackage_DirectorySearchReturnsNull_ReturnsNull()
+        {
+            _config.PackageSource = "c:\\myrepo";
+            _fs.Setup(x => x.Directory.GetFiles(It.IsAny<string>(), It.IsAny<string>(), SearchOption.AllDirectories))
+               .Returns((string[])null);
+
+            var returnedPackage = _locator.CanFindPackage("appName");
+
+            Assert.That(returnedPackage, Is.Null);
+        }
+
+        [Test]
+        public void CanFindPackage_DirectorySearchReturnsEmptyCollection_ReturnsNull()
+        {
+            _config.PackageSource = "c:\\myrepo";
+            _fs.Setup(x => x.Directory.GetFiles(It.IsAny<string>(), It.IsAny<string>(), SearchOption.AllDirectories))
+               .Returns(new string[0]);
+
+            var returnedPackage = _locator.CanFindPackage("appName");
+
+            Assert.That(returnedPackage, Is.Null);
+        }
     }
 }

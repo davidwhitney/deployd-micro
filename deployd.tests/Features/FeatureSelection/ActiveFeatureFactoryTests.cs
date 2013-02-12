@@ -72,5 +72,17 @@ namespace deployd.tests.Features.FeatureSelection
             Assert.That(commands.Skip(1).First().GetType(), Is.EqualTo(typeof(AppExtractionCommand)));
             Assert.That(commands.Skip(2).First().GetType(), Is.EqualTo(typeof(AppInstallationCommand)));
         }
+
+        [Test]
+        public void BuildCommands_VerboseIsSpecified_SetsLogLevelToDebug()
+        {
+            _instanceConfig.AppName = "MyApp";
+            _instanceConfig.Install = true;
+            _instanceConfig.Verbose = true;
+
+            _factory.BuildCommands().ToList();
+
+            _logConfig.Verify(x => x.SetLogLevelToDebug());
+        }
     }
 }

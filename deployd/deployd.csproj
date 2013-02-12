@@ -103,6 +103,7 @@
     <Compile Include="Features\AppLocating\AppLocatingCommand.cs" />
     <Compile Include="Features\IInstallationRoot.cs" />
     <Compile Include="Features\InstallationRoot.cs" />
+    <Compile Include="Features\LoggingConfiguration.cs" />
     <Compile Include="Features\PurgeOldBackups\PurgeOldBackupsCommand.cs" />
     <Compile Include="Infrastructure\DirectoryExtensions.cs" />
     <Compile Include="Program.cs" />

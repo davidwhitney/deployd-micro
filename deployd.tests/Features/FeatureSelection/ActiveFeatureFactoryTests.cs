@@ -1,5 +1,6 @@
 ﻿using Moq;
 using deployd.Extensibility.Configuration;
+using deployd.Features;
 using deployd.Features.AppExtraction;
 using deployd.Features.AppInstallation;
 using deployd.Features.AppLocating;
@@ -17,14 +18,16 @@ namespace deployd.tests.Features.FeatureSelection
         private ActiveFeatureFactory _factory;
         private IInstanceConfiguration _instanceConfig;
         private Mock<ILog> _log;
+        private Mock<ILoggingConfiguration> _logConfig;
 
         [SetUp]
         public void SetUp()
         {
             var appKernel = new AppStart.ApplicationContext(new string[0]);
             _log = new Mock<ILog>();
+            _logConfig = new Mock<ILoggingConfiguration>();
             _instanceConfig = new InstanceConfiguration();
-            _factory = new ActiveFeatureFactory(appKernel.Kernel, _instanceConfig, _log.Object);
+            _factory = new ActiveFeatureFactory(appKernel.Kernel, _instanceConfig, _log.Object, _logConfig.Object);
         }
 
         [Test]

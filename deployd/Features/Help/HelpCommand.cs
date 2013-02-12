@@ -1,17 +1,19 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using deployd.Extensibility.Configuration;
+using log4net;
 
 namespace deployd.Features.Help
 {
     public class HelpCommand : IFeatureCommand
     {
         private readonly IInstanceConfiguration _config;
+        private readonly ILog _log;
 
-        public HelpCommand(IInstanceConfiguration config)
+        public HelpCommand(IInstanceConfiguration config, ILog log)
         {
             _config = config;
+            _log = log;
         }
 
         public void Execute()
@@ -22,7 +24,7 @@ namespace deployd.Features.Help
                 _config.OptionSet.WriteOptionDescriptions(textWriter);
             }
 
-            Console.WriteLine(output);
+            _log.Info(output.ToString());
         }
     }
 }

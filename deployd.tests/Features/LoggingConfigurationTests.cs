@@ -8,7 +8,7 @@ namespace deployd.tests.Features
     public class LoggingConfigurationTests
     {
         [Test]
-        public void Test()
+        public void SetLevelToDebug_UpdatesLog4NetConfiguration()
         {
             var log = LogManager.GetLogger("UnitTest");
             var configurer = new LoggingConfiguration(log);

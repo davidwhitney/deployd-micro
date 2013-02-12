@@ -15,6 +15,16 @@ namespace deployd.Features.AppInstallation
         private readonly HookFinder _finder;
         private readonly Lazy<Hooks.Hooks> _hooks;
 
+        private static readonly Dictionary<string, string> ExecutableMap = new Dictionary<string, string>
+            {
+                {"ps1", "powershell"},
+                {"rb", "ruby"},
+                {"py", "python"},
+                {"cgi", "perl"},
+                {"php", "php"},
+                {"js", "node"},
+            };
+
         public InstallHookExecutor(HookFinder finder, ILog log, InstanceConfiguration config)
         {
             _log = log;
@@ -72,7 +82,10 @@ namespace deployd.Features.AppInstallation
                 startInfo.EnvironmentVariables.Add("Deployd." + variable.Field, variable.Value.ToString());
             }
 
-            BuildInterpreterPrefixes(hook, startInfo);
+            foreach (var extension in ExecutableMap.Where(ext => hook.EndsWith("." + ext.Key)))
+            {
+                startInfo.FileName = extension.Value + " " + startInfo.FileName;
+            }
 
             var process = Process.Start(startInfo);
 
@@ -84,35 +97,7 @@ namespace deployd.Features.AppInstallation
 
             if (process.ExitCode != 0)
             {
-                throw new Exception("Execution of hook failed. Exit code " + process.ExitCode);
-            }
-        }
-
-        private static void BuildInterpreterPrefixes(string hook, ProcessStartInfo startInfo)
-        {
-            if (hook.EndsWith(".ps1"))
-            {
-                startInfo.FileName = "powershell " + startInfo.FileName;
-            }
-            else if (hook.EndsWith(".rb"))
-            {
-                startInfo.FileName = "ruby " + startInfo.FileName;
-            }
-            else if (hook.EndsWith(".py"))
-            {
-                startInfo.FileName = "python " + startInfo.FileName;
-            }
-            else if (hook.EndsWith(".cgi"))
-            {
-                startInfo.FileName = "perl " + startInfo.FileName;
-            }
-            else if (hook.EndsWith(".php"))
-            {
-                startInfo.FileName = "php " + startInfo.FileName;
-            }
-            else if (hook.EndsWith(".js"))
-            {
-                startInfo.FileName = "node " + startInfo.FileName;
+                throw new HookFailureException(hook, process.ExitCode);
             }
         }
     }

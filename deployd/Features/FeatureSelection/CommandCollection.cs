@@ -31,6 +31,11 @@ namespace deployd.Features.FeatureSelection
                 _log.Info(ex.Message);
                 return -2;
             }
+            catch (HookFailureException hookFailure)
+            {
+                _log.Fatal(hookFailure.ToString());
+                return hookFailure.ExitCode;
+            }
             catch (Exception ex)
             {
                 _log.Fatal(ex.ToString());

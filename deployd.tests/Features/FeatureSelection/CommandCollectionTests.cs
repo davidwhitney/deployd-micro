@@ -48,5 +48,16 @@ namespace deployd.tests.Features.FeatureSelection
 
             Assert.That(returnCode, Is.EqualTo(-1));
         }
+
+        [Test]
+        public void AllCommandsRun_ReturnCodeIsZero()
+        {
+            _command.Setup(x => x.Execute());
+            _collection.Add(_command.Object);
+
+            var returnCode = _collection.RunAll();
+
+            Assert.That(returnCode, Is.EqualTo(0));
+        }
     }
 }

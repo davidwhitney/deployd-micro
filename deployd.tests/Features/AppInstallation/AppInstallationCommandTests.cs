@@ -74,5 +74,26 @@ namespace deployd.tests.Features.AppInstallation
 
             _hookExecutor.VerifyAll();
         }
+
+        [Test]
+        public void AppIsInstalled_InstallRequested_RunsInstall()
+        {
+            _app.Setup(x => x.UpdateToLatestRevision());
+
+            _cmd.Execute();
+
+            _app.VerifyAll();
+        }
+
+        [Test]
+        public void AppIsNotInstalled_InstallRequested_RunsInstall()
+        {
+            _app.Setup(x => x.IsInstalled).Returns(false); 
+            _app.Setup(x => x.UpdateToLatestRevision());
+
+            _cmd.Execute();
+
+            _app.VerifyAll();
+        }
     }
 }

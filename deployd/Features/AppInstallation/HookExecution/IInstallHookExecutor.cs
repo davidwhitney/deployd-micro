@@ -1,4 +1,4 @@
-﻿namespace deployd.Features.AppInstallation
+﻿namespace deployd.Features.AppInstallation.HookExecution
 {
     public interface IInstallHookExecutor
     {

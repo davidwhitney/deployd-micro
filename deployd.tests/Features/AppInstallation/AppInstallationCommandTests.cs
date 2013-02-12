@@ -3,6 +3,7 @@ using Moq;
 using NUnit.Framework;
 using deployd.Features;
 using deployd.Features.AppInstallation;
+using deployd.Features.AppInstallation.HookExecution;
 
 namespace deployd.tests.Features.AppInstallation
 {

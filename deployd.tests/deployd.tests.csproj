@@ -64,7 +64,7 @@
   <ItemGroup>
     <Compile Include="Features\AppInstallation\AppInstallationCommandTests.cs" />
     <Compile Include="Features\AppInstallation\InstallationPadLockTests.cs" />
-    <Compile Include="Features\AppInstallation\InstallHookExecutorTests.cs" />
+    <Compile Include="Features\AppInstallation\HookExecution\InstallHookExecutorTests.cs" />
     <Compile Include="Features\ApplicationTests.cs" />
     <Compile Include="Features\AppLocating\AppLocatingCommandTests.cs" />
     <Compile Include="Features\AppLocating\FileSystemAppInstallationLocatorTests.cs" />

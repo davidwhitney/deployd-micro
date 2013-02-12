@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using deployd.Extensibility.Configuration;
 using deployd.Features.AppInstallation.Hooks;
 using log4net;
 
-namespace deployd.Features.AppInstallation
+namespace deployd.Features.AppInstallation.HookExecution
 {
-    public class InstallHookExecutor : IInstallHookExecutor
+    public class CommandLineRunner : IHookRunner
     {
         private readonly ILog _log;
         private readonly IInstanceConfiguration _config;
-        private readonly IHookFinder _finder;
-        private readonly Lazy<Hooks.Hooks> _hooks;
 
         private static readonly Dictionary<string, string> ExecutableMap = new Dictionary<string, string>
             {
@@ -25,57 +22,32 @@ namespace deployd.Features.AppInstallation
                 {"js", "node"},
             };
 
-        public InstallHookExecutor(IHookFinder finder, ILog log, IInstanceConfiguration config)
+        public CommandLineRunner(ILog log, IInstanceConfiguration config)
         {
             _log = log;
             _config = config;
-            _finder = finder;
-            _hooks = new Lazy<Hooks.Hooks>(() => _finder.DiscoverHooks());
         }
 
-        public void ExecuteFirstInstall()
+        public bool SupportsHook(Hook hook)
         {
-            RunHooks(_hooks.Value.FirstInstall);
+            return hook.Type == HookType.File;
         }
 
-        public void ExecutePreInstall()
+        public void ExecuteHook(Hook hook)
         {
-            RunHooks(_hooks.Value.PreInstall);
-        }
+            _log.Info("Executing package hook: " + hook.FileName);
 
-        public void ExecutePostInstall()
-        {
-            RunHooks(_hooks.Value.PostInstall);
-        }
-
-        private void RunHooks(IEnumerable<Hook> hookFiles)
-        {
-            foreach (var hook in hookFiles.Where(x=>x.Type == HookType.File))
-            {
-                _log.Info("Executing package hook: " + hook);
-                ExecuteHook(hook.FileName);
-            }
-
-            foreach (var hook in hookFiles.Where(x=>x.Type == HookType.Class))
-            {
-                _log.Info("Executing plugin hook: " + hook);
-                var classs = (IHook)Activator.CreateInstance(hook.GetType());
-                classs.Execute(_config);
-            }
-        }
-
-        private void ExecuteHook(string hook)
-        {
+            var hookFilename = hook.FileName;
             var startInfo = new ProcessStartInfo
                 {
-                    FileName = hook,
+                    FileName = hookFilename,
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
                 };
 
             CopyVariablesToEnvironment(startInfo);
-            PrefixCommonScriptRuntimes(hook, startInfo);
-            StartProcess(hook, startInfo);
+            PrefixCommonScriptRuntimes(hookFilename, startInfo);
+            StartProcess(hookFilename, startInfo);
         }
 
         private void StartProcess(string hook, ProcessStartInfo startInfo)
@@ -105,7 +77,7 @@ namespace deployd.Features.AppInstallation
         private void CopyVariablesToEnvironment(ProcessStartInfo startInfo)
         {
             var envrs = _config.ApplicationMap.GetType().GetProperties()
-                               .Select(fi => new {Field = fi.Name, Value = fi.GetValue(_config.ApplicationMap)})
+                               .Select(fi => new { Field = fi.Name, Value = fi.GetValue(_config.ApplicationMap) })
                                .ToList();
 
             foreach (var variable in envrs)

@@ -1,4 +1,5 @@
 ﻿using System;
+using deployd.Features.AppInstallation.HookExecution;
 
 namespace deployd.Features.AppInstallation
 {

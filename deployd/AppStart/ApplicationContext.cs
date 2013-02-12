@@ -40,12 +40,12 @@ namespace deployd.AppStart
             kernel.Bind(scanner => scanner.FromAssemblyContaining<IFileSystem>().Select(IsServiceType).BindDefaultInterfaces());
             kernel.Bind(scanner => scanner.FromAssemblyContaining<IPackageRepositoryFactory>().Select(IsServiceType).BindDefaultInterfaces());
 
-            kernel.Rebind<IApplication>().ToMethod(x => kernel.GetService<ApplicationFactory>().GetCurrent()).InSingletonScope();
-            kernel.Rebind<IApplicationMap>().ToMethod(x => kernel.GetService<IInstanceConfiguration>().ApplicationMap).InSingletonScope();
-            
-            kernel.Rebind<IInstanceConfiguration>().ToMethod(x => kernel.GetService<IArgumentParser>().Parse(_args)).InSingletonScope();
-            kernel.Bind<InstanceConfiguration>().ToMethod(x => kernel.GetService<IInstanceConfiguration>() as InstanceConfiguration);
-            kernel.Bind<DeploydConfiguration>().ToMethod(x => kernel.GetService<DeploydConfigurationManager>().LoadConfig()).InSingletonScope();
+            kernel.Rebind<IApplication>().ToMethod(x => x.Kernel.GetService<ApplicationFactory>().GetCurrent()).InSingletonScope();
+            kernel.Rebind<IApplicationMap>().ToMethod(x => x.Kernel.GetService<IInstanceConfiguration>().ApplicationMap).InSingletonScope();
+
+            kernel.Rebind<IInstanceConfiguration>().ToMethod(x => x.Kernel.GetService<IArgumentParser>().Parse(_args)).InSingletonScope();
+            kernel.Bind<InstanceConfiguration>().ToMethod(x => x.Kernel.GetService<IInstanceConfiguration>() as InstanceConfiguration);
+            kernel.Bind<DeploydConfiguration>().ToMethod(x => x.Kernel.GetService<DeploydConfigurationManager>().LoadConfig()).InSingletonScope();
 
             kernel.Bind<ILog>().ToMethod(x => LogManager.GetLogger("default")).InSingletonScope();
 

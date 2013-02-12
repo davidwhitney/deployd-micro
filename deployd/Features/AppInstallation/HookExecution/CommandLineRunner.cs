@@ -33,7 +33,7 @@ namespace deployd.Features.AppInstallation.HookExecution
             return hook.Type == HookType.File;
         }
 
-        public void ExecuteHook(Hook hook)
+        public void ExecuteHook(Hook hook, string arguments = null)
         {
             _log.Info("Executing package hookFileName: " + hook.FileName);
 
@@ -41,6 +41,7 @@ namespace deployd.Features.AppInstallation.HookExecution
             var startInfo = new ProcessStartInfo
                 {
                     FileName = hookFilename,
+                    Arguments = arguments ?? string.Empty,
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
                 };
@@ -50,7 +51,7 @@ namespace deployd.Features.AppInstallation.HookExecution
             StartProcess(hookFilename, startInfo);
         }
 
-        private void StartProcess(string hookFileName, ProcessStartInfo startInfo)
+        private int StartProcess(string hookFileName, ProcessStartInfo startInfo)
         {
             var process = Process.Start(startInfo);
 
@@ -61,9 +62,11 @@ namespace deployd.Features.AppInstallation.HookExecution
             }
 
             VerifyProcessExitCode(hookFileName, process);
+
+            return process.ExitCode;
         }
 
-        public void VerifyProcessExitCode(string hookFileName, Process process)
+        private void VerifyProcessExitCode(string hookFileName, Process process)
         {
             if (process.ExitCode != 0)
             {

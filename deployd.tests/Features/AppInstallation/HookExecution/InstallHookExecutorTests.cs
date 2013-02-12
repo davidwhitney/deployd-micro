@@ -62,7 +62,7 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
 
             _ihe.ExecuteFirstInstall();
 
-            _fakeHookRunner.Verify(x => x.ExecuteHook(fakeHook), Times.Once());
+            _fakeHookRunner.Verify(x => x.ExecuteHook(fakeHook, null), Times.Once());
         }
 
         [Test]
@@ -73,7 +73,7 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
 
             _ihe.ExecutePostInstall();
 
-            _fakeHookRunner.Verify(x => x.ExecuteHook(fakeHook), Times.Once());
+            _fakeHookRunner.Verify(x => x.ExecuteHook(fakeHook, null), Times.Once());
         }
 
         [Test]
@@ -84,7 +84,7 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
 
             _ihe.ExecutePreInstall();
 
-            _fakeHookRunner.Verify(x => x.ExecuteHook(fakeHook), Times.Once());
+            _fakeHookRunner.Verify(x => x.ExecuteHook(fakeHook, null), Times.Once());
         }
     }
 }

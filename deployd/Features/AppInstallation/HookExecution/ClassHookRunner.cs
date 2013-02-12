@@ -16,7 +16,7 @@ namespace deployd.Features.AppInstallation.HookExecution
             _config = config;
         }
 
-        public void ExecuteHook(Hook hook)
+        public void ExecuteHook(Hook hook, string arguments = null)
         {
             _log.Info("Executing plugin hook: " + hook);
             var classs = (IHook)Activator.CreateInstance(hook.GetType());

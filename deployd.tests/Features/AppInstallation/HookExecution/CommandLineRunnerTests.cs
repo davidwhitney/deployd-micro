@@ -5,6 +5,7 @@ using NUnit.Framework;
 using deployd.Extensibility.Configuration;
 using deployd.Features.AppInstallation;
 using deployd.Features.AppInstallation.HookExecution;
+using deployd.Features.AppInstallation.Hooks;
 using log4net;
 
 namespace deployd.tests.Features.AppInstallation.HookExecution
@@ -23,21 +24,9 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
             _config = new Mock<IInstanceConfiguration>();
             _runner = new CommandLineRunner(_log.Object, _config.Object);
         }
-
+        
         [Test]
-        public void VerifyProcessExitCode_WhenProcessExitsWithNoneZeroCode_Throws()
-        {
-            const int exitCode = -1;
-            var process = RunProcessThatReturns(exitCode);
-
-            var ex = Assert.Throws<HookFailureException>(() => _runner.VerifyProcessExitCode(HookFileName, process));
-
-            Assert.That(ex.HookFile, Is.EqualTo(HookFileName));
-            Assert.That(ex.ExitCode, Is.EqualTo(exitCode));
-        }
-
-        [Test]
-        public void CopyVariablesToEnvironment_WhenProcessExitsWithNoneZeroCode_Throws()
+        public void CopyVariablesToEnvironment_MapsApplicationMapToEnvironment()
         {
             var map = new ApplicationMap("testApp", "c:\\full\\path");
             _config.Setup(x => x.ApplicationMap).Returns(map);
@@ -74,19 +63,35 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
             Assert.That(startInfo.FileName, Is.EqualTo(interpreterExpected + " " + script));
         }
 
-        private static Process RunProcessThatReturns(int exitCode)
+        [Test]
+        public void SupportsHook_ForFile_ReturnsTrue()
         {
-            var startInfo = new ProcessStartInfo
-                {
-                    FileName = "cmd.exe",
-                    Arguments = "/c exit " + exitCode,
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                };
+            var supports = _runner.SupportsHook(new Hook("aa", HookType.File));
 
-            var process = Process.Start(startInfo);
-            process.WaitForExit();
-            return process;
+            Assert.That(supports, Is.True);
+        }
+
+        [Test]
+        public void SupportsHook_ForClass_ReturnsFalse()
+        {
+            var supports = _runner.SupportsHook(new Hook(typeof(object)));
+
+            Assert.That(supports, Is.False);
+        }
+        
+        [Test]
+        public void ExecuteHook_WhenGivenAProcessThatExitsCleanly_DoesntThrow()
+        {
+            _runner.ExecuteHook(new Hook("cmd", HookType.File), "/c exit 0");
+        }
+
+        [Test]
+        public void ExecuteHook_WhenGivenAProcessThatExitsWithANoneZeroCode_Throws()
+        {
+            var ex = Assert.Throws<HookFailureException>(()=> _runner.ExecuteHook(new Hook("cmd", HookType.File), "/c exit -300"));
+
+            Assert.That(ex.HookFile, Is.EqualTo("cmd"));
+            Assert.That(ex.ExitCode, Is.EqualTo(-300));
         }
     }
 }

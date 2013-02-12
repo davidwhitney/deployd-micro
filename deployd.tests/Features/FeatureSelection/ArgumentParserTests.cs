@@ -78,5 +78,18 @@ namespace deployd.tests.Features.FeatureSelection
 
             Assert.That(config.AppName, Is.EqualTo("My App"));
         }
+
+        [TestCase("--install")]
+        [TestCase("-install")]
+        [TestCase("/install")]
+        [TestCase("--i")]
+        [TestCase("-i")]
+        [TestCase("/i")]
+        public void Parse_ArgumentsContainInstall_InstallIsFlagged(string suportedHelpCommands)
+        {
+            var config = _parser.Parse(new[] { "--junk", suportedHelpCommands });
+
+            Assert.That(config.Install, Is.True);
+        }
     }
 }

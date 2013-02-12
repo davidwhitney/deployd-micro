@@ -72,6 +72,7 @@
     <Compile Include="AppStart\NinjectExtensions.cs" />
     <Compile Include="Features\AppExtraction\ZipFilePackageExtractor.cs" />
     <Compile Include="Features\AppInstallation\HookFailureException.cs" />
+    <Compile Include="Features\AppInstallation\Hooks\IHookFinder.cs" />
     <Compile Include="Features\AppInstallation\IInstallHookExecutor.cs" />
     <Compile Include="Features\Application.cs" />
     <Compile Include="Features\AppInstallation\Hooks\Hook.cs" />

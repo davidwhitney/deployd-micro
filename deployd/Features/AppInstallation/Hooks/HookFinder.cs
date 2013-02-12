@@ -8,7 +8,7 @@ using deployd.Features.FeatureSelection;
 
 namespace deployd.Features.AppInstallation.Hooks
 {
-    public class HookFinder
+    public class HookFinder : IHookFinder
     {
         private readonly IFileSystem _fs;
         private readonly InstanceConfiguration _configuration;

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using deployd.Extensibility.Configuration;
 using deployd.Features.AppInstallation.Hooks;
-using deployd.Features.FeatureSelection;
 using log4net;
 
 namespace deployd.Features.AppInstallation
@@ -11,8 +11,8 @@ namespace deployd.Features.AppInstallation
     public class InstallHookExecutor : IInstallHookExecutor
     {
         private readonly ILog _log;
-        private readonly InstanceConfiguration _config;
-        private readonly HookFinder _finder;
+        private readonly IInstanceConfiguration _config;
+        private readonly IHookFinder _finder;
         private readonly Lazy<Hooks.Hooks> _hooks;
 
         private static readonly Dictionary<string, string> ExecutableMap = new Dictionary<string, string>
@@ -25,7 +25,7 @@ namespace deployd.Features.AppInstallation
                 {"js", "node"},
             };
 
-        public InstallHookExecutor(HookFinder finder, ILog log, InstanceConfiguration config)
+        public InstallHookExecutor(IHookFinder finder, ILog log, IInstanceConfiguration config)
         {
             _log = log;
             _config = config;

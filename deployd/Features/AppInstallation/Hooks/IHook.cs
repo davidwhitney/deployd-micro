@@ -1,9 +1,9 @@
-﻿using deployd.Features.FeatureSelection;
+﻿using deployd.Extensibility.Configuration;
 
 namespace deployd.Features.AppInstallation.Hooks
 {
     public interface IHook
     {
-        void Execute(InstanceConfiguration config);
+        void Execute(IInstanceConfiguration config);
     }
 }

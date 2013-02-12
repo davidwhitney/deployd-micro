@@ -6,6 +6,7 @@ using NuGet;
 using deployd.Extensibility.Configuration;
 using deployd.Features;
 using deployd.Features.AppExtraction;
+using deployd.Features.AppInstallation.HookExecution;
 using deployd.Features.AppLocating;
 using deployd.Features.FeatureSelection;
 using log4net;
@@ -36,6 +37,7 @@ namespace deployd.AppStart
             kernel.Bind(scanner => scanner.FromThisAssembly().Select(IsServiceType).BindDefaultInterfaces());
             kernel.Bind(scanner => scanner.FromThisAssembly().Select(IsInstallationLocator).BindAllInterfaces());
             kernel.Bind(scanner => scanner.FromThisAssembly().Select(IsPackageExtractor).BindAllInterfaces());
+            kernel.Bind(scanner => scanner.FromThisAssembly().Select(IsHookRunner).BindAllInterfaces());
 
             kernel.Bind(scanner => scanner.FromAssemblyContaining<IFileSystem>().Select(IsServiceType).BindDefaultInterfaces());
             kernel.Bind(scanner => scanner.FromAssemblyContaining<IPackageRepositoryFactory>().Select(IsServiceType).BindDefaultInterfaces());
@@ -65,6 +67,11 @@ namespace deployd.AppStart
         private static bool IsPackageExtractor(Type type)
         {
             return type.IsClass && type.GetInterfaces().Any(intface => intface.Name == typeof(IPackageExtractor).Name);
+        }
+
+        private static bool IsHookRunner(Type type)
+        {
+            return type.IsClass && type.GetInterfaces().Any(intface => intface.Name == typeof(IHookRunner).Name);
         }
     }
 }

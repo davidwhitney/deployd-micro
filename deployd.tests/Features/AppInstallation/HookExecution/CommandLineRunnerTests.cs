@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Linq;
 using Moq;
 using NUnit.Framework;
 using deployd.Extensibility.Configuration;
@@ -33,6 +34,28 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
 
             Assert.That(ex.HookFile, Is.EqualTo(HookFileName));
             Assert.That(ex.ExitCode, Is.EqualTo(exitCode));
+        }
+
+        [Test]
+        public void CopyVariablesToEnvironment_WhenProcessExitsWithNoneZeroCode_Throws()
+        {
+            var map = new ApplicationMap("testApp", "c:\\full\\path");
+            _config.Setup(x => x.ApplicationMap).Returns(map);
+            var startInfo = new ProcessStartInfo { FileName = HookFileName };
+
+            _runner.CopyVariablesToEnvironment(startInfo);
+            
+            const string prefix = "Deployd.";
+            var countOfDeploydKeys = startInfo.EnvironmentVariables.Keys.Cast<string>().Count(var => var.StartsWith(prefix));
+
+            Assert.That(startInfo.EnvironmentVariables[prefix + "Active"], Is.EqualTo(map.Active));
+            Assert.That(startInfo.EnvironmentVariables[prefix + "AppName"], Is.EqualTo(map.AppName));
+            Assert.That(startInfo.EnvironmentVariables[prefix + "FullPath"], Is.EqualTo(map.FullPath));
+            Assert.That(startInfo.EnvironmentVariables[prefix + "Lock"], Is.EqualTo(map.Lock));
+            Assert.That(startInfo.EnvironmentVariables[prefix + "Lockfile"], Is.EqualTo(map.Lockfile));
+            Assert.That(startInfo.EnvironmentVariables[prefix + "Staging"], Is.EqualTo(map.Staging));
+            Assert.That(startInfo.EnvironmentVariables[prefix + "VersionFile"], Is.EqualTo(map.VersionFile));
+            Assert.That(countOfDeploydKeys, Is.GreaterThan(0));
         }
 
         [TestCase("ps1", "powershell")]

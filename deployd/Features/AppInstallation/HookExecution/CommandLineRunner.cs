@@ -85,7 +85,7 @@ namespace deployd.Features.AppInstallation.HookExecution
                               .Select(fi => new {Field = fi.Name, Value = fi.GetValue(_config.ApplicationMap)})
                               .ToList();
 
-            foreach (var variable in envrs)
+            foreach (var variable in envrs.Where(variable => variable.Value != null))
             {
                 startInfo.EnvironmentVariables.Add("Deployd." + variable.Field, variable.Value.ToString());
             }

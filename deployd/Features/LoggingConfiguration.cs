@@ -5,7 +5,6 @@ namespace deployd.Features
     public interface ILoggingConfiguration
     {
         void SetLogLevelToDebug();
-        void SetLogLevelToInfo();
     }
 
     public class LoggingConfiguration : ILoggingConfiguration
@@ -18,11 +17,6 @@ namespace deployd.Features
         }
 
         public void SetLogLevelToDebug()
-        {
-            SetLogLevel("DEBUG");
-        }
-
-        public void SetLogLevelToInfo()
         {
             SetLogLevel("DEBUG");
         }

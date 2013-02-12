@@ -8,7 +8,7 @@ using log4net;
 
 namespace deployd.Features.AppInstallation
 {
-    public class InstallHookExecutor
+    public class InstallHookExecutor : IInstallHookExecutor
     {
         private readonly ILog _log;
         private readonly InstanceConfiguration _config;

@@ -5,9 +5,9 @@ namespace deployd.Features.AppInstallation
     public class AppInstallationCommand : IFeatureCommand
     {
         private readonly IApplication _app;
-        private readonly InstallHookExecutor _hookExecutor;
+        private readonly IInstallHookExecutor _hookExecutor;
 
-        public AppInstallationCommand(IApplication app, InstallHookExecutor hookExecutor)
+        public AppInstallationCommand(IApplication app, IInstallHookExecutor hookExecutor)
         {
             _app = app;
             _hookExecutor = hookExecutor;

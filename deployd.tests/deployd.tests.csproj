@@ -62,6 +62,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Features\AppInstallation\AppInstallationCommandTests.cs" />
     <Compile Include="Features\ApplicationTests.cs" />
     <Compile Include="Features\AppLocating\AppLocatingCommandTests.cs" />
     <Compile Include="Features\AppLocating\FileSystemAppInstallationLocatorTests.cs" />

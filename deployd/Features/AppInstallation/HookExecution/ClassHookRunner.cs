@@ -19,7 +19,7 @@ namespace deployd.Features.AppInstallation.HookExecution
         public void ExecuteHook(Hook hook, string arguments = null)
         {
             _log.Info("Executing plugin hook: " + hook);
-            var classs = (IHook)Activator.CreateInstance(hook.GetType());
+            var classs = (IHook)Activator.CreateInstance(hook.Class);
             classs.Execute(_config);
         }
 

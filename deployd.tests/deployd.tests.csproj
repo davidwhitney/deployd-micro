@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Features\AppInstallation\AppInstallationCommandTests.cs" />
+    <Compile Include="Features\AppInstallation\HookExecution\ClassHookRunnerTests.cs" />
     <Compile Include="Features\AppInstallation\HookExecution\CommandLineRunnerTests.cs" />
     <Compile Include="Features\AppInstallation\InstallationPadLockTests.cs" />
     <Compile Include="Features\AppInstallation\HookExecution\InstallHookExecutorTests.cs" />

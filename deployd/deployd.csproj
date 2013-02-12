@@ -71,6 +71,7 @@
     <Compile Include="AppStart\ApplicationContext.cs" />
     <Compile Include="AppStart\NinjectExtensions.cs" />
     <Compile Include="Features\AppExtraction\ZipFilePackageExtractor.cs" />
+    <Compile Include="Features\AppInstallation\HookFailureException.cs" />
     <Compile Include="Features\Application.cs" />
     <Compile Include="Features\AppInstallation\Hooks\Hook.cs" />
     <Compile Include="Features\AppInstallation\Hooks\HookFinder.cs" />
@@ -103,6 +104,7 @@
     <Compile Include="Features\AppLocating\AppLocatingCommand.cs" />
     <Compile Include="Features\IInstallationRoot.cs" />
     <Compile Include="Features\InstallationRoot.cs" />
+    <Compile Include="Features\LoggingConfiguration.cs" />
     <Compile Include="Features\PurgeOldBackups\PurgeOldBackupsCommand.cs" />
     <Compile Include="Infrastructure\DirectoryExtensions.cs" />
     <Compile Include="Program.cs" />

@@ -15,24 +15,21 @@ namespace deployd.Features.FeatureSelection
         private readonly IKernel _kernel;
         private readonly IInstanceConfiguration _instanceConfiguration;
         private readonly ILog _log;
+        private readonly ILoggingConfiguration _loggingConfiguration;
 
-        public ActiveFeatureFactory(IKernel kernel, IInstanceConfiguration instanceConfiguration, ILog log)
+        public ActiveFeatureFactory(IKernel kernel, IInstanceConfiguration instanceConfiguration, ILog log, ILoggingConfiguration loggingConfiguration)
         {
             _kernel = kernel;
             _instanceConfiguration = instanceConfiguration;
             _log = log;
+            _loggingConfiguration = loggingConfiguration;
         }
 
         public CommandCollection BuildCommands()
         {
             if (_instanceConfiguration.Verbose)
             {
-                // yes, for real...
-                var heir =
-                    (log4net.Repository.Hierarchy.Hierarchy)
-                    (((log4net.Repository.Hierarchy.Logger) _log.Logger).Repository);
-
-                ((log4net.Repository.Hierarchy.Logger)_log.Logger).Level = heir.LevelMap["DEBUG"];
+                _loggingConfiguration.SetLogLevelToDebug();
             }
 
             var commandCollection = _kernel.GetService<CommandCollection>();

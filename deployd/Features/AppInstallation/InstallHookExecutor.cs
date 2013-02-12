@@ -15,6 +15,16 @@ namespace deployd.Features.AppInstallation
         private readonly HookFinder _finder;
         private readonly Lazy<Hooks.Hooks> _hooks;
 
+        private static readonly Dictionary<string, string> ExecutableMap = new Dictionary<string, string>
+            {
+                {"ps1", "powershell"},
+                {"rb", "ruby"},
+                {"py", "python"},
+                {"cgi", "perl"},
+                {"php", "php"},
+                {"js", "node"},
+            };
+
         public InstallHookExecutor(HookFinder finder, ILog log, InstanceConfiguration config)
         {
             _log = log;
@@ -63,17 +73,13 @@ namespace deployd.Features.AppInstallation
                     UseShellExecute = false,
                 };
 
-            var envrs = _config.ApplicationMap.GetType().GetProperties()
-                               .Select(fi => new {Field = fi.Name, Value = fi.GetValue(_config.ApplicationMap)})
-                               .ToList();
+            CopyVariablesToEnvironment(startInfo);
+            PrefixCommonScriptRuntimes(hook, startInfo);
+            StartProcess(hook, startInfo);
+        }
 
-            foreach (var variable in envrs)
-            {
-                startInfo.EnvironmentVariables.Add("Deployd." + variable.Field, variable.Value.ToString());
-            }
-
-            BuildInterpreterPrefixes(hook, startInfo);
-
+        private void StartProcess(string hook, ProcessStartInfo startInfo)
+        {
             var process = Process.Start(startInfo);
 
             using (var outputStream = process.StandardOutput)
@@ -84,35 +90,27 @@ namespace deployd.Features.AppInstallation
 
             if (process.ExitCode != 0)
             {
-                throw new Exception("Execution of hook failed. Exit code " + process.ExitCode);
+                throw new HookFailureException(hook, process.ExitCode);
             }
         }
 
-        private static void BuildInterpreterPrefixes(string hook, ProcessStartInfo startInfo)
+        private static void PrefixCommonScriptRuntimes(string hook, ProcessStartInfo startInfo)
         {
-            if (hook.EndsWith(".ps1"))
+            foreach (var extension in ExecutableMap.Where(ext => hook.EndsWith("." + ext.Key)))
             {
-                startInfo.FileName = "powershell " + startInfo.FileName;
+                startInfo.FileName = extension.Value + " " + startInfo.FileName;
             }
-            else if (hook.EndsWith(".rb"))
+        }
+
+        private void CopyVariablesToEnvironment(ProcessStartInfo startInfo)
+        {
+            var envrs = _config.ApplicationMap.GetType().GetProperties()
+                               .Select(fi => new {Field = fi.Name, Value = fi.GetValue(_config.ApplicationMap)})
+                               .ToList();
+
+            foreach (var variable in envrs)
             {
-                startInfo.FileName = "ruby " + startInfo.FileName;
-            }
-            else if (hook.EndsWith(".py"))
-            {
-                startInfo.FileName = "python " + startInfo.FileName;
-            }
-            else if (hook.EndsWith(".cgi"))
-            {
-                startInfo.FileName = "perl " + startInfo.FileName;
-            }
-            else if (hook.EndsWith(".php"))
-            {
-                startInfo.FileName = "php " + startInfo.FileName;
-            }
-            else if (hook.EndsWith(".js"))
-            {
-                startInfo.FileName = "node " + startInfo.FileName;
+                startInfo.EnvironmentVariables.Add("Deployd." + variable.Field, variable.Value.ToString());
             }
         }
     }

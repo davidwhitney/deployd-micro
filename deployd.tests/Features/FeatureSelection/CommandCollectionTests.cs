@@ -39,6 +39,17 @@ namespace deployd.tests.Features.FeatureSelection
         }
 
         [Test]
+        public void HookFailureExceptionThrown_ReturnCodeIsCopiedFromException()
+        {
+            _command.Setup(x => x.Execute()).Throws(new HookFailureException("fakehook", -30));
+            _collection.Add(_command.Object);
+
+            var returnCode = _collection.RunAll();
+
+            Assert.That(returnCode, Is.EqualTo(-30));
+        }
+
+        [Test]
         public void UnknownExceptionThrown_ReturnCodeIsMinusOne()
         {
             _command.Setup(x => x.Execute()).Throws(new Exception());
@@ -47,6 +58,17 @@ namespace deployd.tests.Features.FeatureSelection
             var returnCode = _collection.RunAll();
 
             Assert.That(returnCode, Is.EqualTo(-1));
+        }
+
+        [Test]
+        public void AllCommandsRun_ReturnCodeIsZero()
+        {
+            _command.Setup(x => x.Execute());
+            _collection.Add(_command.Object);
+
+            var returnCode = _collection.RunAll();
+
+            Assert.That(returnCode, Is.EqualTo(0));
         }
     }
 }

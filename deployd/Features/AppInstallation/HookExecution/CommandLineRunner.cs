@@ -45,7 +45,7 @@ namespace deployd.Features.AppInstallation.HookExecution
                     UseShellExecute = false,
                 };
 
-            CopyVariablesToEnvironment(startInfo, _config);
+            CopyVariablesToEnvironment(startInfo);
             PrefixCommonScriptRuntimes(hookFilename, startInfo);
             StartProcess(hookFilename, startInfo);
         }
@@ -63,7 +63,7 @@ namespace deployd.Features.AppInstallation.HookExecution
             VerifyProcessExitCode(hookFileName, process);
         }
 
-        public static void VerifyProcessExitCode(string hookFileName, Process process)
+        public void VerifyProcessExitCode(string hookFileName, Process process)
         {
             if (process.ExitCode != 0)
             {
@@ -71,7 +71,7 @@ namespace deployd.Features.AppInstallation.HookExecution
             }
         }
 
-        public static void PrefixCommonScriptRuntimes(string hookFileName, ProcessStartInfo startInfo)
+        public void PrefixCommonScriptRuntimes(string hookFileName, ProcessStartInfo startInfo)
         {
             foreach (var extension in ExecutableMap.Where(ext => hookFileName.EndsWith("." + ext.Key)))
             {
@@ -79,10 +79,10 @@ namespace deployd.Features.AppInstallation.HookExecution
             }
         }
 
-        public static void CopyVariablesToEnvironment(ProcessStartInfo startInfo, IInstanceConfiguration config)
+        public void CopyVariablesToEnvironment(ProcessStartInfo startInfo)
         {
-            var envrs = config.ApplicationMap.GetType().GetProperties()
-                              .Select(fi => new {Field = fi.Name, Value = fi.GetValue(config.ApplicationMap)})
+            var envrs = _config.ApplicationMap.GetType().GetProperties()
+                              .Select(fi => new {Field = fi.Name, Value = fi.GetValue(_config.ApplicationMap)})
                               .ToList();
 
             foreach (var variable in envrs)

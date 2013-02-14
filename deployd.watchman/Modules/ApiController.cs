@@ -7,9 +7,14 @@ namespace deployd.watchman.Modules
     {
         private readonly AppService _appService;
         private readonly ConfigurationService _configurationService;
+        
+        private static string ApiRoot
+        {
+            get { return "/api/v1"; }
+        }
 
         public ApiController(AppService appService, ConfigurationService configurationService) 
-            : base("/api/v1")
+            : base(ApiRoot)
         {
             _appService = appService;
             _configurationService = configurationService;
@@ -29,10 +34,11 @@ namespace deployd.watchman.Modules
                     return Response.AsJson(new {appName, version, backupVersions});
                 };
 
-            Put["/apps/{AppName}"] = x =>
+            Post["/install-queue/{AppName}"] = x =>
                 {
                     _appService.InstallPackage((string)x.AppName);
-                    return Response.AsJson("ok", HttpStatusCode.Created);
+                    var response = new {next = ApiRoot + "/apps/" + x.AppName};
+                    return Response.AsJson(response, HttpStatusCode.Created);
                 };
         }
     }

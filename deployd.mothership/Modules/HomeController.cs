@@ -6,7 +6,7 @@ namespace deployd.mothership.Modules
     {
         public HomeController()
         {
-            Get["/"] = x => Response.AsText("deployd watchman");
+            Get["/"] = x => View["index"];
         }
     }
 }

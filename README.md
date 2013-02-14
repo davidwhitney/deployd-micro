@@ -1,4 +1,4 @@
-deployd-micro - continuous for win
+deployd-micro - continuous deployment for windows
 =============
 
 Deployment on Windows is harder than it should be.

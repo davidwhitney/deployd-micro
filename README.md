@@ -20,13 +20,14 @@ Take care of packaging, take care of transport, take care of installation, so th
 What is it then?
 =================
 
-deployd-micro is four small applications that can be chained together into a deployment pipeline. 
-It has baked in conventions for run first, pre and post install hooks and it's built around NuGet and Zip file packages.
+- deployd-micro is four small applications that can be chained together into a deployment pipeline. 
+- It has baked in conventions for run first, pre and post install hooks and it's built around NuGet and Zip file packages.
 
 What isn't it?
 ==============
 
-deployd-micro isn't an environment provisioning system/framework. If you're looking for that, go look at Chef for Windows.
+- deployd-micro isn't an environment provisioning system/framework. If you're looking for that, go look at Chef for Windows.
+- deployd-micro isn't an environment management tool.
 
 The tools
 ==========
@@ -41,14 +42,72 @@ The idea is that you can chain these tools into any configuration you wish.
 Minimum barrier to entry
 ========================
 
-.NET 4.5 installed on your server
-A server with a copy of deployd and it's config file copied to it pointing at a package source.
-A package source: a folder full of NuGet or Zip files with names in the format MyApp.1.0.0.0.nupkg at the minimum (or a remote NuGet feed uri)
-Two hands to invoke deployd.exe on the command line.
+- .NET 4.5 installed on your server
+- A server with a copy of deployd and it's config file copied to it pointing at a package source.
+- A package source: a folder full of NuGet or Zip files with names in the format MyApp.1.0.0.0.nupkg at the minimum (or a remote NuGet feed uri)
+- Two hands to invoke deployd.exe on the command line.
 
-When you invoke "deployd /app=MyApp /i", deployd will source the package from your package source, and by default unpack into an /Apps subdirectory
-It'll log the installation.
-If you repeat the install command, it'll create a versioned backup and re-install your software.
+When you invoke "deployd /app=MyApp /i", deployd will:
+
+- Source the package from your package source
+- By default unpack into an /Apps subdirectory
+- It'll log the installation.
+- If you repeat the install command, it'll create a versioned backup and re-install your software.
+
+You can override the app installation directory and the package source from the configuration .json file.
 
 Conventions
 ===========
+
+Your apps will be unpacked into: ~/Apps/AppName
+On install, version numbered backups are made in: ~/Apps/AppName/x.x.x.x
+
+During install, the staged (unpacked, not-installed) version of your app will be searched for any files matching the following patterns:
+
+- hook-first-install*
+- hook-pre-install*
+- hook-post-install*
+
+All matching files found will be executed on the command line. Known extensions will be auto-executed in their appropriate environments presuming that you have all the information required to do this in your environment PATH.
+
+An example:
+
+hook-pre-install.rb will be executed as "ruby hook-pre-install.rb" on the command line.
+
+All deployd directory paths are copied into environmental variables and made available if the script of your choice supports it. These variables start with "Deployd."
+
+An end to end concept
+=====================
+
+Presume you have a copy of TeamCity that is running as a CI server
+
+- On the target server, install deployd.watchman.
+- On the target server, configure deployd to point to your package source, perhaps a network share.
+
+- Add a build step at the end of your build calling deployd-package to package your asset.
+- Add a build step to copy your package to your package location.
+- Add a call to deployd-remote with the package name and target server name as command line parameters.
+
+- You CI server, on pulling a code change, would then build your software, deployd would package it.
+- Your CI server would then copy the asset somewhere.
+- deployd-remote would ask watchman to invoke an install.
+- deployd would pull the package from the published source and install.
+
+Potential enhancements?
+=======================
+
+Deployd notably doesn't keep a map of known environments. This is a design decision that prevents it from requiring a centralised master server.
+In any system of a suitable size, you'll want to keep this environment configuration as code.
+
+I can see scope to enhancing deployd-remote (or building an alternative remote) so that it can keep a configuration file of your server map and you can keep source controlled.
+This configuration file could map servers and their installed apps, so that you could tell the remote to "update-all" on fresh builds, or potentially "update-group-1" followed by "update-group-2" for phased rollouts.
+
+An alternative remote implementation could support auto-registration and server roles.
+
+Design decisions
+================
+
+- Each part of deployd is small and replaceable.
+- Each part operates in conjunction with it's peers, but doesn't depend on them.
+- deployd itself does a single locked install per instance.
+- You must be able to execute any element of deployd by hand

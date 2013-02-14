@@ -17,7 +17,7 @@ namespace deployd.mothership
                         new List<IWindowsService>{ new NancyUi() }.ToArray,
                         installationSettings: (serviceInstaller, serviceProcessInstaller) =>
                             {
-                                serviceInstaller.ServiceName = "deployd.watchman";
+                                serviceInstaller.ServiceName = "deployd.mothership";
                                 serviceInstaller.StartType = ServiceStartMode.Automatic;
                                 serviceProcessInstaller.Account = ServiceAccount.NetworkService;
                             },

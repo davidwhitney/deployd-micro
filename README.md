@@ -20,14 +20,13 @@ Take care of packaging, take care of transport, take care of installation, so th
 What is it then?
 =================
 
-- deployd-micro is four small applications that can be chained together into a deployment pipeline. 
+- deployd-micro is a suite of small applications that can be chained together into a deployment pipeline. 
 - It has baked in conventions for run first, pre and post install hooks and it's built around NuGet and Zip file packages.
 
 What isn't it?
 ==============
 
 - deployd-micro isn't an environment provisioning system/framework. If you're looking for that, go look at Chef for Windows.
-- deployd-micro isn't an environment management tool.
 
 The tools
 ==========
@@ -36,6 +35,7 @@ The tools
 - deployd.watchman => an optional system service installed side by side with deployd, offers a REST interface to trigger deployments and query a servers current state
 - deployd-remote => an optional component that turns a command line call into a watchman API call to trigger deployments remotely
 - deployd-package => a quick and dirty auto-packager that creates a NuGet package out of a directory
+- deployd-mothership => an optional environment grouping and deployment app to trigger deployments visually and radiate status
 
 The idea is that you can chain these tools into any configuration you wish.
 
@@ -83,6 +83,7 @@ Presume you have a copy of TeamCity that is running as a CI server
 
 - On the target server, install deployd.watchman.
 - On the target server, configure deployd to point to your package source, perhaps a network share.
+- Optionally install deployd.mothership on a deployment server with the watchman installs set to autoregister.
 
 - Add a build step at the end of your build calling deployd-package to package your asset.
 - Add a build step to copy your package to your package location.
@@ -92,17 +93,6 @@ Presume you have a copy of TeamCity that is running as a CI server
 - Your CI server would then copy the asset somewhere.
 - deployd-remote would ask watchman to invoke an install.
 - deployd would pull the package from the published source and install.
-
-Potential enhancements?
-=======================
-
-Deployd notably doesn't keep a map of known environments. This is a design decision that prevents it from requiring a centralised master server.
-In any system of a suitable size, you'll want to keep this environment configuration as code.
-
-I can see scope to enhancing deployd-remote (or building an alternative remote) so that it can keep a configuration file of your server map and you can keep source controlled.
-This configuration file could map servers and their installed apps, so that you could tell the remote to "update-all" on fresh builds, or potentially "update-group-1" followed by "update-group-2" for phased rollouts.
-
-An alternative remote implementation could support auto-registration and server roles.
 
 Design decisions
 ================

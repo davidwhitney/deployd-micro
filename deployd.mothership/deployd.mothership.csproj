@@ -37,11 +37,20 @@
     <Reference Include="Nancy">
       <HintPath>..\packages\Nancy.0.16.0\lib\net40\Nancy.dll</HintPath>
     </Reference>
+    <Reference Include="Nancy.Bootstrappers.Ninject">
+      <HintPath>..\packages\Nancy.Bootstrappers.Ninject.0.16.0\lib\net40\Nancy.Bootstrappers.Ninject.dll</HintPath>
+    </Reference>
     <Reference Include="Nancy.Hosting.Self">
       <HintPath>..\packages\Nancy.Hosting.Self.0.16.0\lib\net40\Nancy.Hosting.Self.dll</HintPath>
     </Reference>
     <Reference Include="Nancy.ViewEngines.Razor">
       <HintPath>..\packages\Nancy.Viewengines.Razor.0.16.0\lib\net40\Nancy.ViewEngines.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject">
+      <HintPath>..\packages\Ninject.3.0.1.10\lib\net45-full\Ninject.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Extensions.ChildKernel">
+      <HintPath>..\packages\Ninject.Extensions.ChildKernel.3.0.0.5\lib\net45-full\Ninject.Extensions.ChildKernel.dll</HintPath>
     </Reference>
     <Reference Include="SimpleServices">
       <HintPath>..\packages\simpleservices.1.0.1\lib\Net45\SimpleServices.dll</HintPath>
@@ -63,6 +72,7 @@
   <ItemGroup>
     <Compile Include="AppStart\NancyConventionsBootstrapper.cs" />
     <Compile Include="AppStart\NancyUi.cs" />
+    <Compile Include="Modules\ApiController.cs" />
     <Compile Include="Modules\HomeController.cs" />
     <Compile Include="Program.cs">
       <SubType>Component</SubType>

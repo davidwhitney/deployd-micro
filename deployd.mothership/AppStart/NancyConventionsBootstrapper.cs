@@ -1,14 +1,14 @@
-﻿using Nancy;
-using Nancy.TinyIoc;
-
-namespace deployd.mothership.AppStart
+﻿namespace deployd.mothership.AppStart
 {
-    public class NancyConventionsBootstrapper : DefaultNancyBootstrapper
+    public class NancyConventionsBootstrapper : Nancy.Bootstrappers.Ninject.NinjectNancyBootstrapper
     {
-        protected override void ApplicationStartup(TinyIoCContainer container, Nancy.Bootstrapper.IPipelines pipelines)
+        protected override void ApplicationStartup(Ninject.IKernel container, Nancy.Bootstrapper.IPipelines pipelines)
         {
-            Conventions.ViewLocationConventions.Add((viewName, model, context) => string.Concat("../../Views/", context.ModuleName.Replace("Controller",""), "/", viewName));
-            Conventions.ViewLocationConventions.Add((viewName, model, context) => string.Concat("Views/", context.ModuleName.Replace("Controller",""), "/", viewName));
-        }
+            base.ApplicationStartup(container, pipelines);
+
+            
+            Conventions.ViewLocationConventions.Add((viewName, model, context) => string.Concat("../../Views/", context.ModuleName.Replace("Controller", ""), "/", viewName));
+            Conventions.ViewLocationConventions.Add((viewName, model, context) => string.Concat("Views/", context.ModuleName.Replace("Controller", ""), "/", viewName));
+        } 
     }
 }

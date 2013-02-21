@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.ServiceProcess;
 using SimpleServices;
 using deployd.watchman.AppStart;
@@ -13,8 +14,14 @@ namespace deployd.watchman
     {
         private static void Main(string[] args)
         {
-            new Service(args,
-                        new List<IWindowsService>{ new NancyUi() }.ToArray,
+            var services = new List<IWindowsService> {new NancyUi()};
+
+            if (ConfigurationManager.AppSettings["mothership:Enabled"].ToLower() == "true")
+            {
+                services.Add(new MothershipCommunicator());
+            }
+
+            new Service(args, services.ToArray,
                         installationSettings: (serviceInstaller, serviceProcessInstaller) =>
                             {
                                 serviceInstaller.ServiceName = "deployd.watchman";

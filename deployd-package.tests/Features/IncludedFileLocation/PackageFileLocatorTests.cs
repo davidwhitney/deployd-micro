@@ -31,13 +31,13 @@ namespace deployd_package.tests.Features.IncludedFileLocation
             _fs.Setup(x => x.Directory.GetFiles(It.IsAny<string>()))
                .Returns((string param) => _filesOnDisk.ContainsKey(param) ? _filesOnDisk[param].ToArray() : new string[0]);
             
-            _pfl = new PackageFileLocator(_fs.Object, _rootDir);
+            _pfl = new PackageFileLocator(_fs.Object);
         }
 
         [Test]
         public void IncludedFiles_ReturnsEntryForEachFileInDirectoryStructure()
         {
-            var files = _pfl.IncludedFiles().ToList();
+            var files = _pfl.IncludedFiles(_rootDir).ToList();
 
             Assert.That(files[0].Path, Is.EqualTo("sub-1\\one.txt"));
             Assert.That(files[1].Path, Is.EqualTo("sub-1\\two.txt"));

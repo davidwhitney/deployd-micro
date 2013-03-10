@@ -8,18 +8,16 @@ namespace deployd_package.Features.IncludedFileLocation
     public class PackageFileLocator
     {
         private readonly IFileSystem _fs;
-        private readonly string _rootDirectory;
 
-        public PackageFileLocator(IFileSystem fs, string rootDirectory)
+        public PackageFileLocator(IFileSystem fs)
         {
             _fs = fs;
-            _rootDirectory = rootDirectory;
         }
 
-        public IEnumerable<IPackageFile> IncludedFiles()
+        public IEnumerable<IPackageFile> IncludedFiles(string rootDirectory)
         {
-            var directories = _fs.Directory.GetDirectories(_rootDirectory).ToList();
-            directories.Add(_rootDirectory);
+            var directories = _fs.Directory.GetDirectories(rootDirectory).ToList();
+            directories.Add(rootDirectory);
 
             foreach (var directory in directories)
             {
@@ -30,7 +28,7 @@ namespace deployd_package.Features.IncludedFileLocation
                     yield return new PhysicalPackageFile
                         {
                             SourcePath = file,
-                            TargetPath = file.Replace(_rootDirectory + "\\", string.Empty),
+                            TargetPath = file.Replace(rootDirectory + "\\", string.Empty),
                         };
                 }
             }

@@ -6,14 +6,6 @@ namespace deployd_package.Features.MetadataDiscovery
     {
         private readonly IEnumerable<IMetadataDiscoveryHeuristic> _discoveryHeuristics;
 
-        public PackageMetadataLocator()
-        {
-            _discoveryHeuristics = new List<IMetadataDiscoveryHeuristic>
-                {
-                    new DefaultMetadataDiscoveryHeuristic()
-                };
-        }
-
         public PackageMetadataLocator(IEnumerable<IMetadataDiscoveryHeuristic> discoveryHeuristics)
         {
             _discoveryHeuristics = discoveryHeuristics;

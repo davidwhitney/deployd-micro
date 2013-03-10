@@ -5,20 +5,31 @@ namespace deployd_package.Features.MetadataDiscovery
 {
     public class PackageMetadataLocator
     {
+        private readonly IEnumerable<IMetadataDiscoveryHeuristic> _discoveryHeuristics;
+
         public PackageMetadataLocator()
         {
-            
+            _discoveryHeuristics = new List<IMetadataDiscoveryHeuristic>
+                {
+                    new DefaultMetadataDiscoveryHeuristic()
+                };
         }
 
-        public static PackageMetadata DiscoverPackageMetadata(string discoveryRoot)
+        public PackageMetadataLocator(IEnumerable<IMetadataDiscoveryHeuristic> discoveryHeuristics)
         {
-            return new PackageMetadata
-                {
-                    Id = "tempid",
-                    Version = new SemanticVersion(1, 0, 0, 0),
-                    Description = "desc",
-                    Authors = new List<string> {"temp-author"}
-                };
+            _discoveryHeuristics = discoveryHeuristics;
+        }
+
+        public PackageMetadata DiscoverPackageMetadata(string discoveryRoot)
+        {
+            var packageMetadata = new PackageMetadata();
+
+            foreach (var heuristic in _discoveryHeuristics)
+            {
+                heuristic.DiscoverMetadataProperties(packageMetadata);
+            }
+
+            return packageMetadata;
         }
     }
 }

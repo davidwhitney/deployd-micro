@@ -50,6 +50,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Features\MetadataDiscovery\DefaultMetadataDiscoveryHeuristic.cs" />
+    <Compile Include="Features\MetadataDiscovery\IMetadataDiscoveryHeuristic.cs" />
     <Compile Include="Features\PackageBuilding\PackageConstructor.cs" />
     <Compile Include="Features\IncludedFileLocation\PackageFileLocator.cs" />
     <Compile Include="Features\MetadataDiscovery\PackageMetadata.cs" />

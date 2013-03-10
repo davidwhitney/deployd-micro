@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using NuGet;
+using deployd_package.Features.MetadataDiscovery;
 
-namespace deployd_package
+namespace deployd_package.Features.PackageBuilding
 {
     public class PackageConstructor
     {

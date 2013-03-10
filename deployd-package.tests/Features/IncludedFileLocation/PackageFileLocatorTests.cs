@@ -3,8 +3,9 @@ using System.IO.Abstractions;
 using System.Linq;
 using Moq;
 using NUnit.Framework;
+using deployd_package.Features.IncludedFileLocation;
 
-namespace deployd_package.tests
+namespace deployd_package.tests.Features.IncludedFileLocation
 {
     [TestFixture]
     public class PackageFileLocatorTests

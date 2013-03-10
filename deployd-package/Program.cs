@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.IO.Abstractions;
+using deployd_package.Features.IncludedFileLocation;
+using deployd_package.Features.MetadataDiscovery;
+using deployd_package.Features.PackageBuilding;
 
 namespace deployd_package
 {

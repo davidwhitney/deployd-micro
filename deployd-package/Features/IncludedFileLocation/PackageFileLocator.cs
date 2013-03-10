@@ -3,7 +3,7 @@ using System.Linq;
 using NuGet;
 using IFileSystem = System.IO.Abstractions.IFileSystem;
 
-namespace deployd_package
+namespace deployd_package.Features.IncludedFileLocation
 {
     public class PackageFileLocator
     {

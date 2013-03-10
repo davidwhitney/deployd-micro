@@ -50,10 +50,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PackageConstructor.cs" />
-    <Compile Include="PackageFileLocator.cs" />
-    <Compile Include="PackageMetadata.cs" />
-    <Compile Include="PackageMetadataLocator.cs" />
+    <Compile Include="Features\PackageBuilding\PackageConstructor.cs" />
+    <Compile Include="Features\IncludedFileLocation\PackageFileLocator.cs" />
+    <Compile Include="Features\MetadataDiscovery\PackageMetadata.cs" />
+    <Compile Include="Features\MetadataDiscovery\PackageMetadataLocator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

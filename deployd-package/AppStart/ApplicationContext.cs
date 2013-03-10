@@ -19,7 +19,7 @@ namespace deployd_package.AppStart
 
             var log = Kernel.Get<ILog>();
             log.Info("deployd-package");
-            log.Info("version: " + typeof(Program).Assembly.GetName().Version);
+            log.Info("version: " + GetType().Assembly.GetName().Version);
         }
 
         private static IKernel CreateKernel()

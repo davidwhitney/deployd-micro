@@ -1,6 +1,7 @@
 ﻿using System;
 using Ninject;
 using deployd_package.AppStart;
+using deployd_package.Features.Configuration;
 
 namespace deployd_package
 {
@@ -9,15 +10,15 @@ namespace deployd_package
         private static void Main(string[] args)
         {
             var context = new ApplicationContext();
+            var cfg = new Configuration(args);
 
-            if (args.Length < 1)
+            if (cfg.ShowHelp)
             { 
-                Console.WriteLine("No path supplied.");
+                cfg.Options.WriteOptionDescriptions(Console.Out);
             }
 
-            var packageSourceRoot = args[0];
             var packager = context.Kernel.Get<Packager>();
-            packager.Package(packageSourceRoot, string.Empty);
+            packager.Package(cfg.SourceDirectory, cfg.OutputDirectory);
         }     
     }
 }

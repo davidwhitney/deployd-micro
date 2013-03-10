@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using deployd_package.Features.MetadataDiscovery;
 
 namespace deployd_package.tests.Features.MetadataDiscovery
@@ -14,14 +13,14 @@ namespace deployd_package.tests.Features.MetadataDiscovery
         public void SetUp()
         {
             _discoveryRoot = "";
-            _disc = new PackageMetadataLocator(new List<IMetadataDiscoveryHeuristic>());
+            _disc = new PackageMetadataLocator(new MetadataDiscoveryHeuristics());
         }
 
         [Test]
         public void DiscoverPackageMetadata_ExecutesEmbeddedLocationHeuristics()
         {
             var heuristic = new FakeHeuristic();
-            _disc = new PackageMetadataLocator(new List<IMetadataDiscoveryHeuristic> { heuristic });
+            _disc = new PackageMetadataLocator(new MetadataDiscoveryHeuristics { heuristic });
             
             _disc.DiscoverPackageMetadata(_discoveryRoot);
 
@@ -38,7 +37,7 @@ namespace deployd_package.tests.Features.MetadataDiscovery
         private class FakeHeuristic : IMetadataDiscoveryHeuristic
         {
             public bool Executed { get; private set; }
-            public void DiscoverMetadataProperties(PackageMetadata discoveredMetadata)
+            public void DiscoverMetadataProperties(PackageMetadata discoveredMetadata, string discoveryRoot)
             {
                 Executed = true;
             }

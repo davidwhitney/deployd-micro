@@ -2,6 +2,6 @@
 {
     public interface IMetadataDiscoveryHeuristic
     {
-        void DiscoverMetadataProperties(PackageMetadata discoveredMetadata);
+        void DiscoverMetadataProperties(PackageMetadata discoveredMetadata, string discoveryRoot);
     }
 }

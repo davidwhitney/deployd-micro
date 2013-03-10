@@ -32,6 +32,12 @@ namespace deployd_package.AppStart
             kernel.Bind(scanner => scanner.FromThisAssembly().Select(IsServiceType).BindDefaultInterfaces());
             kernel.Bind(scanner => scanner.FromThisAssembly().Select(IsHeuristic).BindDefaultInterfaces());
 
+            kernel.Bind<MetadataDiscoveryHeuristics>().ToMethod(x => new MetadataDiscoveryHeuristics
+                {
+                    x.Kernel.Get<DefaultMetadataDiscoveryHeuristic>(),
+                    x.Kernel.Get<InferPackageDetailsFromSingleFoundExecutable>()
+                });
+
             return kernel;
         }
 

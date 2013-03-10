@@ -1,12 +1,10 @@
-﻿using System.Collections.Generic;
-
-namespace deployd_package.Features.MetadataDiscovery
+﻿namespace deployd_package.Features.MetadataDiscovery
 {
     public class PackageMetadataLocator
     {
-        private readonly IEnumerable<IMetadataDiscoveryHeuristic> _discoveryHeuristics;
+        private readonly MetadataDiscoveryHeuristics _discoveryHeuristics;
 
-        public PackageMetadataLocator(IEnumerable<IMetadataDiscoveryHeuristic> discoveryHeuristics)
+        public PackageMetadataLocator(MetadataDiscoveryHeuristics discoveryHeuristics)
         {
             _discoveryHeuristics = discoveryHeuristics;
         }
@@ -17,7 +15,7 @@ namespace deployd_package.Features.MetadataDiscovery
 
             foreach (var heuristic in _discoveryHeuristics)
             {
-                heuristic.DiscoverMetadataProperties(packageMetadata);
+                heuristic.DiscoverMetadataProperties(packageMetadata, discoveryRoot);
             }
 
             return packageMetadata;

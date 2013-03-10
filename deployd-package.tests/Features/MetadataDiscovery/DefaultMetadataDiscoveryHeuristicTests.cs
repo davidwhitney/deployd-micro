@@ -20,7 +20,7 @@ namespace deployd_package.tests.Features.MetadataDiscovery
         {
             var meta = new PackageMetadata();
 
-            _disc.DiscoverMetadataProperties(meta);
+            _disc.DiscoverMetadataProperties(meta, string.Empty);
 
             Assert.That(meta.Authors[0], Is.EqualTo("Author"));
             Assert.That(meta.Description, Is.EqualTo("Package description"));

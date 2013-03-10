@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using NuGet;
 
 namespace deployd_package.Features.MetadataDiscovery
 {

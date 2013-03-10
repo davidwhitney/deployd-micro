@@ -1,10 +1,10 @@
 ﻿using System;
-using System.IO.Abstractions;
 using System.Linq;
 using Ninject;
 using Ninject.Extensions.Conventions;
 using deployd_package.Features.MetadataDiscovery;
 using log4net;
+using IFileSystem = System.IO.Abstractions.IFileSystem;
 
 namespace deployd_package.AppStart
 {
@@ -14,10 +14,10 @@ namespace deployd_package.AppStart
 
         public ApplicationContext()
         {
-            var kernel = CreateKernel();
+            Kernel = CreateKernel();
             log4net.Config.XmlConfigurator.Configure();
 
-            var log = kernel.Get<ILog>();
+            var log = Kernel.Get<ILog>();
             log.Info("deployd-package");
             log.Info("version: " + typeof(Program).Assembly.GetName().Version);
         }
@@ -25,11 +25,12 @@ namespace deployd_package.AppStart
         private static IKernel CreateKernel()
         {
             var kernel = new StandardKernel();
+            kernel.Bind<ILog>().ToMethod(x => LogManager.GetLogger("default")).InSingletonScope();
+
+            kernel.Bind(scanner => scanner.FromAssemblyContaining<IFileSystem>().Select(IsServiceType).BindDefaultInterfaces());
 
             kernel.Bind(scanner => scanner.FromThisAssembly().Select(IsServiceType).BindDefaultInterfaces());
             kernel.Bind(scanner => scanner.FromThisAssembly().Select(IsHeuristic).BindDefaultInterfaces());
-            kernel.Bind(scanner => scanner.FromAssemblyContaining<IFileSystem>().Select(IsServiceType).BindDefaultInterfaces());
-            kernel.Bind<ILog>().ToMethod(x => LogManager.GetLogger("default")).InSingletonScope();
 
             return kernel;
         }

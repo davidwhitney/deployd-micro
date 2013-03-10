@@ -6,7 +6,7 @@ namespace deployd_package.Features.PackageBuilding
 {
     public class PackageConstructor
     {
-        public static PackageBuilder BuildPackage(IEnumerable<IPackageFile> packageFiles, PackageMetadata metaData)
+        public PackageBuilder BuildPackage(IEnumerable<IPackageFile> packageFiles, PackageMetadata metaData)
         {
             var package = new PackageBuilder
             {

@@ -10,7 +10,9 @@ namespace deployd_package.AppStart
 {
     public class ApplicationContext
     {
-        public IKernel Start()
+        public IKernel Kernel { get; set; }
+
+        public ApplicationContext()
         {
             var kernel = CreateKernel();
             log4net.Config.XmlConfigurator.Configure();
@@ -18,8 +20,6 @@ namespace deployd_package.AppStart
             var log = kernel.Get<ILog>();
             log.Info("deployd-package");
             log.Info("version: " + typeof(Program).Assembly.GetName().Version);
-
-            return kernel;
         }
 
         private static IKernel CreateKernel()

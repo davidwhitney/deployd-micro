@@ -12,7 +12,7 @@ namespace deployd_package
     {
         private static void Main(string[] args)
         {
-            var kernel = new ApplicationContext().Start();
+            var context = new ApplicationContext();
 
             if (args.Length < 1)
             {
@@ -20,12 +20,13 @@ namespace deployd_package
             }
 
             var packageSourceRoot = args[0];
-            var directoryInspector = kernel.Get<PackageFileLocator>();
-            var metaDataLocator = kernel.Get<PackageMetadataLocator>();
+            var directoryInspector = context.Kernel.Get<PackageFileLocator>();
+            var metaDataLocator = context.Kernel.Get<PackageMetadataLocator>();
+            var packageConstructor = context.Kernel.Get<PackageConstructor>();
 
             var includedFiles = directoryInspector.IncludedFiles(packageSourceRoot);
             var metaData = metaDataLocator.DiscoverPackageMetadata(packageSourceRoot);
-            var package = PackageConstructor.BuildPackage(includedFiles, metaData);
+            var package = packageConstructor.BuildPackage(includedFiles, metaData);
 
             using (var fs = new FileStream(metaData.PackageFilename, FileMode.Create))
             {

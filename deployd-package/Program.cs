@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.IO.Abstractions;
-using NuGet;
 
 namespace deployd_package
 {
@@ -14,24 +13,14 @@ namespace deployd_package
                 Console.WriteLine("No path supplied.");
             }
 
-            var directoryInspector = new PackageFileLocator(new FileSystem(), args[0]);
+            var packageSourceRoot = args[0];
+            var directoryInspector = new PackageFileLocator(new FileSystem(), packageSourceRoot);
 
-            // need to fill in order discover all these bits
-            var package = new PackageBuilder
-                {
-                    Id = "temporary-id",
-                    Version = new SemanticVersion(1, 0, 0, 0),
-                    Description = "desc"
-                };
-            package.Authors.Add("Author");
+            var includedFiles = directoryInspector.IncludedFiles();
+            var metaData = PackageMetadataLocator.DiscoverPackageMetadata(packageSourceRoot);
+            var package = PackageConstructor.BuildPackage(includedFiles, metaData);
 
-            foreach (var file in directoryInspector.IncludedFiles())
-            {
-                package.Files.Add(file);
-            }
-
-            var packageOutputFilename = string.Format("{0}-{1}.nupkg", package.Id, package.Version);
-            using (var fs = new FileStream(packageOutputFilename, FileMode.Create))
+            using (var fs = new FileStream(metaData.PackageFilename, FileMode.Create))
             {
                 package.Save(fs);
                 fs.Close();

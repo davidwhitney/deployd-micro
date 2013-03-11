@@ -28,7 +28,6 @@ namespace deployd_package.tests.Features.MetadataDiscovery
             _dllFilesOnDisk = new List<string>();
             _fs.Setup(x => x.Directory.GetFiles(It.IsAny<string>(), "*.exe", SearchOption.AllDirectories)).Returns(_exeFilesOnDisk.ToArray);
             _fs.Setup(x => x.Directory.GetFiles(It.IsAny<string>(), "*.dll", SearchOption.AllDirectories)).Returns(_dllFilesOnDisk.ToArray);
-            _fs.Setup(x => x.Directory.GetFiles(It.IsAny<string>(), "*.dll", SearchOption.AllDirectories)).Returns(_dllFilesOnDisk.ToArray);
 
             _mapper = new Mock<IPackageDetailsFromAssemblyMapper>();
             _mapper.Setup(x => x.MapAssemblyInfoToPackage(It.IsAny<string>(), It.IsAny<PackageMetadata>()))

@@ -15,6 +15,7 @@ namespace deployd_package.tests.Features.MetadataDiscovery
         private DiscoverPackageConfigurationMetadataFile _heuristic;
         private List<string> _packageManifests;
         private string _discoveryRoot;
+        private Mock<IConventionsSettingsFileLoader> _settingsLoader;
         private const string SettingsFilename = "settings.deployd-package";
 
         [SetUp]
@@ -22,9 +23,10 @@ namespace deployd_package.tests.Features.MetadataDiscovery
         {
             _discoveryRoot = "c:\\root";
             _fs = new Mock<IFileSystem>();
+            _settingsLoader = new Mock<IConventionsSettingsFileLoader>();
             _packageManifests = new List<string>();
             _fs.Setup(x => x.Directory.GetFiles(It.IsAny<string>(), "*.deployd-package", SearchOption.AllDirectories)).Returns(_packageManifests.ToArray);
-            _heuristic = new DiscoverPackageConfigurationMetadataFile(_fs.Object);
+            _heuristic = new DiscoverPackageConfigurationMetadataFile(_fs.Object, _settingsLoader.Object);
         }
 
         [Test]
@@ -44,11 +46,11 @@ namespace deployd_package.tests.Features.MetadataDiscovery
         {
             var meta = new PackageMetadata();
             _packageManifests.Add(SettingsFilename);
-            _fs.Setup(x => x.File.ReadAllText(SettingsFilename)).Returns(string.Empty);
+            _settingsLoader.Setup(x => x.Load(SettingsFilename)).Returns(new ConventionsSettingsFile());
 
             _heuristic.DiscoverMetadataProperties(meta, _discoveryRoot);
 
-            _fs.Verify(x => x.File.ReadAllText(SettingsFilename), Times.Once());
+            _settingsLoader.Verify(x => x.Load(SettingsFilename), Times.Once());
         }
     }
 }

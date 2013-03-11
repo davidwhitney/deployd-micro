@@ -64,6 +64,8 @@
   <ItemGroup>
     <Compile Include="AppStart\ApplicationContext.cs" />
     <Compile Include="Features\Configuration\Configuration.cs" />
+    <Compile Include="Features\MetadataDiscovery\ConventionsSettingsFile.cs" />
+    <Compile Include="Features\MetadataDiscovery\ConventionsSettingsFileLoader.cs" />
     <Compile Include="Features\MetadataDiscovery\DefaultMetadataDiscoveryHeuristic.cs" />
     <Compile Include="Features\MetadataDiscovery\DiscoverPackageConfigurationMetadataFile.cs" />
     <Compile Include="Features\MetadataDiscovery\IMetadataDiscoveryHeuristic.cs" />

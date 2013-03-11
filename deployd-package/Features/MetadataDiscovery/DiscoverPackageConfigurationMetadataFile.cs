@@ -6,10 +6,12 @@ namespace deployd_package.Features.MetadataDiscovery
     public class DiscoverPackageConfigurationMetadataFile : IMetadataDiscoveryHeuristic
     {       
         private readonly System.IO.Abstractions.IFileSystem _fs;
+        private readonly IConventionsSettingsFileLoader _settingsFileLoader;
 
-        public DiscoverPackageConfigurationMetadataFile(System.IO.Abstractions.IFileSystem fs)
+        public DiscoverPackageConfigurationMetadataFile(System.IO.Abstractions.IFileSystem fs, IConventionsSettingsFileLoader settingsFileLoader)
         {
             _fs = fs;
+            _settingsFileLoader = settingsFileLoader;
         }
 
         public void DiscoverMetadataProperties(PackageMetadata discoveredMetadata, string discoveryRoot)
@@ -26,7 +28,7 @@ namespace deployd_package.Features.MetadataDiscovery
                 throw new InvalidOperationException("More than one packing convention file found in source directory.");
             }
 
-            var conventions = _fs.File.ReadAllText(matchingFiles[0]);
+            var conventionsFile = _settingsFileLoader.Load(matchingFiles[0]);
         }
     }
 }

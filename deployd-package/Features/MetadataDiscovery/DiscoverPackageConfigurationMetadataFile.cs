@@ -26,7 +26,7 @@ namespace deployd_package.Features.MetadataDiscovery
                 throw new InvalidOperationException("More than one packing convention file found in source directory.");
             }
 
-            var conventionFile = matchingFiles.First();
+            var conventions = _fs.File.ReadAllText(matchingFiles[0]);
         }
     }
 }

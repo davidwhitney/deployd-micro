@@ -15,6 +15,7 @@ namespace deployd_package.tests.Features.MetadataDiscovery
         private DiscoverPackageConfigurationMetadataFile _heuristic;
         private List<string> _packageManifests;
         private string _discoveryRoot;
+        private const string SettingsFilename = "settings.deployd-package";
 
         [SetUp]
         public void SetUp()
@@ -30,12 +31,24 @@ namespace deployd_package.tests.Features.MetadataDiscovery
         public void MoreThanOnePackageManifestPresent_ThrowsException()
         {
             var meta = new PackageMetadata();
-            _packageManifests.Add("settings.deployd-package");
+            _packageManifests.Add(SettingsFilename);
             _packageManifests.Add("settings2.deployd-package");
 
             var ex = Assert.Throws<InvalidOperationException>(() => _heuristic.DiscoverMetadataProperties(meta, _discoveryRoot));
 
             Assert.That(ex.Message, Is.EqualTo("More than one packing convention file found in source directory."));
+        }
+
+        [Test]
+        public void OnePackageManifestPresent_LoadsPackageSettingsFile()
+        {
+            var meta = new PackageMetadata();
+            _packageManifests.Add(SettingsFilename);
+            _fs.Setup(x => x.File.ReadAllText(SettingsFilename)).Returns(string.Empty);
+
+            _heuristic.DiscoverMetadataProperties(meta, _discoveryRoot);
+
+            _fs.Verify(x => x.File.ReadAllText(SettingsFilename), Times.Once());
         }
     }
 }

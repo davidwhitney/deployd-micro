@@ -69,6 +69,7 @@
     <Compile Include="Features\MetadataDiscovery\IMetadataDiscoveryHeuristic.cs" />
     <Compile Include="Features\MetadataDiscovery\InferPackageDetailsFromSingleFoundExecutable.cs" />
     <Compile Include="Features\MetadataDiscovery\MetadataDiscoveryHeuristics.cs" />
+    <Compile Include="Features\MetadataDiscovery\PackageDetailsFromAssemblyMapper.cs" />
     <Compile Include="Features\PackageBuilding\PackageConstructor.cs" />
     <Compile Include="Features\IncludedFileLocation\PackageFileLocator.cs" />
     <Compile Include="Features\MetadataDiscovery\PackageMetadata.cs" />

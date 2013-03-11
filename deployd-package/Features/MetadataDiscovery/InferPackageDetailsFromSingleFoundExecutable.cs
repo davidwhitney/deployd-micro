@@ -1,18 +1,18 @@
-﻿using System.Diagnostics;
-using System.Linq;
-using NuGet;
+﻿using System.Linq;
 
 namespace deployd_package.Features.MetadataDiscovery
 {
     public class InferPackageDetailsFromSingleFoundExecutable : IMetadataDiscoveryHeuristic
     {
         private readonly System.IO.Abstractions.IFileSystem _fs;
+        private readonly IPackageDetailsFromAssemblyMapper _fromAssemblyMapper;
 
-        public InferPackageDetailsFromSingleFoundExecutable(System.IO.Abstractions.IFileSystem fs)
+        public InferPackageDetailsFromSingleFoundExecutable(System.IO.Abstractions.IFileSystem fs, IPackageDetailsFromAssemblyMapper fromAssemblyMapper)
         {
             _fs = fs;
+            _fromAssemblyMapper = fromAssemblyMapper;
         }
-        
+
         public void DiscoverMetadataProperties(PackageMetadata discoveredMetadata, string discoveryRoot)
         {
             var matchingFiles = _fs.Directory.GetFiles(discoveryRoot, "*.exe", System.IO.SearchOption.AllDirectories).ToList();
@@ -23,17 +23,7 @@ namespace deployd_package.Features.MetadataDiscovery
                 return;
             }
 
-            var vi = FileVersionInfo.GetVersionInfo(matchingFiles[0]);
-
-            discoveredMetadata.Id = vi.ProductName;
-            discoveredMetadata.Version = new SemanticVersion(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
-            discoveredMetadata.Description = vi.FileDescription;
-
-            if (!string.IsNullOrWhiteSpace(vi.CompanyName))
-            {
-                discoveredMetadata.Authors.Clear();
-                discoveredMetadata.Authors.Add(vi.CompanyName);
-            }
+            _fromAssemblyMapper.MapAssemblyInfoToPackage(matchingFiles[0], discoveredMetadata);
         }
     }
 }

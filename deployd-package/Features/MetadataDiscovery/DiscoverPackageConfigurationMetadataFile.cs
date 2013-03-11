@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 namespace deployd_package.Features.MetadataDiscovery
 {
@@ -18,6 +19,11 @@ namespace deployd_package.Features.MetadataDiscovery
             if (matchingFiles.Count == 0)
             {
                 return;
+            }
+
+            if (matchingFiles.Count > 1)
+            {
+                throw new InvalidOperationException("More than one packing convention file found in source directory.");
             }
 
             var conventionFile = matchingFiles.First();

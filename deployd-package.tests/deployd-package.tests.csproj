@@ -63,6 +63,7 @@
     <Compile Include="Features\MetadataDiscovery\DefaultMetadataDiscoveryHeuristicTests.cs" />
     <Compile Include="Features\MetadataDiscovery\InferPackageDetailsFromSingleFoundExecutableTests.cs" />
     <Compile Include="Features\MetadataDiscovery\PackageMetadataLocatorTests.cs" />
+    <Compile Include="Features\PackageBuilding\PackageConstructorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

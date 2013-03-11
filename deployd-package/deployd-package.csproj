@@ -65,6 +65,7 @@
     <Compile Include="AppStart\ApplicationContext.cs" />
     <Compile Include="Features\Configuration\Configuration.cs" />
     <Compile Include="Features\MetadataDiscovery\DefaultMetadataDiscoveryHeuristic.cs" />
+    <Compile Include="Features\MetadataDiscovery\DiscoverPackageConfigurationMetadataFile.cs" />
     <Compile Include="Features\MetadataDiscovery\IMetadataDiscoveryHeuristic.cs" />
     <Compile Include="Features\MetadataDiscovery\InferPackageDetailsFromSingleFoundExecutable.cs" />
     <Compile Include="Features\MetadataDiscovery\MetadataDiscoveryHeuristics.cs" />

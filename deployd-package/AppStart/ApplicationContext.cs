@@ -35,7 +35,8 @@ namespace deployd_package.AppStart
             kernel.Bind<MetadataDiscoveryHeuristics>().ToMethod(x => new MetadataDiscoveryHeuristics
                 {
                     x.Kernel.Get<DefaultMetadataDiscoveryHeuristic>(),
-                    x.Kernel.Get<InferPackageDetailsFromSingleFoundExecutable>()
+                    x.Kernel.Get<InferPackageDetailsFromSingleFoundExecutable>(),
+                    x.Kernel.Get<DiscoverPackageConfigurationMetadataFile>()
                 });
 
             return kernel;

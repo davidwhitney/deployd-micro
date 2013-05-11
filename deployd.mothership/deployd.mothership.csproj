@@ -52,8 +52,9 @@
     <Reference Include="Ninject.Extensions.ChildKernel">
       <HintPath>..\packages\Ninject.Extensions.ChildKernel.3.0.0.5\lib\net45-full\Ninject.Extensions.ChildKernel.dll</HintPath>
     </Reference>
-    <Reference Include="SimpleServices">
-      <HintPath>..\packages\simpleservices.1.0.1\lib\Net45\SimpleServices.dll</HintPath>
+    <Reference Include="SimpleServices, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\simpleservices.1.0.5\lib\Net45\SimpleServices.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration.Install" />

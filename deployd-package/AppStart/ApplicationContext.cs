@@ -36,7 +36,8 @@ namespace deployd_package.AppStart
                 {
                     x.Kernel.Get<DefaultMetadataDiscoveryHeuristic>(),
                     x.Kernel.Get<InferPackageDetailsFromSingleFoundExecutable>(),
-                    x.Kernel.Get<DiscoverPackageConfigurationMetadataFile>()
+                    x.Kernel.Get<DiscoverPackageConfigurationMetadataFile>(),
+                    x.Kernel.Get<InferPackageDetailsForWebsite>(),
                 });
 
             return kernel;

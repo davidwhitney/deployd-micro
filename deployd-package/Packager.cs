@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using NuGet;
 using deployd_package.Features.IncludedFileLocation;
 using deployd_package.Features.MetadataDiscovery;
 using deployd_package.Features.PackageBuilding;
@@ -18,11 +20,13 @@ namespace deployd_package
             _constructor = constructor;
         }
 
-        public void Package(string source, string destination)
+        public void Package(string source, string destination, Version forcedVersion=null)
         {
             var includedFiles = _packageFileLocator.IncludedFiles(source);
             var metaData = _metaDataLocator.DiscoverPackageMetadata(source);
             var package = _constructor.BuildPackage(includedFiles, metaData);
+            if (forcedVersion != null)
+                metaData.Version = new SemanticVersion(forcedVersion);
 
             var outputLocation = Path.Combine(destination, metaData.PackageFilename);
 

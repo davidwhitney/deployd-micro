@@ -31,6 +31,15 @@ namespace deployd_package.Features.MetadataDiscovery
                 _log.DebugFormat("Inferring package metadata for web application {0}", webAppAssemblyPath);
                 _fromAssemblyMapper.MapAssemblyInfoToPackage(webAppAssemblyPath, discoveredMetadata);
             }
+
+            if (string.IsNullOrWhiteSpace(discoveredMetadata.Id))
+            {
+                discoveredMetadata.Id = webAppName;
+            }
+            if (string.IsNullOrWhiteSpace(discoveredMetadata.Description))
+            {
+                discoveredMetadata.Description = webAppName + " description";
+            }
         }
     }
 }

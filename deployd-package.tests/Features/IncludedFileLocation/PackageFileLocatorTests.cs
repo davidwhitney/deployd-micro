@@ -4,6 +4,7 @@ using System.Linq;
 using Moq;
 using NUnit.Framework;
 using deployd_package.Features.IncludedFileLocation;
+using log4net;
 
 namespace deployd_package.tests.Features.IncludedFileLocation
 {
@@ -14,12 +15,14 @@ namespace deployd_package.tests.Features.IncludedFileLocation
         private Mock<IFileSystem> _fs;
         private string _rootDir;
         private Dictionary<string, string[]> _filesOnDisk;
+        private Mock<ILog> _log;
 
         [SetUp]
         public void SetUp()
         {
             _rootDir = "c:\\package-source-dir";
             _fs = new Mock<IFileSystem>();
+            _log = new Mock<ILog>();
 
             _filesOnDisk = new Dictionary<string, string[]>
                 {
@@ -30,8 +33,8 @@ namespace deployd_package.tests.Features.IncludedFileLocation
             _fs.Setup(x => x.Directory.GetDirectories(_rootDir)).Returns(_filesOnDisk.Keys.ToArray());
             _fs.Setup(x => x.Directory.GetFiles(It.IsAny<string>()))
                .Returns((string param) => _filesOnDisk.ContainsKey(param) ? _filesOnDisk[param].ToArray() : new string[0]);
-            
-            _pfl = new PackageFileLocator(_fs.Object);
+
+            _pfl = new PackageFileLocator(_fs.Object, _log.Object);
         }
 
         [Test]

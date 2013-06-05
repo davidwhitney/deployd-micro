@@ -17,5 +17,6 @@ namespace deployd.Extensibility.Configuration
         PackageLocation<object> PackageLocation { get; set; }
 
         IApplicationMap ApplicationMap { get; set; }
+        string Environment { get; set; }
     }
 }

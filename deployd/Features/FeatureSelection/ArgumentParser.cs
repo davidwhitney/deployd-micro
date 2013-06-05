@@ -20,6 +20,7 @@ namespace deployd.Features.FeatureSelection
                 {
                     {"app=", v => cfg.AppName = v},
                     {"i|install", v => cfg.Install = v != null},
+                    {"e|environment=", v => cfg.Environment = v},
                     {"v|verbose", v => cfg.Verbose = v != null},
                     {"h|?|help", v => cfg.Help = v != null},
                 };

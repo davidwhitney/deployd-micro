@@ -12,16 +12,19 @@ namespace deployd.Features.AppExtraction
     {
         private readonly IApplicationFactory _appFactory;
         private readonly IInstallationRoot _installRoot;
+        private readonly IEnumerable<IApplicationConfigurator> _configurators;
         private readonly IList<IPackageExtractor> _extractors;
         private readonly IInstanceConfiguration _config;
 
         public AppExtractionCommand(IEnumerable<IPackageExtractor> extractors, 
             IInstanceConfiguration config,
             IApplicationFactory appFactory, 
-            IInstallationRoot installRoot)
+            IInstallationRoot installRoot,
+            IEnumerable<IApplicationConfigurator> configurators )
         {
             _appFactory = appFactory;
             _installRoot = installRoot;
+            _configurators = configurators;
             _extractors = extractors.ToList();
             _config = config;
 
@@ -46,6 +49,19 @@ namespace deployd.Features.AppExtraction
             var extractor = GetExtractorFor(packageInfo);
 
             extractor.Unpack(_config.ApplicationMap.Staging, packageInfo);
+
+            var configurer = GetConfiguratorFor(packageInfo);
+            configurer.Configure(_config.ApplicationMap.Staging, packageInfo, _config.Environment);
+        }
+
+        private IApplicationConfigurator GetConfiguratorFor(object packageInfo)
+        {
+            var configurator = _configurators.FirstOrDefault(x => x.CanConfigure(packageInfo));
+            if (configurator == null)
+            {
+                throw new InvalidOperationException("No supported configurator");
+            }
+            return configurator;
         }
 
         private IPackageExtractor GetExtractorFor(object packageInfo)

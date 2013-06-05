@@ -38,6 +38,7 @@ namespace deployd.AppStart
             kernel.Bind(scanner => scanner.FromThisAssembly().Select(IsInstallationLocator).BindAllInterfaces());
             kernel.Bind(scanner => scanner.FromThisAssembly().Select(IsPackageExtractor).BindAllInterfaces());
             kernel.Bind(scanner => scanner.FromThisAssembly().Select(IsHookRunner).BindAllInterfaces());
+            kernel.Bind(scanner => scanner.FromThisAssembly().Select(IsApplicationConfigurator).BindAllInterfaces());
 
             kernel.Bind(scanner => scanner.FromAssemblyContaining<IFileSystem>().Select(IsServiceType).BindDefaultInterfaces());
             kernel.Bind(scanner => scanner.FromAssemblyContaining<IPackageRepositoryFactory>().Select(IsServiceType).BindDefaultInterfaces());
@@ -67,6 +68,11 @@ namespace deployd.AppStart
         private static bool IsPackageExtractor(Type type)
         {
             return type.IsClass && type.GetInterfaces().Any(intface => intface.Name == typeof(IPackageExtractor).Name);
+        }
+
+        private static bool IsApplicationConfigurator(Type type)
+        {
+            return type.IsClass && type.GetInterfaces().Any(intface => intface.Name == typeof(IApplicationConfigurator).Name);
         }
 
         private static bool IsHookRunner(Type type)

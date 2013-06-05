@@ -17,6 +17,7 @@ namespace deployd.Features.FeatureSelection
         public PackageLocation<object> PackageLocation { get; set; }
 
         public IApplicationMap ApplicationMap { get; set; }
+        public string Environment { get; set; }
 
         public InstanceConfiguration()
         {

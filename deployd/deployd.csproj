@@ -40,6 +40,10 @@
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Web.Publishing.Tasks, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Microsoft.Web.Publishing.Tasks.Dll</HintPath>
+    </Reference>
     <Reference Include="NDesk.Options">
       <HintPath>..\packages\NDesk.Options.0.2.1\lib\NDesk.Options.dll</HintPath>
     </Reference>
@@ -70,6 +74,8 @@
   <ItemGroup>
     <Compile Include="AppStart\ApplicationContext.cs" />
     <Compile Include="AppStart\NinjectExtensions.cs" />
+    <Compile Include="Features\AppExtraction\DefaultApplicationConfigurator.cs" />
+    <Compile Include="Features\AppExtraction\IApplicationConfigurator.cs" />
     <Compile Include="Features\AppExtraction\ZipFilePackageExtractor.cs" />
     <Compile Include="Features\AppInstallation\HookExecution\ClassHookRunner.cs" />
     <Compile Include="Features\AppInstallation\HookFailureException.cs" />
@@ -116,6 +122,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="lib\Microsoft.Web.Publishing.Tasks.Dll" />
+    <Content Include="TransformVsConfiguration.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="App.config" />
     <Content Include="config.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

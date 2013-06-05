@@ -12,11 +12,13 @@ namespace deployd_remote
             var appName = string.Empty;
             var hostName = string.Empty;
             var help = false;
-
+            var environment=string.Empty;
+            
             var p = new OptionSet
                 {
                     {"app=", v => appName = v},
                     {"host=", v => hostName = v},
+                    {"e|environment=", v => environment = v},
                     {"h|?|help", v => help = v != null},
                 };
             p.Parse(args);
@@ -28,7 +30,12 @@ namespace deployd_remote
             }
 
             var restClient = new RestClient("http://" + hostName + ":9000");
-            var request = new RestRequest("/api/v1/install-queue/" + appName, Method.POST) {RequestFormat = DataFormat.Json};
+            var requestUrl = "/api/v1/install-queue/" + appName;
+            if (!string.IsNullOrWhiteSpace(environment))
+            {
+                requestUrl += "?environment=" + environment;
+            }
+            var request = new RestRequest(requestUrl, Method.POST) { RequestFormat = DataFormat.Json };
             request.AddBody(new { @null = string.Empty });
             var response = restClient.Post(request);
 

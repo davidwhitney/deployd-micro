@@ -55,12 +55,12 @@ namespace deployd.watchman.Services
             return !_fs.File.Exists(map.VersionFile) ? string.Empty : _fs.File.ReadAllText(map.VersionFile);
         }
 
-        public void InstallPackage(string appName)
+        public void InstallPackage(string appName, string environment="")
         {
             var startInfo = new ProcessStartInfo
             {
                 FileName = "deployd.exe",
-                Arguments = string.Format("-install -app=\"{0}\"", appName),
+                Arguments = string.Format("-install -app=\"{0}\" -e=\"{1}\"", appName, environment),
             };
 
             Process.Start(startInfo);

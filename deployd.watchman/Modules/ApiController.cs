@@ -36,7 +36,8 @@ namespace deployd.watchman.Modules
 
             Post["/install-queue/{AppName}"] = x =>
                 {
-                    _appService.InstallPackage((string)x.AppName);
+                    string environment = Request.Query["environment"];
+                    _appService.InstallPackage((string)x.AppName, environment);
                     var response = new {next = ApiRoot + "/apps/" + x.AppName};
                     return Response.AsJson(response, HttpStatusCode.Created);
                 };

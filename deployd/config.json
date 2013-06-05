@@ -1,5 +1,5 @@
 ﻿{ 
     "PackageType" : "NuGet", 
     "PackageSource" : "d:\\packages",
-    "InstallRoot" : "~\\Apps" 
+    "InstallRoot" : "d:\\wwwcom2" 
 }

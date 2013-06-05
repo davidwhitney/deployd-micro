@@ -1,0 +1,14 @@
+﻿<h1>@Model.AppName</h1>
+
+<form method="post" action="/api/v1/install-queue/@Model.AppName">
+    <button type="submit">Install Latest Version</button>
+</form>
+
+<p>Installed: @Model.Version</p>
+
+<p>Backup versions:
+    @foreach (var version in Model.BackupVersions)
+    {
+        @version<br/>
+    }
+</p>

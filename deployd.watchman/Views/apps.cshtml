@@ -1,0 +1,8 @@
+﻿<h1>Applications</h1>
+
+<ul>
+@foreach (var app in Model.Apps)
+{
+    <li><a href="/apps/@app">@app</a></li>
+}
+</ul>

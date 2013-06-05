@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.IO.Abstractions;
+using deployd.Extensibility.Configuration;
 using log4net;
 
 namespace deployd.Features.AppExtraction
@@ -16,9 +17,9 @@ namespace deployd.Features.AppExtraction
             _log = log;
         }
 
-        public bool CanConfigure(object packageInfo)
+        public bool CanConfigure(object packageInfo, IInstanceConfiguration config)
         {
-            return true;
+            return !string.IsNullOrWhiteSpace(config.Environment);
         }
 
         public void Configure(string path, object packageInfo, string forEnvironment)

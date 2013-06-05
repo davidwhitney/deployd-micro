@@ -51,16 +51,15 @@ namespace deployd.Features.AppExtraction
             extractor.Unpack(_config.ApplicationMap.Staging, packageInfo);
 
             var configurer = GetConfiguratorFor(packageInfo);
-            configurer.Configure(_config.ApplicationMap.Staging, packageInfo, _config.Environment);
+            if (configurer != null)
+            {
+                configurer.Configure(_config.ApplicationMap.Staging, packageInfo, _config.Environment);
+            }
         }
 
         private IApplicationConfigurator GetConfiguratorFor(object packageInfo)
         {
-            var configurator = _configurators.FirstOrDefault(x => x.CanConfigure(packageInfo));
-            if (configurator == null)
-            {
-                throw new InvalidOperationException("No supported configurator");
-            }
+            var configurator = _configurators.FirstOrDefault(x => x.CanConfigure(packageInfo, _config));
             return configurator;
         }
 

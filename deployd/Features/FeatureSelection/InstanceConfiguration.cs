@@ -18,6 +18,7 @@ namespace deployd.Features.FeatureSelection
 
         public IApplicationMap ApplicationMap { get; set; }
         public string Environment { get; set; }
+        public bool ShowState { get; set; }
 
         public InstanceConfiguration()
         {

@@ -22,6 +22,7 @@ namespace deployd.Features.FeatureSelection
                     {"i|install", v => cfg.Install = v != null},
                     {"e|environment=", v => cfg.Environment = v},
                     {"v|verbose", v => cfg.Verbose = v != null},
+                    {"s|state", v => cfg.ShowState = v != null},
                     {"h|?|help", v => cfg.Help = v != null},
                 };
             cfg.OptionSet = p;

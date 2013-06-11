@@ -65,8 +65,8 @@ namespace deployd.Features
                 return;
             }
 
-            var currentInstalledVersion = _fs.File.ReadAllText(_appMap.VersionFile);
-            var backupPath = Path.Combine(_appMap.FullPath, currentInstalledVersion);
+            var currentInstalledVersion = GetInstalledVersion();
+            var backupPath = Path.Combine(_appMap.FullPath, currentInstalledVersion.ToString());
 
             if (_fs.Directory.Exists(backupPath))
             {
@@ -101,6 +101,16 @@ namespace deployd.Features
             {
                 _fs.Directory.Delete(item, true);
             }
+        }
+
+        public Version GetInstalledVersion()
+        {
+            return new Version(_fs.File.ReadAllText(_appMap.VersionFile));
+        }
+
+        public Version GetLatestAvailableVersion()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -5,6 +5,7 @@ using deployd.Features.AppInstallation;
 using deployd.Features.AppLocating;
 using deployd.Features.Help;
 using deployd.Features.PurgeOldBackups;
+using deployd.Features.ShowState;
 using log4net;
 using Ninject;
 
@@ -41,12 +42,19 @@ namespace deployd.Features.FeatureSelection
                 return commandCollection;
             }
 
+            if (_instanceConfiguration.ShowState)
+            {
+                commandCollection.Add(_kernel.GetService<ShowStateCommand>());
+                return commandCollection;
+            }
+
             if (!_instanceConfiguration.Install)
             {
                 commandCollection.Add(_kernel.GetService<HelpCommand>());
                 return commandCollection;
                     // TODO: Display info on current version of packages?
             }
+
 
             commandCollection.Add(_kernel.GetService<AppLocatingCommand>());
             commandCollection.Add(_kernel.GetService<AppExtractionCommand>());

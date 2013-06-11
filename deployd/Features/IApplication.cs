@@ -1,3 +1,5 @@
+using System;
+
 namespace deployd.Features
 {
     public interface IApplication
@@ -9,5 +11,7 @@ namespace deployd.Features
         void BackupCurrentVersion();
         void WriteUpdatedManifest(string newVersion);
         void PruneBackups();
+        Version GetInstalledVersion();
+        Version GetLatestAvailableVersion();
     }
 }

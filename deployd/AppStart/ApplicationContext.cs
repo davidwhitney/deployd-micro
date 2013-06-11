@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using Ninject;
 using Ninject.Extensions.Conventions;
@@ -51,6 +52,7 @@ namespace deployd.AppStart
             kernel.Bind<DeploydConfiguration>().ToMethod(x => x.Kernel.GetService<DeploydConfigurationManager>().LoadConfig()).InSingletonScope();
 
             kernel.Bind<ILog>().ToMethod(x => LogManager.GetLogger("default")).InSingletonScope();
+            kernel.Bind<Stream>().ToMethod(x => System.Console.OpenStandardOutput());
 
             return kernel;
         }

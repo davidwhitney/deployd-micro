@@ -118,6 +118,7 @@
     <Compile Include="Features\InstallationRoot.cs" />
     <Compile Include="Features\LoggingConfiguration.cs" />
     <Compile Include="Features\PurgeOldBackups\PurgeOldBackupsCommand.cs" />
+    <Compile Include="Features\ShowState\ShowStateCommand.cs" />
     <Compile Include="Infrastructure\DirectoryExtensions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

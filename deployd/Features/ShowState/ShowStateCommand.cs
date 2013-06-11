@@ -13,14 +13,19 @@ namespace deployd.Features.ShowState
         private readonly Stream _outputStream;
         private readonly IEnumerable<IAppInstallationLocator> _finders;
         private readonly IInstanceConfiguration _config;
+        private readonly IListLatestVersionsOfPackagesQuery _query;
+        private readonly DeploydConfiguration _deployd;
 
         public ShowStateCommand(IApplication app,
-            Stream outputStream, IEnumerable<IAppInstallationLocator> finders, IInstanceConfiguration config)
+            Stream outputStream, IEnumerable<IAppInstallationLocator> finders, IInstanceConfiguration config,
+            IListLatestVersionsOfPackagesQuery query, DeploydConfiguration deployd)
         {
             _app = app;
             _outputStream = outputStream;
             _finders = finders;
             _config = config;
+            _query = query;
+            _deployd = deployd;
         }
 
         public void Execute()
@@ -51,6 +56,14 @@ namespace deployd.Features.ShowState
                 else
                 {
                     streamWriter.WriteLine("Package not found in source");
+                }
+
+                streamWriter.WriteLine();
+                streamWriter.WriteLine("All packages in {0}:", _deployd.PackageSource);
+                var allPackages = _query.GetLatestVersions(_deployd.PackageSource);
+                foreach (var package in allPackages)
+                {
+                    streamWriter.WriteLine("{0}: {1}", package.Id, package.Version);
                 }
             }
         }

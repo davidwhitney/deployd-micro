@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
-using System.IO.Abstractions;
 using System.Linq;
 using Ninject;
+using NuGet;
 using deployd.Extensibility.Configuration;
 using deployd.Features;
 using deployd.Features.AppExtraction;
@@ -11,6 +11,7 @@ using deployd.Features.AppInstallation.HookExecution;
 using deployd.Features.AppLocating;
 using deployd.Features.FeatureSelection;
 using log4net;
+using IFileSystem = System.IO.Abstractions.IFileSystem;
 
 namespace deployd.AppStart
 {
@@ -72,6 +73,10 @@ namespace deployd.AppStart
             kernel.Bind<IInstallationPadLock>().To<InstallationPadLock>();
 
             kernel.Bind<IFileSystem>().To<System.IO.Abstractions.FileSystem>();
+            kernel.Bind<IPackageRepositoryFactory>().To<PackageRepositoryFactory>();
+
+            kernel.Bind<IListLatestVersionsOfPackagesQuery>().To<ListLatestVersionOfPackagesQuery>();
+            kernel.Bind<IGetLatestNuGetPackageByNameQuery>().To<GetLatestNuGetPackageByNameQuery>();
         }
 
         private static bool IsServiceType(Type type)

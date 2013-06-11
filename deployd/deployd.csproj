@@ -92,6 +92,8 @@
     <Compile Include="Features\ApplicationFactory.cs" />
     <Compile Include="Features\AppLocating\GetLatestNuGetPackageByNameQuery.cs" />
     <Compile Include="Features\AppLocating\IGetLatestNuGetPackageByNameQuery.cs" />
+    <Compile Include="Features\AppLocating\IListLatestVersionsOfPackagesQuery.cs" />
+    <Compile Include="Features\AppLocating\ListLatestVersionOfPackagesQuery.cs" />
     <Compile Include="Features\AppLocating\NoPackageFoundException.cs" />
     <Compile Include="Features\AppLocating\PackagePointer.cs" />
     <Compile Include="Features\FeatureSelection\ActiveFeatureFactory.cs" />

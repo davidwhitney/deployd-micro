@@ -1,17 +1,16 @@
 ﻿using System;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using Ninject;
-using Ninject.Extensions.Conventions;
-using NuGet;
 using deployd.Extensibility.Configuration;
 using deployd.Features;
 using deployd.Features.AppExtraction;
+using deployd.Features.AppInstallation;
 using deployd.Features.AppInstallation.HookExecution;
 using deployd.Features.AppLocating;
 using deployd.Features.FeatureSelection;
 using log4net;
-using IFileSystem = System.IO.Abstractions.IFileSystem;
 
 namespace deployd.AppStart
 {
@@ -35,6 +34,10 @@ namespace deployd.AppStart
         {
             var kernel = new StandardKernel();
 
+            /*
+             * convention based bindings
+             * Requires Ninject.Conventions.Extensions which depends on .Net 4.5
+             * We have to upgrade servers to 2008+ in order to use this
             kernel.Bind(scanner => scanner.FromThisAssembly().Select(IsServiceType).BindDefaultInterfaces());
             kernel.Bind(scanner => scanner.FromThisAssembly().Select(IsInstallationLocator).BindAllInterfaces());
             kernel.Bind(scanner => scanner.FromThisAssembly().Select(IsPackageExtractor).BindAllInterfaces());
@@ -43,6 +46,9 @@ namespace deployd.AppStart
 
             kernel.Bind(scanner => scanner.FromAssemblyContaining<IFileSystem>().Select(IsServiceType).BindDefaultInterfaces());
             kernel.Bind(scanner => scanner.FromAssemblyContaining<IPackageRepositoryFactory>().Select(IsServiceType).BindDefaultInterfaces());
+             */
+            BindEverything(kernel);
+
 
             kernel.Rebind<IApplication>().ToMethod(x => x.Kernel.GetService<ApplicationFactory>().GetCurrent()).InSingletonScope();
             kernel.Rebind<IApplicationMap>().ToMethod(x => x.Kernel.GetService<IInstanceConfiguration>().ApplicationMap).InSingletonScope();
@@ -52,9 +58,20 @@ namespace deployd.AppStart
             kernel.Bind<DeploydConfiguration>().ToMethod(x => x.Kernel.GetService<DeploydConfigurationManager>().LoadConfig()).InSingletonScope();
 
             kernel.Bind<ILog>().ToMethod(x => LogManager.GetLogger("default")).InSingletonScope();
-            kernel.Bind<Stream>().ToMethod(x => System.Console.OpenStandardOutput());
+            kernel.Bind<Stream>().ToMethod(x=>System.Console.OpenStandardOutput());
 
             return kernel;
+        }
+
+        private void BindEverything(StandardKernel kernel)
+        {
+            kernel.Bind<IArgumentParser>().To<ArgumentParser>();
+
+            kernel.Bind<ILoggingConfiguration>().To<LoggingConfiguration>();
+
+            kernel.Bind<IInstallationPadLock>().To<InstallationPadLock>();
+
+            kernel.Bind<IFileSystem>().To<System.IO.Abstractions.FileSystem>();
         }
 
         private static bool IsServiceType(Type type)

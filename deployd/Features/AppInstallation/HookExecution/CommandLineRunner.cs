@@ -78,7 +78,7 @@ namespace deployd.Features.AppInstallation.HookExecution
         public void CopyVariablesToEnvironment(ProcessStartInfo startInfo)
         {
             var envrs = _config.ApplicationMap.GetType().GetProperties()
-                              .Select(fi => new {Field = fi.Name, Value = fi.GetValue(_config.ApplicationMap)})
+                              .Select(fi => new {Field = fi.Name, Value = fi.GetValue(_config.ApplicationMap,null)})
                               .ToList();
 
             foreach (var variable in envrs.Where(variable => variable.Value != null))

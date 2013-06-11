@@ -18,5 +18,6 @@ namespace deployd.Extensibility.Configuration
 
         IApplicationMap ApplicationMap { get; set; }
         string Environment { get; set; }
+        bool ShowState { get; set; }
     }
 }

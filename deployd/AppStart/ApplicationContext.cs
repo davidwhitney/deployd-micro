@@ -8,6 +8,7 @@ using deployd.Features;
 using deployd.Features.AppExtraction;
 using deployd.Features.AppInstallation;
 using deployd.Features.AppInstallation.HookExecution;
+using deployd.Features.AppInstallation.Hooks;
 using deployd.Features.AppLocating;
 using deployd.Features.FeatureSelection;
 using log4net;
@@ -50,7 +51,10 @@ namespace deployd.AppStart
              */
             BindEverything(kernel);
 
-
+            kernel.Bind<IApplicationFactory>().To<ApplicationFactory>();
+            kernel.Bind<IInstallationRoot>().To<InstallationRoot>();
+            kernel.Bind<IInstallHookExecutor>().To<InstallHookExecutor>();
+            kernel.Bind<IHookFinder>().To<HookFinder>();
             kernel.Rebind<IApplication>().ToMethod(x => x.Kernel.GetService<ApplicationFactory>().GetCurrent()).InSingletonScope();
             kernel.Rebind<IApplicationMap>().ToMethod(x => x.Kernel.GetService<IInstanceConfiguration>().ApplicationMap).InSingletonScope();
 

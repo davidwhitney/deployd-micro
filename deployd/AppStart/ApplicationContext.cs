@@ -58,6 +58,12 @@ namespace deployd.AppStart
             kernel.Rebind<IApplication>().ToMethod(x => x.Kernel.GetService<ApplicationFactory>().GetCurrent()).InSingletonScope();
             kernel.Rebind<IApplicationMap>().ToMethod(x => x.Kernel.GetService<IInstanceConfiguration>().ApplicationMap).InSingletonScope();
 
+            kernel.Bind<IAppInstallationLocator>().To<NuGetFeedAppInstallationLocator>();
+            kernel.Bind<IAppInstallationLocator>().To<FileSystemAppInstallationLocator>();
+
+            kernel.Bind<IPackageExtractor>().To<NuGetPackageExtractor>();
+            kernel.Bind<IPackageExtractor>().To<ZipFilePackageExtractor>();
+
             kernel.Rebind<IInstanceConfiguration>().ToMethod(x => x.Kernel.GetService<IArgumentParser>().Parse(_args)).InSingletonScope();
             kernel.Bind<InstanceConfiguration>().ToMethod(x => x.Kernel.GetService<IInstanceConfiguration>() as InstanceConfiguration);
             kernel.Bind<DeploydConfiguration>().ToMethod(x => x.Kernel.GetService<DeploydConfigurationManager>().LoadConfig()).InSingletonScope();

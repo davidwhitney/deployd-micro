@@ -35,16 +35,16 @@ namespace deployd.Features.FeatureSelection
 
             var commandCollection = _kernel.GetService<CommandCollection>();
 
+            if (_instanceConfiguration.ShowState)
+            {
+                commandCollection.Add(_kernel.GetService<ShowStateCommand>());
+                return commandCollection;
+            }
+
             if (_instanceConfiguration.Help
                 || string.IsNullOrWhiteSpace(_instanceConfiguration.AppName))
             {
                 commandCollection.Add(_kernel.GetService<HelpCommand>());
-                return commandCollection;
-            }
-
-            if (_instanceConfiguration.ShowState)
-            {
-                commandCollection.Add(_kernel.GetService<ShowStateCommand>());
                 return commandCollection;
             }
 

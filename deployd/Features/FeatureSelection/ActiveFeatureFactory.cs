@@ -62,6 +62,7 @@ namespace deployd.Features.FeatureSelection
 
                 if (_instanceConfiguration.Install)
                 {
+                    commandCollection.Add(_kernel.GetService<SetEnvironmentCommand>());
                     commandCollection.Add(_kernel.GetService<AppInstallationCommand>());
                 }
 

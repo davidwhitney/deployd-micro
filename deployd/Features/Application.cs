@@ -54,7 +54,7 @@ namespace deployd.Features
         public void ActivateStaging()
         {
             _log.Info("Activating staged install...");
-            _fs.Directory.Move(_appMap.Staging, _appMap.Active);
+            _fs.Directory.Move(_appMap.Staging, _appMap.FullPath);
         }
 
         public void BackupCurrentVersion()

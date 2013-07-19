@@ -2,11 +2,13 @@
 using System.Diagnostics;
 using System.IO.Abstractions;
 using System.Linq;
+using log4net;
 
 namespace deployd.watchman.Services
 {
     public class AppService
     {
+        private readonly ILog _log = LogManager.GetLogger(typeof(AppService));
         private readonly ConfigurationService _cfgService;
         private readonly IFileSystem _fs;
 
@@ -57,13 +59,17 @@ namespace deployd.watchman.Services
 
         public void InstallPackage(string appName, string environment="")
         {
-            var startInfo = new ProcessStartInfo
-            {
-                FileName = "deployd.exe",
-                Arguments = string.Format("-install -app=\"{0}\" -e=\"{1}\"", appName, environment),
-            };
+            _log.InfoFormat("Installing {0}", appName);
+            var p = new Process();
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.FileName = "deployd.exe";
+            p.StartInfo.Arguments = string.Format("-install -app=\"{0}\" -e=\"{1}\"", appName, environment);
 
-            Process.Start(startInfo);
+            p.Start();
+            string output = p.StandardOutput.ReadToEnd();
+            p.WaitForExit();
+            _log.Debug(output);
         }
     }
 }

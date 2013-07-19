@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace deployd.Extensibility.Configuration
 {
@@ -22,7 +23,7 @@ namespace deployd.Extensibility.Configuration
         {
             AppName = appName;
             FullPath = fullPath;
-            Staging = Path.Combine(FullPath, "Staging").ToAbsolutePath();
+            Staging = Path.Combine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,appName), "Staging").ToAbsolutePath();
             Active = Path.Combine(fullPath, "Active").ToAbsolutePath();
             Lockfile = Path.Combine(fullPath, "installing.deployd").ToAbsolutePath();
             VersionFile = Path.Combine(fullPath, "version.deployd").ToAbsolutePath();

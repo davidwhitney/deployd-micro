@@ -1,5 +1,6 @@
 using Nancy;
 using deployd.watchman.Services;
+using log4net;
 
 namespace deployd.watchman.Modules
 {
@@ -7,6 +8,7 @@ namespace deployd.watchman.Modules
     {
         private readonly AppService _appService;
         private readonly ConfigurationService _configurationService;
+        private ILog _logger = null;
         
         private static string ApiRoot
         {
@@ -16,6 +18,8 @@ namespace deployd.watchman.Modules
         public ApiController(AppService appService, ConfigurationService configurationService) 
             : base(ApiRoot)
         {
+            _logger = LogManager.GetLogger(typeof(ApiController));
+            
             _appService = appService;
             _configurationService = configurationService;
 
@@ -37,6 +41,7 @@ namespace deployd.watchman.Modules
             Post["/install-queue/{AppName}"] = x =>
                 {
                     string environment = Request.Query["environment"];
+                    _logger.DebugFormat("Install {0} ({1})", x.AppName, environment);
                     _appService.InstallPackage((string)x.AppName, environment);
                     var response = new {next = ApiRoot + "/apps/" + x.AppName};
                     return Response.AsJson(response, HttpStatusCode.Created);

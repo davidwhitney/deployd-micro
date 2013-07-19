@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
+using System.IO;
 using System.ServiceProcess;
 using SimpleServices;
 using deployd.watchman.AppStart;
+using log4net;
 using ServiceInstaller = System.ServiceProcess.ServiceInstaller;
 
 namespace deployd.watchman
@@ -14,6 +16,8 @@ namespace deployd.watchman
     {
         private static void Main(string[] args)
         {
+            var config = log4net.Config.XmlConfigurator.Configure(new FileInfo("log4net.config"));
+            var logger = LogManager.GetLogger(typeof (Program));
             var services = new List<IWindowsService> {new NancyUi()};
 
             if (ConfigurationManager.AppSettings["mothership:Enabled"].ToLower() == "true")

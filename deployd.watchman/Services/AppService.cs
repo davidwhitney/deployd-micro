@@ -63,13 +63,26 @@ namespace deployd.watchman.Services
             var p = new Process();
             p.StartInfo.UseShellExecute = false;
             p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.RedirectStandardError = true;
             p.StartInfo.FileName = "deployd.exe";
             p.StartInfo.Arguments = string.Format("-install -app=\"{0}\" -e=\"{1}\"", appName, environment);
 
             p.Start();
             string output = p.StandardOutput.ReadToEnd();
             p.WaitForExit();
-            _log.Debug(output);
+
+            _log.DebugFormat("Process exited with code {0}", p.ExitCode);
+            
+            if (p.ExitCode == 0)
+            {
+                _log.Debug(output);
+            }
+            else
+            {
+                _log.Warn(p.StandardError.ReadToEnd());
+            }
+
+            
         }
     }
 }

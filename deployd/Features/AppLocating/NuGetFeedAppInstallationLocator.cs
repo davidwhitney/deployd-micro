@@ -7,18 +7,32 @@ namespace deployd.Features.AppLocating
 {
     public class NuGetFeedAppInstallationLocator : IAppInstallationLocator<IPackage>
     {
-        private readonly DeploydConfiguration _clientConfig;
         private readonly IFileSystem _fs;
         private readonly IGetLatestNuGetPackageByNameQuery _query;
+        private readonly string _packageLocation;
 
-        public bool IsHttp { get { return _clientConfig.PackageSource.StartsWith("http"); } }
-        public string PackageLocation { get { return IsHttp ? _clientConfig.PackageSource : _clientConfig.PackageSource.ToAbsolutePath(); } }
+        public bool IsHttp { get { return _packageLocation.StartsWith("http"); } }
+        public string PackageLocation { get { return _packageLocation; } }
 
         public NuGetFeedAppInstallationLocator(DeploydConfiguration clientConfig, IFileSystem fs, IGetLatestNuGetPackageByNameQuery query)
+            :this(clientConfig.PackageSource, fs, query)
         {
-            _clientConfig = clientConfig;
+        }
+
+        public NuGetFeedAppInstallationLocator(string packageSource, IFileSystem fs,
+                                               IGetLatestNuGetPackageByNameQuery query)
+        {
             _fs = fs;
             _query = query;
+
+            if (packageSource.StartsWith("http"))
+            {
+                _packageLocation = packageSource;
+            }
+            else
+            {
+                _packageLocation = packageSource.ToAbsolutePath();
+            }
         }
         
         public bool SupportsPathType()

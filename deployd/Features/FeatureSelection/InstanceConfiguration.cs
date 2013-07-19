@@ -8,6 +8,7 @@ namespace deployd.Features.FeatureSelection
     {
         public string AppName { get; set; }
         public bool Install { get; set; }
+        public bool Prep { get; set; }
         public bool Help { get; set; }
         public bool Verbose { get; set; }
         

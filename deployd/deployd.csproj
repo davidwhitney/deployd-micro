@@ -75,6 +75,8 @@
     <Compile Include="AppStart\NinjectExtensions.cs" />
     <Compile Include="Features\AppExtraction\DefaultApplicationConfigurator.cs" />
     <Compile Include="Features\AppExtraction\IApplicationConfigurator.cs" />
+    <Compile Include="Features\AppExtraction\IPackageCache.cs" />
+    <Compile Include="Features\AppExtraction\PackageCache.cs" />
     <Compile Include="Features\AppExtraction\ZipFilePackageExtractor.cs" />
     <Compile Include="Features\AppInstallation\HookExecution\ClassHookRunner.cs" />
     <Compile Include="Features\AppInstallation\HookFailureException.cs" />

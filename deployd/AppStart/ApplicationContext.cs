@@ -58,8 +58,13 @@ namespace deployd.AppStart
             kernel.Rebind<IApplication>().ToMethod(x => x.Kernel.GetService<ApplicationFactory>().GetCurrent()).InSingletonScope();
             kernel.Rebind<IApplicationMap>().ToMethod(x => x.Kernel.GetService<IInstanceConfiguration>().ApplicationMap).InSingletonScope();
 
+            kernel.Bind<IPackageCache>().To<PackageCache>();
+            /*kernel.Bind<IAppInstallationLocator>()
+                .ToConstructor(a =>
+                    new NuGetFeedAppInstallationLocator(AppDomain.CurrentDomain.BaseDirectory + "\\cache", a.Inject<IFileSystem>(), a.Inject<IGetLatestNuGetPackageByNameQuery>()));*/
             kernel.Bind<IAppInstallationLocator>().To<NuGetFeedAppInstallationLocator>();
-            kernel.Bind<IAppInstallationLocator>().To<FileSystemAppInstallationLocator>();
+            kernel.Bind<IAppInstallationLocator>()
+                .ToConstructor(a=>new FileSystemAppInstallationLocator(a.Inject<DeploydConfiguration>(),a.Inject<IFileSystem>(),a.Inject<ILog>()));
 
             kernel.Bind<IPackageExtractor>().To<NuGetPackageExtractor>();
             kernel.Bind<IPackageExtractor>().To<ZipFilePackageExtractor>();

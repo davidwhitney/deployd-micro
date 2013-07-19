@@ -10,11 +10,13 @@ namespace deployd.Features.AppExtraction
     {
         private readonly System.IO.Abstractions.IFileSystem _fs;
         private readonly ILog _log;
+        private readonly IPackageCache _packageCache;
 
-        public NuGetPackageExtractor(System.IO.Abstractions.IFileSystem fs, ILog log)
+        public NuGetPackageExtractor(System.IO.Abstractions.IFileSystem fs, ILog log, IPackageCache packageCache)
         {
             _fs = fs;
             _log = log;
+            _packageCache = packageCache;
         }
 
         public bool CanUnpack(object packageInfo)
@@ -32,6 +34,8 @@ namespace deployd.Features.AppExtraction
             _log.Info("Unpacking NuGet package...");
 
             var nugetPackage = packageInfo as IPackage;
+            nugetPackage = _packageCache.CachePackage(nugetPackage);
+
             var files = nugetPackage.GetFiles();
             
             foreach (var file in files)

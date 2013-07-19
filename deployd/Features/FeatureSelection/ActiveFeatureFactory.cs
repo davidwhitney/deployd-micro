@@ -48,18 +48,25 @@ namespace deployd.Features.FeatureSelection
                 return commandCollection;
             }
 
-            if (!_instanceConfiguration.Install)
+            if (!_instanceConfiguration.Install && !_instanceConfiguration.Prep)
             {
                 commandCollection.Add(_kernel.GetService<HelpCommand>());
                 return commandCollection;
                     // TODO: Display info on current version of packages?
             }
 
+            if (_instanceConfiguration.Install || _instanceConfiguration.Prep)
+            {
+                commandCollection.Add(_kernel.GetService<AppLocatingCommand>());
+                commandCollection.Add(_kernel.GetService<AppExtractionCommand>());
 
-            commandCollection.Add(_kernel.GetService<AppLocatingCommand>());
-            commandCollection.Add(_kernel.GetService<AppExtractionCommand>());
-            commandCollection.Add(_kernel.GetService<AppInstallationCommand>());
-            commandCollection.Add(_kernel.GetService<PurgeOldBackupsCommand>());
+                if (_instanceConfiguration.Install)
+                {
+                    commandCollection.Add(_kernel.GetService<AppInstallationCommand>());
+                }
+
+                commandCollection.Add(_kernel.GetService<PurgeOldBackupsCommand>());
+            }
             return commandCollection;
         }
     }

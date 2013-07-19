@@ -8,6 +8,7 @@ namespace deployd.Extensibility.Configuration
     {
         string AppName { get; set; }
         bool Install { get; set; }
+        bool Prep { get; set; }
         bool Help { get; set; }
         bool Verbose { get; set; }
         

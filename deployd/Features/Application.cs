@@ -37,6 +37,9 @@ namespace deployd.Features
         {
             _fs.EnsureDirectoryExists(_appMap.FullPath);
             _fs.EnsureDirectoryExists(_appMap.Staging);
+            _fs.EnsureDirectoryExists(_appMap.CachePath);
+            var cacheFolder = _fs.DirectoryInfo.FromDirectoryName(_appMap.CachePath);
+            cacheFolder.Attributes = FileAttributes.Hidden;
         }
 
         public void LockForInstall()
@@ -53,8 +56,54 @@ namespace deployd.Features
 
         public void ActivateStaging()
         {
-            _log.Info("Activating staged install...");
-            _fs.Directory.Move(_appMap.Staging, _appMap.Active);
+            _log.InfoFormat("Activating staged install at {0}...", _appMap.Active);
+
+            //_fs.Directory.Move(_appMap.Staging, _appMap.Active);
+            RecursiveDelete(_appMap.FullPath);
+            RecursiveCopy(_appMap.Staging, _appMap.FullPath);
+            RecursiveDelete(_appMap.Staging);
+        }
+
+        private void RecursiveDelete(string path)
+        {
+            var sourceFolder = _fs.DirectoryInfo.FromDirectoryName(path);
+            var folders = sourceFolder.GetDirectories("*", SearchOption.TopDirectoryOnly);
+            foreach (var folder in folders)
+            {
+                if (folder.Attributes.HasFlag(FileAttributes.Hidden))
+                    continue;
+
+                RecursiveDelete(folder.FullName);
+            }
+            var files = sourceFolder.GetFiles();
+            foreach (var file in files)
+            {
+                file.Delete();
+            }
+        }
+
+        private void RecursiveCopy(string source, string destination)
+        {
+            var sourceFolder = _fs.DirectoryInfo.FromDirectoryName(source);
+            var folders = sourceFolder.GetDirectories("*", SearchOption.TopDirectoryOnly);
+            foreach (var folder in folders)
+            {
+                if (folder.Attributes.HasFlag(FileAttributes.Hidden))
+                    continue;
+
+                RecursiveCopy(folder.FullName, _fs.Path.Combine(destination, folder.Name));
+
+            }
+
+            if (!_fs.Directory.Exists(destination))
+                _fs.Directory.CreateDirectory(destination);
+            
+            var files = sourceFolder.GetFiles();
+            foreach (var file in files)
+            {
+                _log.DebugFormat("Copying {0} -> {1}", file.FullName, _fs.Path.Combine(destination, file.Name));
+                _fs.File.Copy(file.FullName, _fs.Path.Combine(destination, file.Name));
+            }
         }
 
         public void BackupCurrentVersion()
@@ -66,18 +115,20 @@ namespace deployd.Features
             }
 
             var currentInstalledVersion = GetInstalledVersion();
-            var backupPath = Path.Combine(_appMap.FullPath, currentInstalledVersion.ToString());
+            var backupPath = Path.Combine(_appMap.CachePath, currentInstalledVersion.ToString());
 
             if (_fs.Directory.Exists(backupPath))
             {
                 var newPath = backupPath + "-duplicate-" + Guid.NewGuid().ToString();
+                //_fs.Directory.CreateDirectory(newPath);
+                //RecursiveCopy(backupPath, newPath);
                 _fs.Directory.Move(backupPath, newPath);
             }
 
             if (_fs.Directory.Exists(_appMap.Active))
             {
                 _log.Info("Backing up current installation...");
-                _fs.Directory.Move(_appMap.Active, backupPath);
+                RecursiveCopy(_appMap.Active, backupPath);
             }
         }
 
@@ -88,7 +139,7 @@ namespace deployd.Features
 
         public void PruneBackups()
         {
-            var backups = _fs.Directory.GetDirectories(_appMap.FullPath);
+            var backups = _fs.Directory.GetDirectories(_appMap.CachePath);
             if (backups.Length <= 10)
             {
                 return;

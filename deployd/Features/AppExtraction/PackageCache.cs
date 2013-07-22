@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using NuGet;
+using deployd.Extensibility.Configuration;
 using deployd.Features.FeatureSelection;
 using log4net;
 
@@ -11,27 +12,28 @@ namespace deployd.Features.AppExtraction
         private readonly System.IO.Abstractions.IFileSystem _fs;
         private readonly ILog _log;
         private readonly InstanceConfiguration _instanceConfiguration;
+        private readonly IApplicationMap _applicationMap;
 
-        public PackageCache(System.IO.Abstractions.IFileSystem fs, ILog log, InstanceConfiguration instanceConfiguration)
+        public PackageCache(System.IO.Abstractions.IFileSystem fs, ILog log, 
+            InstanceConfiguration instanceConfiguration, IApplicationMap applicationMap)
         {
             _fs = fs;
             _log = log;
             _instanceConfiguration = instanceConfiguration;
+            _applicationMap = applicationMap;
         }
 
         private const int DownloadChunkSize = 4096;
         public IPackage CachePackage(IPackage package)
         {
-            string cachePath = _fs.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "cache");
-
-            if (!_fs.Directory.Exists(cachePath))
+            if (!_fs.Directory.Exists(_applicationMap.CachePath))
             {
-                _fs.Directory.CreateDirectory(cachePath);
+                _fs.Directory.CreateDirectory(_applicationMap.CachePath);
             }
 
             string packageFileName = string.Format("{0}.{1}.nupkg", package.Id, package.Version);
-            string packagePath = _fs.Path.Combine(cachePath, packageFileName);
-            if (!PackageIsCached(package)
+            string packagePath = _fs.Path.Combine(_applicationMap.CachePath, packageFileName);
+            if (!PackageIsCached(_applicationMap, package)
                 || _instanceConfiguration.ForceDownload)
             {
                 _log.Info("Downloading package from source...");
@@ -53,17 +55,15 @@ namespace deployd.Features.AppExtraction
             return new ZipPackage(packagePath);
         }
 
-        private bool PackageIsCached(IPackage package)
+        private bool PackageIsCached(IApplicationMap applicationMap, IPackage package)
         {
-            string cachePath = _fs.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "cache");
-
-            if (!_fs.Directory.Exists(cachePath))
+            if (!_fs.Directory.Exists(applicationMap.CachePath))
             {
                 return false;
             }
 
             string packageFileName = string.Format("{0}.{1}.nupkg", package.Id, package.Version);
-            string packagePath = _fs.Path.Combine(cachePath, packageFileName);
+            string packagePath = _fs.Path.Combine(applicationMap.CachePath, packageFileName);
             if (_fs.File.Exists(packagePath))
             {
                 _log.Debug("Package exists in cache");

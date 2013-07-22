@@ -11,6 +11,7 @@ namespace deployd.Extensibility.Configuration
         string Lockfile { get; set; }
         string VersionFile { get; set; }
         Stream Lock { get; set; }
+        string CachePath { get; set; }
         IApplicationMap Configure(string appName, string fullPath);
     }
 }

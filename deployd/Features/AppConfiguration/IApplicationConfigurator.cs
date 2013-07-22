@@ -1,6 +1,6 @@
-﻿using deployd.Extensibility.Configuration;
+using deployd.Extensibility.Configuration;
 
-namespace deployd.Features.AppExtraction
+namespace deployd.Features.AppConfiguration
 {
     public interface IApplicationConfigurator
     {

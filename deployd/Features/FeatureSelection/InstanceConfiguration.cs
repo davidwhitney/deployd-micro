@@ -21,6 +21,8 @@ namespace deployd.Features.FeatureSelection
         public string Environment { get; set; }
         public bool ShowState { get; set; }
 
+        public bool ForceDownload { get; set; }
+
         public InstanceConfiguration()
         {
             ApplicationMap = new ApplicationMap(string.Empty, string.Empty);

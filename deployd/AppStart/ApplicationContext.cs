@@ -5,6 +5,7 @@ using Ninject;
 using NuGet;
 using deployd.Extensibility.Configuration;
 using deployd.Features;
+using deployd.Features.AppConfiguration;
 using deployd.Features.AppExtraction;
 using deployd.Features.AppInstallation;
 using deployd.Features.AppInstallation.HookExecution;

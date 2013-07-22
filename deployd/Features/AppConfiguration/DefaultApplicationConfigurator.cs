@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.IO;
 using System.IO.Abstractions;
 using deployd.Extensibility.Configuration;
 using log4net;
 
-namespace deployd.Features.AppExtraction
+namespace deployd.Features.AppConfiguration
 {
     public class DefaultApplicationConfigurator : IApplicationConfigurator
     {

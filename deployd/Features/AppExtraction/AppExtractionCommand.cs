@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using deployd.Extensibility;
 using deployd.Extensibility.Configuration;
+using deployd.Features.AppConfiguration;
 using deployd.Features.AppLocating;
 
 namespace deployd.Features.AppExtraction

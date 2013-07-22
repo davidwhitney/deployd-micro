@@ -24,6 +24,7 @@ namespace deployd.Features.FeatureSelection
                     {"e|environment=", v => cfg.Environment = v},
                     {"v|verbose", v => cfg.Verbose = v != null},
                     {"s|state", v => cfg.ShowState = v != null},
+                    {"f|force", v => cfg.ForceDownload = v != null},
                     {"h|?|help", v => cfg.Help = v != null},
                 };
             cfg.OptionSet = p;

@@ -19,7 +19,7 @@ namespace deployd.Features.AppExtraction
             _instanceConfiguration = instanceConfiguration;
         }
 
-        private const int DownloadChunkSize = 256;
+        private const int DownloadChunkSize = 4096;
         public IPackage CachePackage(IPackage package)
         {
             string cachePath = _fs.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "cache");
@@ -39,30 +39,7 @@ namespace deployd.Features.AppExtraction
                     var fileStream = _fs.File.Open(packagePath, FileMode.Create, FileAccess.Write, FileShare.None)
                     )
                 {
-                    // this should download in chunks
-                    int offset = 0;
-                    long packageLength = 0, remaining=0;
-                    byte[] packageData = null;
-                    int cursorPosition = Console.CursorLeft;
-                    
-                    using (var packageStream = package.GetStream())
-                    {
-                        remaining = packageLength = packageStream.Length;
-                        packageData = new byte[packageLength];
-                        while (remaining > 0)
-                        {
-                            decimal progressPercent = offset / (decimal)packageLength;
-                            Console.SetCursorPosition(cursorPosition, Console.CursorTop);
-                            Console.Write("{0:p}", progressPercent);
-                            packageStream.Read(packageData, offset, (int)Math.Min(remaining, DownloadChunkSize));
-                            remaining -= DownloadChunkSize;
-                            offset += DownloadChunkSize;
-                        }
-                    }
-                    if (packageData.Length != packageLength)
-                    {
-                        throw new Exception("Downloaded data length was incorrect");
-                    }
+                    var packageData = package.GetStream().ReadAllBytes();
                     fileStream.Write(packageData, 0, packageData.Length);
                     fileStream.Flush();
                     fileStream.Close();

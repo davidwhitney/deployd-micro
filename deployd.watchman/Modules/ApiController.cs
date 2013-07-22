@@ -41,8 +41,10 @@ namespace deployd.watchman.Modules
             Post["/install-queue/{AppName}"] = x =>
                 {
                     string environment = Request.Query["environment"];
+                    bool prepareOnly = Request.Query["prepareOnly"] != null;
+                    bool forceDownload = Request.Query["forceDownload"] != null;
                     _logger.DebugFormat("Install {0} ({1})", x.AppName, environment);
-                    _appService.InstallPackage((string)x.AppName, environment);
+                    _appService.InstallPackage((string)x.AppName, prepareOnly, forceDownload, environment);
                     var response = new {next = ApiRoot + "/apps/" + x.AppName};
                     return Response.AsJson(response, HttpStatusCode.Created);
                 };

@@ -57,32 +57,30 @@ namespace deployd.watchman.Services
             return !_fs.File.Exists(map.VersionFile) ? string.Empty : _fs.File.ReadAllText(map.VersionFile);
         }
 
-        public void InstallPackage(string appName, string environment="")
+        public void InstallPackage(string appName, bool prepareOnly, bool forceDownload, string environment)
         {
-            _log.InfoFormat("Installing {0}", appName);
-            var p = new Process();
-            p.StartInfo.UseShellExecute = false;
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.RedirectStandardError = true;
-            p.StartInfo.FileName = "deployd.exe";
-            p.StartInfo.Arguments = string.Format("-install -app=\"{0}\" -e=\"{1}\"", appName, environment);
-
-            p.Start();
-            string output = p.StandardOutput.ReadToEnd();
-            p.WaitForExit();
-
-            _log.DebugFormat("Process exited with code {0}", p.ExitCode);
-            
-            if (p.ExitCode == 0)
-            {
-                _log.Debug(output);
-            }
-            else
-            {
-                _log.Warn(p.StandardError.ReadToEnd());
-            }
-
-            
+            _log.InfoFormat("Installing {0} ({1}, {2}, {3})", appName, environment, prepareOnly ? "prepare" : "install", forceDownload ? "force download" : "use cached if available");
+            var process = new Process();
+            process.StartInfo.CreateNoWindow = true;
+            process.StartInfo.ErrorDialog = false;
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardError = true;
+            process.StartInfo.RedirectStandardInput = true;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.EnableRaisingEvents = true;
+            process.StartInfo.FileName = "deployd.exe";
+            process.StartInfo.Arguments = string.Format("-{2} -app=\"{0}\" -e=\"{1}\" {3}", 
+                appName, 
+                environment,
+                prepareOnly ? "p" : "i",
+                forceDownload ? "-f" : "");
+            process.OutputDataReceived += (sender, args) => _log.Info(args.Data);
+            process.ErrorDataReceived += (sender, args) => _log.Warn(args.Data);
+            process.Exited += (sender, args) => _log.DebugFormat("Process exited with code {0}", process.ExitCode);
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+            //p.WaitForExit();
         }
     }
 }

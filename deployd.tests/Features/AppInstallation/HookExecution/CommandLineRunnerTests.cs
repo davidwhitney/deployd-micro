@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.IO.Abstractions;
 using System.Linq;
 using Moq;
 using NUnit.Framework;
@@ -15,6 +16,7 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
     {
         private readonly Mock<ILog> _log;
         private readonly Mock<IInstanceConfiguration> _config;
+        private readonly Mock<IFileSystem> _fs;
         private readonly CommandLineRunner _runner;
         const string HookFileName = "internal-use-only.ps1";
 
@@ -22,7 +24,8 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
         {
             _log = new Mock<ILog>();
             _config = new Mock<IInstanceConfiguration>();
-            _runner = new CommandLineRunner(_log.Object, _config.Object);
+            _fs = new Mock<IFileSystem>();
+            _runner = new CommandLineRunner(_log.Object, _config.Object, _fs.Object);
         }
         
         [Test]
@@ -47,7 +50,6 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
             Assert.That(countOfDeploydKeys, Is.GreaterThan(0));
         }
 
-        [TestCase("ps1", "powershell")]
         [TestCase("rb", "ruby")]
         [TestCase("py", "python")]
         [TestCase("cgi", "perl")]
@@ -66,6 +68,9 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
         [Test]
         public void SupportsHook_ForFile_ReturnsTrue()
         {
+            var path = new Mock<PathWrapper>();
+            path.Setup(p => p.GetExtension(It.IsAny<string>())).Returns(".rb");
+            _fs.Setup(x => x.Path).Returns(path.Object);
             var supports = _runner.SupportsHook(new HookTypeRef("aa", HookType.File));
 
             Assert.That(supports, Is.True);

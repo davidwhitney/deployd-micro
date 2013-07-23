@@ -56,7 +56,6 @@ namespace deployd.AppStart
             kernel.Bind<IApplicationFactory>().To<ApplicationFactory>();
             kernel.Bind<IInstallationRoot>().To<InstallationRoot>();
             kernel.Bind<IInstallHookExecutor>().To<InstallHookExecutor>();
-            kernel.Bind<IHookFinder>().To<HookFinder>();
             kernel.Rebind<IApplication>().ToMethod(x => x.Kernel.GetService<ApplicationFactory>().GetCurrent()).InSingletonScope();
             kernel.Rebind<IApplicationMap>().ToMethod(x => x.Kernel.GetService<IInstanceConfiguration>().ApplicationMap).InSingletonScope();
 
@@ -77,6 +76,11 @@ namespace deployd.AppStart
 
             kernel.Bind<ILog>().ToMethod(x => LogManager.GetLogger("default")).InSingletonScope();
             kernel.Bind<Stream>().ToMethod(x=>System.Console.OpenStandardOutput());
+
+            kernel.Bind<IHookFinder>().To<HookFinder>();
+            kernel.Bind<IHookRunner>().To<PowershellRunner>();
+            kernel.Bind<IHookRunner>().To<ClassHookRunner>();
+            kernel.Bind<IHookRunner>().To<CommandLineRunner>();
 
             return kernel;
         }

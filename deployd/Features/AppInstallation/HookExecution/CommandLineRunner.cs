@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO.Abstractions;
 using System.Linq;
 using deployd.Extensibility.Configuration;
 using deployd.Features.AppInstallation.Hooks;
@@ -11,10 +12,11 @@ namespace deployd.Features.AppInstallation.HookExecution
     {
         private readonly ILog _log;
         private readonly IInstanceConfiguration _config;
+        private readonly IFileSystem _fs;
 
         private static readonly Dictionary<string, string> ExecutableMap = new Dictionary<string, string>
             {
-                {"ps1", "powershell"},
+                //{"ps1", "powershell"},
                 {"rb", "ruby"},
                 {"py", "python"},
                 {"cgi", "perl"},
@@ -22,22 +24,24 @@ namespace deployd.Features.AppInstallation.HookExecution
                 {"js", "node"},
             };
 
-        public CommandLineRunner(ILog log, IInstanceConfiguration config)
+        public CommandLineRunner(ILog log, IInstanceConfiguration config, IFileSystem fs)
         {
             _log = log;
             _config = config;
+            _fs = fs;
         }
 
-        public bool SupportsHook(Hook hook)
+        public bool SupportsHook(HookTypeRef hookTypeRef)
         {
-            return hook.Type == HookType.File;
+            return hookTypeRef.Type == HookType.File
+                && ExecutableMap.ContainsKey(_fs.Path.GetExtension(hookTypeRef.FileName).Substring(1));
         }
 
-        public void ExecuteHook(Hook hook, string arguments = null)
+        public void ExecuteHook(HookTypeRef hookTypeRef, string arguments = null)
         {
-            _log.Info("Executing package hookFileName: " + hook.FileName);
+            _log.Info("Executing package hookFileName: " + hookTypeRef.FileName);
 
-            var hookFilename = hook.FileName;
+            var hookFilename = hookTypeRef.FileName;
             var startInfo = new ProcessStartInfo
                 {
                     FileName = hookFilename,

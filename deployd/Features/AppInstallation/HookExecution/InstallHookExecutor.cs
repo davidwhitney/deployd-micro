@@ -33,7 +33,12 @@ namespace deployd.Features.AppInstallation.HookExecution
             RunHooks(_hooks.Value.PostInstall);
         }
 
-        private void RunHooks(IEnumerable<Hook> hookFiles)
+        public void ExecuteFirstPostInstall()
+        {
+            RunHooks(_hooks.Value.PostFirstInstall);
+        }
+
+        private void RunHooks(IEnumerable<HookTypeRef> hookFiles)
         {
             foreach (var hook in hookFiles)
             {

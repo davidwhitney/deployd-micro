@@ -2,19 +2,19 @@
 
 namespace deployd.Features.AppInstallation.Hooks
 {
-    public class Hook
+    public class HookTypeRef
     {
         public string FileName { get; set; }
         public HookType Type { get; set; }
         public Type Class { get; set; }
 
-        public Hook(string fileName, HookType type)
+        public HookTypeRef(string fileName, HookType type)
         {
             FileName = fileName;
             Type = type;
         }
 
-        public Hook(Type @class)
+        public HookTypeRef(Type @class)
         {
             Class = @class;
             Type = HookType.Class;

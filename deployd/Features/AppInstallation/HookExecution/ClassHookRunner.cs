@@ -2,6 +2,7 @@
 using deployd.Extensibility.Configuration;
 using deployd.Features.AppInstallation.Hooks;
 using log4net;
+using IHook = deployd.Extensibility.Hooks.IHook;
 
 namespace deployd.Features.AppInstallation.HookExecution
 {
@@ -16,16 +17,16 @@ namespace deployd.Features.AppInstallation.HookExecution
             _config = config;
         }
 
-        public void ExecuteHook(Hook hook, string arguments = null)
+        public void ExecuteHook(HookTypeRef hookTypeRef, string arguments = null)
         {
-            _log.Info("Executing plugin hook: " + hook);
-            var classs = (IHook)Activator.CreateInstance(hook.Class);
-            classs.Execute(_config);
+            _log.Info("Executing plugin hook: " + hookTypeRef);
+            var hookInstance = Activator.CreateInstance(hookTypeRef.Class) as IHook;
+            if (hookInstance != null) hookInstance.Execute(_config);
         }
 
-        public bool SupportsHook(Hook hook)
+        public bool SupportsHook(HookTypeRef hookTypeRef)
         {
-            return hook.Type == HookType.Class;
+            return hookTypeRef.Type == HookType.Class;
         }
     }
 }

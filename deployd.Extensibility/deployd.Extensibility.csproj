@@ -60,6 +60,7 @@
     <Compile Include="Configuration\PackageLocation.cs" />
     <Compile Include="Configuration\PackageType.cs" />
     <Compile Include="Hooks\IFirstInstallHook.cs" />
+    <Compile Include="Hooks\IPostFirstInstallHook.cs" />
     <Compile Include="Hooks\IHook.cs" />
     <Compile Include="Hooks\IPostInstallHook.cs" />
     <Compile Include="Hooks\IPreInstallHook.cs" />

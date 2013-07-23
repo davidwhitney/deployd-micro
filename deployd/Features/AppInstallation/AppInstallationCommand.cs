@@ -29,6 +29,7 @@ namespace deployd.Features.AppInstallation
             _hookExecutor.ExecutePreInstall();
             _app.UpdateToLatestRevision();
             _hookExecutor.ExecutePostInstall();
+            _hookExecutor.ExecuteFirstPostInstall();
         }
     }
 }

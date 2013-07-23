@@ -29,7 +29,7 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
         [Test]
         public void SupportsHook_ForFile_ReturnsFalse()
         {
-            var supports = _runner.SupportsHook(new Hook("aa", HookType.File));
+            var supports = _runner.SupportsHook(new HookTypeRef("aa", HookType.File));
 
             Assert.That(supports, Is.False);
         }
@@ -37,7 +37,7 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
         [Test]
         public void SupportsHook_ForClass_ReturnsTrue()
         {
-            var supports = _runner.SupportsHook(new Hook(typeof(object)));
+            var supports = _runner.SupportsHook(new HookTypeRef(typeof(object)));
 
             Assert.That(supports, Is.True);
         }
@@ -45,7 +45,7 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
         [Test]
         public void ExecuteHook_WhenGivenAType_CreatesAndExecutesIt()
         {
-            _runner.ExecuteHook(new Hook(typeof(FakeHook)));
+            _runner.ExecuteHook(new HookTypeRef(typeof(FakeHook)));
 
             Assert.That(FakeHook.Executed, Is.True);
             Assert.That(FakeHook.Config, Is.EqualTo(_config.Object));

@@ -66,7 +66,7 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
         [Test]
         public void SupportsHook_ForFile_ReturnsTrue()
         {
-            var supports = _runner.SupportsHook(new Hook("aa", HookType.File));
+            var supports = _runner.SupportsHook(new HookTypeRef("aa", HookType.File));
 
             Assert.That(supports, Is.True);
         }
@@ -74,7 +74,7 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
         [Test]
         public void SupportsHook_ForClass_ReturnsFalse()
         {
-            var supports = _runner.SupportsHook(new Hook(typeof(object)));
+            var supports = _runner.SupportsHook(new HookTypeRef(typeof(object)));
 
             Assert.That(supports, Is.False);
         }
@@ -82,13 +82,13 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
         [Test]
         public void ExecuteHook_WhenGivenAProcessThatExitsCleanly_DoesntThrow()
         {
-            _runner.ExecuteHook(new Hook("cmd", HookType.File), "/c exit 0");
+            _runner.ExecuteHook(new HookTypeRef("cmd", HookType.File), "/c exit 0");
         }
 
         [Test]
         public void ExecuteHook_WhenGivenAProcessThatExitsWithANoneZeroCode_Throws()
         {
-            var ex = Assert.Throws<HookFailureException>(()=> _runner.ExecuteHook(new Hook("cmd", HookType.File), "/c exit -300"));
+            var ex = Assert.Throws<HookFailureException>(()=> _runner.ExecuteHook(new HookTypeRef("cmd", HookType.File), "/c exit -300"));
 
             Assert.That(ex.HookFile, Is.EqualTo("cmd"));
             Assert.That(ex.ExitCode, Is.EqualTo(-300));

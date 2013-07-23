@@ -58,13 +58,24 @@ namespace deployd_remote
 
             var request = new RestRequest(requestUrl, Method.POST) { RequestFormat = DataFormat.Json };
             request.AddBody(new { @null = string.Empty });
-            var response = restClient.Post(request);
 
-            if (response.StatusCode == HttpStatusCode.Created)
+            try
             {
-                Console.WriteLine("'{0}' deployment started remotely on '{1}'.", appName, hostName);
-            }
+                var response = restClient.Post(request);
 
+                if (response.StatusCode == HttpStatusCode.Created)
+                {
+                    Console.WriteLine("'{0}' deployment started remotely on '{1}'.", appName, hostName);
+                }
+            }
+            catch (WebException ex)
+            {
+                Console.WriteLine("Web exception: " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }

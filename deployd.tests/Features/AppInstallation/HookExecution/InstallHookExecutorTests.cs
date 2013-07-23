@@ -20,7 +20,7 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
             _finder = new Mock<IHookFinder>();
             _fakeHookRunner = new Mock<IHookRunner>();
             _hookRunners = new List<IHookRunner> {_fakeHookRunner.Object};
-            _fakeHookRunner.Setup(x => x.SupportsHook(It.IsAny<Hook>())).Returns(true);
+            _fakeHookRunner.Setup(x => x.SupportsHook(It.IsAny<HookTypeRef>())).Returns(true);
             _ihe = new InstallHookExecutor(_finder.Object, _hookRunners);
         }
 
@@ -57,8 +57,8 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
         [Test]
         public void ExecuteFirstInstall_ExecutesDiscoveredHooks()
         {
-            var fakeHook = new Hook("file.txt", HookType.File);
-            _finder.Setup(x => x.DiscoverHooks()).Returns(new Hooks {FirstInstall = new List<Hook> {fakeHook}});
+            var fakeHook = new HookTypeRef("file.txt", HookType.File);
+            _finder.Setup(x => x.DiscoverHooks()).Returns(new Hooks {FirstInstall = new List<HookTypeRef> {fakeHook}});
 
             _ihe.ExecuteFirstInstall();
 
@@ -68,8 +68,8 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
         [Test]
         public void ExecutePostInstall_ExecutesDiscoveredHooks()
         {
-            var fakeHook = new Hook("file.txt", HookType.File);
-            _finder.Setup(x => x.DiscoverHooks()).Returns(new Hooks {PostInstall = new List<Hook> {fakeHook}});
+            var fakeHook = new HookTypeRef("file.txt", HookType.File);
+            _finder.Setup(x => x.DiscoverHooks()).Returns(new Hooks {PostInstall = new List<HookTypeRef> {fakeHook}});
 
             _ihe.ExecutePostInstall();
 
@@ -79,8 +79,8 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
         [Test]
         public void ExecutePreInstall_ExecutesDiscoveredHooks()
         {
-            var fakeHook = new Hook("file.txt", HookType.File);
-            _finder.Setup(x => x.DiscoverHooks()).Returns(new Hooks {PreInstall = new List<Hook> {fakeHook}});
+            var fakeHook = new HookTypeRef("file.txt", HookType.File);
+            _finder.Setup(x => x.DiscoverHooks()).Returns(new Hooks {PreInstall = new List<HookTypeRef> {fakeHook}});
 
             _ihe.ExecutePreInstall();
 

@@ -5,5 +5,6 @@
         void ExecuteFirstInstall();
         void ExecutePreInstall();
         void ExecutePostInstall();
+        void ExecuteFirstPostInstall();
     }
 }

@@ -14,6 +14,7 @@ namespace deployd
             var returnCode = chainOfCommands.RunAll();
 
             Environment.Exit(returnCode);
+
         }
     }
 }

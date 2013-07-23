@@ -64,6 +64,10 @@
     <Reference Include="System.IO.Abstractions">
       <HintPath>..\packages\System.IO.Abstractions.1.4.0.40\lib\net35\System.IO.Abstractions.dll</HintPath>
     </Reference>
+    <Reference Include="System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\System.Management.Automation.6.1.7601.17515\lib\net40\System.Management.Automation.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -79,13 +83,14 @@
     <Compile Include="Features\AppExtraction\PackageCache.cs" />
     <Compile Include="Features\AppExtraction\ZipFilePackageExtractor.cs" />
     <Compile Include="Features\AppInstallation\HookExecution\ClassHookRunner.cs" />
+    <Compile Include="Features\AppInstallation\HookExecution\PowershellRunner.cs" />
     <Compile Include="Features\AppInstallation\HookFailureException.cs" />
     <Compile Include="Features\AppInstallation\Hooks\IHookFinder.cs" />
     <Compile Include="Features\AppInstallation\HookExecution\IHookRunner.cs" />
     <Compile Include="Features\AppInstallation\HookExecution\IInstallHookExecutor.cs" />
     <Compile Include="Features\AppInstallation\HookExecution\CommandLineRunner.cs" />
     <Compile Include="Features\Application.cs" />
-    <Compile Include="Features\AppInstallation\Hooks\Hook.cs" />
+    <Compile Include="Features\AppInstallation\Hooks\HookTypeRef.cs" />
     <Compile Include="Features\AppInstallation\Hooks\HookFinder.cs" />
     <Compile Include="Features\AppInstallation\Hooks\Hooks.cs" />
     <Compile Include="Features\AppInstallation\Hooks\HookType.cs" />

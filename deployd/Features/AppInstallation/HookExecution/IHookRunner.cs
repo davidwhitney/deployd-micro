@@ -4,7 +4,7 @@ namespace deployd.Features.AppInstallation.HookExecution
 {
     public interface IHookRunner
     {
-        void ExecuteHook(Hook hook, string arguments = null);
-        bool SupportsHook(Hook hook);
+        void ExecuteHook(HookTypeRef hookTypeRef, string arguments = null);
+        bool SupportsHook(HookTypeRef hookTypeRef);
     }
 }

@@ -31,9 +31,15 @@ namespace deployd.Features.AppInstallation.HookExecution
                     runSpaceInvoker.Invoke("Set-ExecutionPolicy Unrestricted -Scope Process");
                     using (var pipeline = runspace.CreatePipeline())
                     {
+                        Console.WriteLine("Credentials for script execution are required");
+                        Console.Write("Username: ");
+                        var username = Console.ReadLine();
+                        Console.Write("Password: ");
+                        var password = Console.ReadLine();
+
                         var command = new Command(hookTypeRef.FileName);
-                        command.Parameters.Add("justgiving01\\comuser");
-                        command.Parameters.Add("victoria");
+                        command.Parameters.Add("username",username);
+                        command.Parameters.Add("password",password);
                         pipeline.Commands.Add(command);
                         var results = pipeline.Invoke();
                         foreach (var result in results)

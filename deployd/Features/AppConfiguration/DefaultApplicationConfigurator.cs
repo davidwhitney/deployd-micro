@@ -50,7 +50,7 @@ namespace deployd.Features.AppConfiguration
                         process.StartInfo.RedirectStandardOutput = true;
                         
                         process.Start();
-                        Console.WriteLine(process.StandardOutput.ReadToEnd());
+                        _log.Debug(process.StandardOutput.ReadToEnd());
                         process.WaitForExit();
 
                         _fs.File.Delete(config.FullName);

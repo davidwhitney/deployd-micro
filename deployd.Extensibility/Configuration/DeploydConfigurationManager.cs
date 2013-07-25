@@ -1,4 +1,5 @@
-﻿using System.IO.Abstractions;
+﻿using System.IO;
+using System.IO.Abstractions;
 using Newtonsoft.Json;
 
 namespace deployd.Extensibility.Configuration
@@ -18,7 +19,20 @@ namespace deployd.Extensibility.Configuration
 
             if (!_fileSystem.File.Exists(fileName))
             {
-                return new DeploydConfiguration {DefaultConfiguration = true};
+                var configuration = new DeploydConfiguration
+                    {
+                        DefaultConfiguration = true
+                    };
+                using (var file = _fileSystem.File.Open(fileName, FileMode.Create, FileAccess.Write))
+                using (var streamWriter = new StreamWriter(file))
+                {
+                    configuration.PackageType = PackageType.NuGet;
+                    configuration.PackageSource = @"c:\path\to\packages";
+                    configuration.InstallRoot = @"c:\where\to\install\packages\to";
+                    streamWriter.Write(JsonConvert.SerializeObject(configuration));
+                    streamWriter.Flush();
+                    streamWriter.Close();
+                }
             }
 
             var configFileContents = _fileSystem.File.ReadAllText(fileName);

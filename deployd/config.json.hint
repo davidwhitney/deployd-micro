@@ -1,0 +1,5 @@
+﻿{ 
+    "PackageType" : "NuGet|CommonArchiveFormats|Directory", 
+    "PackageSource" : "[path or url to package source]",
+    "InstallRoot" : "[path to install applications to e.g: c:\\inetpub]" 
+}

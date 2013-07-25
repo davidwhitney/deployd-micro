@@ -1,5 +1,0 @@
-﻿{ 
-    "PackageType" : "NuGet", 
-    "PackageSource" : "http://build.justgiving.com/guestAuth/app/nuget/v1/FeedService.svc/",
-    "InstallRoot" : "d:\\wwwcom2" 
-}

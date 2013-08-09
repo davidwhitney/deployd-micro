@@ -55,6 +55,29 @@ namespace deployd.Features.AppExtraction
             return new ZipPackage(packagePath);
         }
 
+        public IPackage GetPackage(string packageId, string version = null)
+        {
+            if (!_fs.Directory.Exists(_applicationMap.CachePath))
+            {
+                return null;
+            }
+
+            var cache = NuGet.PackageRepositoryFactory.Default.CreateRepository(_applicationMap.CachePath);
+
+            if (version != null)
+            {
+                SemanticVersion semanticVersion;
+                if(!SemanticVersion.TryParse(version, out semanticVersion))
+                {
+                    throw new ArgumentException("Invalid version format", "version");
+                }
+
+                return cache.FindPackage(packageId, semanticVersion);
+            }
+
+            return cache.FindPackage(packageId);
+        }
+
         private bool PackageIsCached(IApplicationMap applicationMap, IPackage package)
         {
             if (!_fs.Directory.Exists(applicationMap.CachePath))

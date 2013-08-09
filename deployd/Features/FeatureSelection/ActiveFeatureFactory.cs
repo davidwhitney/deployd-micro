@@ -1,4 +1,5 @@
-﻿using deployd.AppStart;
+﻿using System;
+using deployd.AppStart;
 using deployd.Extensibility.Configuration;
 using deployd.Features.AppExtraction;
 using deployd.Features.AppInstallation;
@@ -6,6 +7,7 @@ using deployd.Features.AppLocating;
 using deployd.Features.Help;
 using deployd.Features.PurgeOldBackups;
 using deployd.Features.ShowState;
+using deployd.Features.Update;
 using log4net;
 using Ninject;
 
@@ -41,6 +43,17 @@ namespace deployd.Features.FeatureSelection
                 return commandCollection;
             }
 
+            if (_instanceConfiguration.Update)
+            {
+                if (string.IsNullOrEmpty(_instanceConfiguration.Environment))
+                {
+                    throw new ArgumentException("Usage:\r\ndeployd [packagename] -i -e [environment]");
+                }
+
+                commandCollection.Add(_kernel.GetService<UpdateCommand>());
+                return commandCollection;
+            }
+
             if (_instanceConfiguration.Help
                 || string.IsNullOrWhiteSpace(_instanceConfiguration.AppName))
             {
@@ -50,10 +63,16 @@ namespace deployd.Features.FeatureSelection
 
             if (!_instanceConfiguration.Install && !_instanceConfiguration.Prep)
             {
+                if (string.IsNullOrEmpty(_instanceConfiguration.Environment))
+                {
+                    throw new ArgumentException("Usage:\r\ndeployd [packagename] -i -e [environment]");
+                }
+
                 commandCollection.Add(_kernel.GetService<HelpCommand>());
                 return commandCollection;
                     // TODO: Display info on current version of packages?
             }
+
 
             if (_instanceConfiguration.Install || _instanceConfiguration.Prep)
             {

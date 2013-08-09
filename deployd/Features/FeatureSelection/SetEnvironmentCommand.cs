@@ -42,7 +42,7 @@ namespace deployd.Features.FeatureSelection
                 if (_fs.File.Exists(expectedTransformFilePath))
                 {
                     // found a transform for this config
-                    _log.InfoFormat("Found a config transform: {0} and {1}", sourceConfigFileName, expectedTransformFilename);
+                    _log.InfoFormat("Setting {0} environment", _config.Environment);
                     Transform(sourceConfigPath, expectedTransformFilePath);
                 }
             }
@@ -63,8 +63,8 @@ namespace deployd.Features.FeatureSelection
             process.Start();
             string output = process.StandardOutput.ReadToEnd();
             process.WaitForExit();
-            _log.InfoFormat("Transform process exited with code {0}", process.ExitCode);
-            _log.Info(output);
+            _log.DebugFormat("Transform process exited with code {0}", process.ExitCode);
+            _log.Debug(output);
 
         }
     }

@@ -9,6 +9,7 @@ using deployd.Extensibility.Configuration;
 using deployd.Features.AppExtraction;
 using deployd.Features.AppLocating;
 using log4net;
+using IFileSystem = System.IO.Abstractions.IFileSystem;
 
 namespace deployd.Features.Update
 {
@@ -19,47 +20,64 @@ namespace deployd.Features.Update
         private readonly Stream _outputStream;
         private readonly IListLatestVersionsOfPackagesQuery _query;
         private readonly DeploydConfiguration _deployd;
-        private readonly IPackageCache _packageCache;
+        private readonly IInstallationRoot _installationRoot;
+        private readonly IFileSystem _fs;
         private readonly ILog _log = LogManager.GetLogger(typeof(UpdateCommand));
 
         public UpdateCommand(IEnumerable<IAppInstallationLocator> finders, IInstanceConfiguration instanceConfiguration,
              Stream outputStream, IListLatestVersionsOfPackagesQuery query, DeploydConfiguration deployd,
-            IPackageCache packageCache)
+            IInstallationRoot installationRoot, System.IO.Abstractions.IFileSystem fs)
         {
             _finders = finders;
             _instanceConfiguration = instanceConfiguration;
             _outputStream = outputStream;
             _query = query;
             _deployd = deployd;
-            _packageCache = packageCache;
+            _installationRoot = installationRoot;
+            _fs = fs;
         }
 
         public void Execute()
         {
+            List<IPackage> packagesToUpdate = new List<IPackage>();
             using (var streamWriter = new StreamWriter(_outputStream))
             {
                 var activeFinders = _finders.Where(x => x.SupportsPathType()).ToList();
 
                 var location =
                     activeFinders.Select(locator => locator.CanFindPackageAsObject(_instanceConfiguration.AppName))
-                                 .FirstOrDefault(result => result != null);
+                        .FirstOrDefault(result => result != null);
 
-                streamWriter.WriteLine("All packages in {0}:", _deployd.PackageSource);
                 var allPackages = _query.GetLatestVersions(_deployd.PackageSource);
                 foreach (var package in allPackages)
                 {
-                    var cachedPackage = _packageCache.GetPackage(package.Id);
-                    if (cachedPackage != null)
+                    var appmap = new ApplicationMap(package.Id, _fs.Path.Combine(_installationRoot.Path, package.Id));
+                    if (!File.Exists(appmap.VersionFile))
                     {
-                        streamWriter.WriteLine("{0}: {1}", cachedPackage.Id, cachedPackage.Version);
-                        streamWriter.WriteLine("Local version: {0}", cachedPackage.Version);
-                        streamWriter.WriteLine("Remote version: {0}", package.Version);
+                        _log.DebugFormat("{0} is not installed", package.Id);
+                        continue;
+                    }
 
-                        if (package.Version > cachedPackage.Version)
+                    SemanticVersion installedVersion;
+                    if (SemanticVersion.TryParse(File.ReadAllText(appmap.VersionFile), out installedVersion))
+                    {
+                        if (package.Version > installedVersion)
                         {
-                            PrepareInstall(package, _instanceConfiguration.Prep);
+                            streamWriter.WriteLine(package.Id + " is out of date");
+                            packagesToUpdate.Add(package);
                         }
                     }
+                }
+
+                if (packagesToUpdate.Count == 0)
+                {
+                    streamWriter.WriteLine("Everything up to date");
+                    return;
+                }
+
+                foreach (var package in packagesToUpdate)
+                {
+                    PrepareInstall(package, _instanceConfiguration.Prep);
                 }
 
             }
@@ -81,12 +99,14 @@ namespace deployd.Features.Update
                 _instanceConfiguration.Environment,
                 prepareOnly ? "p" : "i",
                 _instanceConfiguration.ForceDownload ? "-f" : "");
+            _log.DebugFormat("{0} {1}", process.StartInfo.FileName, process.StartInfo.Arguments);
             process.OutputDataReceived += (sender, args) => _log.Info(args.Data);
             process.ErrorDataReceived += (sender, args) => _log.Warn(args.Data);
             process.Exited += (sender, args) => _log.DebugFormat("Process exited with code {0}", process.ExitCode);
             process.Start();
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
+            process.WaitForExit();
         }
     }
 }

@@ -34,7 +34,6 @@ namespace deployd.Features.AppExtraction
             {
                 foreach (var e in zip)
                 {
-                    _log.DebugFormat("Writing file {0}...", e.FileName); 
                     e.Extract(targetDirectory, ExtractExistingFileAction.OverwriteSilently);
                 }
             }

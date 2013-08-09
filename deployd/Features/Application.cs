@@ -101,7 +101,6 @@ namespace deployd.Features
             var files = sourceFolder.GetFiles();
             foreach (var file in files)
             {
-                _log.DebugFormat("Copying {0} -> {1}", file.FullName, _fs.Path.Combine(destination, file.Name));
                 _fs.File.Copy(file.FullName, _fs.Path.Combine(destination, file.Name));
             }
         }

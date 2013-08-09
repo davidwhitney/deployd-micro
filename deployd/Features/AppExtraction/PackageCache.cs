@@ -11,11 +11,11 @@ namespace deployd.Features.AppExtraction
     {
         private readonly System.IO.Abstractions.IFileSystem _fs;
         private readonly ILog _log;
-        private readonly InstanceConfiguration _instanceConfiguration;
+        private readonly IInstanceConfiguration _instanceConfiguration;
         private readonly IApplicationMap _applicationMap;
 
         public PackageCache(System.IO.Abstractions.IFileSystem fs, ILog log, 
-            InstanceConfiguration instanceConfiguration, IApplicationMap applicationMap)
+            IInstanceConfiguration instanceConfiguration, IApplicationMap applicationMap)
         {
             _fs = fs;
             _log = log;

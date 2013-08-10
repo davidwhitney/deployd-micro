@@ -4,8 +4,8 @@ using System.IO;
 using System.Linq;
 using deployd.Extensibility;
 using deployd.Extensibility.Configuration;
-using deployd.Features.AppConfiguration;
 using deployd.Features.AppLocating;
+using deployd.Features.Environment;
 
 namespace deployd.Features.AppExtraction
 {
@@ -13,7 +13,7 @@ namespace deployd.Features.AppExtraction
     {
         private readonly IApplicationFactory _appFactory;
         private readonly IInstallationRoot _installRoot;
-        private readonly IEnumerable<IApplicationConfigurator> _configurators;
+        private readonly IEnumerable<IEnvironmentApplier> _configurators;
         private readonly IList<IPackageExtractor> _extractors;
         private readonly IInstanceConfiguration _config;
 
@@ -21,7 +21,7 @@ namespace deployd.Features.AppExtraction
             IInstanceConfiguration config,
             IApplicationFactory appFactory, 
             IInstallationRoot installRoot,
-            IEnumerable<IApplicationConfigurator> configurators )
+            IEnumerable<IEnvironmentApplier> configurators )
         {
             _appFactory = appFactory;
             _installRoot = installRoot;
@@ -51,14 +51,14 @@ namespace deployd.Features.AppExtraction
 
             extractor.Unpack(_config.ApplicationMap.Staging, packageInfo);
 
-            var configurer = GetConfiguratorFor(packageInfo);
-            if (configurer != null)
+            var environmentApplier = GetEnvironmentApplierFor(packageInfo);
+            if (environmentApplier != null)
             {
-                configurer.Configure(_config.ApplicationMap.Staging, packageInfo, _config.Environment);
+                environmentApplier.Apply(_config.ApplicationMap.Staging, packageInfo, _config.Environment);
             }
         }
 
-        private IApplicationConfigurator GetConfiguratorFor(object packageInfo)
+        private IEnvironmentApplier GetEnvironmentApplierFor(object packageInfo)
         {
             var configurator = _configurators.FirstOrDefault(x => x.CanConfigure(packageInfo, _config));
             return configurator;

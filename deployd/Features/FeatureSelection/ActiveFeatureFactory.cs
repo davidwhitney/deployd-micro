@@ -1,6 +1,7 @@
 ﻿using System;
 using deployd.AppStart;
 using deployd.Extensibility.Configuration;
+using deployd.Features.AppConfiguration;
 using deployd.Features.AppExtraction;
 using deployd.Features.AppInstallation;
 using deployd.Features.AppLocating;
@@ -40,6 +41,12 @@ namespace deployd.Features.FeatureSelection
             if (_instanceConfiguration.ShowState)
             {
                 commandCollection.Add(_kernel.GetService<ShowStateCommand>());
+                return commandCollection;
+            }
+
+            if (!string.IsNullOrWhiteSpace(_instanceConfiguration.SetConfigurationValue))
+            {
+                commandCollection.Add(_kernel.GetService<ConfigureCommand>());
                 return commandCollection;
             }
 

@@ -24,6 +24,8 @@ namespace deployd.Features.FeatureSelection
 
         public bool ForceDownload { get; set; }
 
+        public string SetConfigurationValue { get; set; }
+
         public InstanceConfiguration()
         {
             ApplicationMap = new ApplicationMap(string.Empty, string.Empty);

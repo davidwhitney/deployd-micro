@@ -4,14 +4,14 @@ using System.IO.Abstractions;
 using deployd.Extensibility.Configuration;
 using log4net;
 
-namespace deployd.Features.AppConfiguration
+namespace deployd.Features.Environment
 {
-    public class DefaultApplicationConfigurator : IApplicationConfigurator
+    public class DefaultEnvironmentApplier : IEnvironmentApplier
     {
         private readonly IFileSystem _fs;
         private readonly ILog _log;
 
-        public DefaultApplicationConfigurator(IFileSystem fs, ILog log)
+        public DefaultEnvironmentApplier(IFileSystem fs, ILog log)
         {
             _fs = fs;
             _log = log;
@@ -22,7 +22,7 @@ namespace deployd.Features.AppConfiguration
             return !string.IsNullOrWhiteSpace(config.Environment);
         }
 
-        public void Configure(string path, object packageInfo, string forEnvironment)
+        public void Apply(string path, object packageInfo, string forEnvironment)
         {
             var stagingRoot = _fs.DirectoryInfo.FromDirectoryName(path);
             var configDirectory = _fs.DirectoryInfo.FromDirectoryName(stagingRoot.FullName + "\\config");

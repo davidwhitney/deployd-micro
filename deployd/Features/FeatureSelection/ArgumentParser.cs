@@ -26,6 +26,7 @@ namespace deployd.Features.FeatureSelection
                     {"v|verbose", v => cfg.Verbose = v != null},
                     {"s|state", v => cfg.ShowState = v != null},
                     {"f|force", v => cfg.ForceDownload = v != null},
+                    {"c|config=", v => cfg.SetConfigurationValue = v},
                     {"h|?|help", v => cfg.Help = v != null},
                 };
             cfg.OptionSet = p;

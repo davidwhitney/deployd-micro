@@ -5,12 +5,12 @@ using Ninject;
 using NuGet;
 using deployd.Extensibility.Configuration;
 using deployd.Features;
-using deployd.Features.AppConfiguration;
 using deployd.Features.AppExtraction;
 using deployd.Features.AppInstallation;
 using deployd.Features.AppInstallation.HookExecution;
 using deployd.Features.AppInstallation.Hooks;
 using deployd.Features.AppLocating;
+using deployd.Features.Environment;
 using deployd.Features.FeatureSelection;
 using log4net;
 using IFileSystem = System.IO.Abstractions.IFileSystem;
@@ -117,7 +117,7 @@ namespace deployd.AppStart
 
         private static bool IsApplicationConfigurator(Type type)
         {
-            return type.IsClass && type.GetInterfaces().Any(intface => intface.Name == typeof(IApplicationConfigurator).Name);
+            return type.IsClass && type.GetInterfaces().Any(intface => intface.Name == typeof(IEnvironmentApplier).Name);
         }
 
         private static bool IsHookRunner(Type type)

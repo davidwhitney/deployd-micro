@@ -7,6 +7,7 @@ namespace deployd.Extensibility.Configuration
     public class DeploydConfigurationManager
     {
         private readonly IFileSystem _fileSystem;
+        const string fileName = "config.json";
 
         public DeploydConfigurationManager(IFileSystem fileSystem)
         {
@@ -15,7 +16,7 @@ namespace deployd.Extensibility.Configuration
 
         public DeploydConfiguration LoadConfig()
         {
-            const string fileName = "config.json";
+            
 
             if (!_fileSystem.File.Exists(fileName))
             {
@@ -37,6 +38,17 @@ namespace deployd.Extensibility.Configuration
 
             var configFileContents = _fileSystem.File.ReadAllText(fileName);
             return JsonConvert.DeserializeObject<DeploydConfiguration>(configFileContents);
+        }
+
+        public void SaveConfig(DeploydConfiguration deploydConfiguration)
+        {
+            using (var file = _fileSystem.File.Open(fileName, FileMode.Create, FileAccess.Write))
+            using (var streamWriter = new StreamWriter(file))
+            {
+                streamWriter.Write(JsonConvert.SerializeObject(deploydConfiguration));
+                streamWriter.Flush();
+                streamWriter.Close();
+            }
         }
     }
 }

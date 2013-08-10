@@ -22,5 +22,6 @@ namespace deployd.Extensibility.Configuration
         bool ShowState { get; set; }
         bool Update { get; set; }
         bool ForceDownload { get; set; }
+        string SetConfigurationValue { get; set; }
     }
 }

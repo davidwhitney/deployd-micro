@@ -30,14 +30,20 @@ namespace deployd.Features.AppConfiguration
 
             if (split.Length == 1 || split.Length == 2)
             {
-                var property = typeof(DeploydConfiguration)
-                    .GetProperty(split[0]);
+                var property = typeof(DeploydConfiguration).GetProperty(split[0]);
 
                 if (property != null)
                 {
                     if (split.Length == 2)
                     {
-                        property.SetValue(_deploydConfiguration, split[1], null);
+                        if (property.PropertyType.IsEnum)
+                        {
+                            property.SetValue(_deploydConfiguration, Enum.Parse(property.PropertyType, split[1], true), null);
+                        }
+                        else
+                        {
+                            property.SetValue(_deploydConfiguration, Convert.ChangeType(split[1], property.PropertyType), null);
+                        }
                         _configurationManager.SaveConfig(_deploydConfiguration);
                     }
                     else

@@ -1,4 +1,6 @@
-﻿using Moq;
+﻿using System.IO;
+using System.Text;
+using Moq;
 using NUnit.Framework;
 using System.IO.Abstractions;
 using deployd.Extensibility.Configuration;
@@ -21,7 +23,10 @@ namespace deployd.tests.Features.ClientConfiguration
         [Test]
         public void LoadConfig_NoConfigFileFound_LoadsDefaultConfiguration()
         {
+            var fakeFileStream = new MemoryStream();
             _fs.Setup(x => x.File.Exists("config.json")).Returns(false);
+            _fs.Setup(x => x.File.Open(It.IsAny<string>(), It.IsAny<FileMode>(), It.IsAny<FileAccess>())).Returns(fakeFileStream);
+            _fs.Setup(x => x.File.ReadAllText(It.IsAny<string>())).Returns(()=>Encoding.UTF8.GetString(fakeFileStream.ToArray()));
 
             var configuration = _cfgManager.LoadConfig();
 

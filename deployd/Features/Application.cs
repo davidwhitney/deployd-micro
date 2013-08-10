@@ -30,12 +30,12 @@ namespace deployd.Features
             _config = config;
             _installationLock = installationLock;
 
-            _log.Info("App directory: " + _appMap.FullPath);
+            _log.Info("App directory: " + _appMap.InstallPath);
         }
 
         public void EnsureDataDirectoriesExist()
         {
-            _fs.EnsureDirectoryExists(_appMap.FullPath);
+            _fs.EnsureDirectoryExists(_appMap.InstallPath);
             _fs.EnsureDirectoryExists(_appMap.Staging);
             _fs.EnsureDirectoryExists(_appMap.CachePath);
             var cacheFolder = _fs.DirectoryInfo.FromDirectoryName(_appMap.CachePath);
@@ -56,11 +56,11 @@ namespace deployd.Features
 
         public void ActivateStaging()
         {
-            _log.InfoFormat("Activating staged install at {0}...", _appMap.Active);
+            _log.InfoFormat("Activating staged install at {0}...", _appMap.InstallPath);
 
             //_fs.Directory.Move(_appMap.Staging, _appMap.Active);
-            RecursiveDelete(_appMap.FullPath);
-            RecursiveCopy(_appMap.Staging, _appMap.FullPath);
+            RecursiveDelete(_appMap.InstallPath);
+            RecursiveCopy(_appMap.Staging, _appMap.InstallPath);
             RecursiveDelete(_appMap.Staging);
         }
 
@@ -124,10 +124,10 @@ namespace deployd.Features
                 _fs.Directory.Move(backupPath, newPath);
             }
 
-            if (_fs.Directory.Exists(_appMap.Active))
+            if (_fs.Directory.Exists(_appMap.InstallPath))
             {
                 _log.Info("Backing up current installation...");
-                RecursiveCopy(_appMap.Active, backupPath);
+                RecursiveCopy(_appMap.InstallPath, backupPath);
             }
         }
 

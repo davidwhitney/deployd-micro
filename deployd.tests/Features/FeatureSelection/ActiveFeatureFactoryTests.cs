@@ -70,7 +70,8 @@ namespace deployd.tests.Features.FeatureSelection
 
             Assert.That(commands.First().GetType(), Is.EqualTo(typeof(AppLocatingCommand)));
             Assert.That(commands.Skip(1).First().GetType(), Is.EqualTo(typeof(AppExtractionCommand)));
-            Assert.That(commands.Skip(2).First().GetType(), Is.EqualTo(typeof(AppInstallationCommand)));
+            Assert.That(commands.Skip(2).First().GetType(), Is.EqualTo(typeof(SetEnvironmentCommand)));
+            Assert.That(commands.Skip(3).First().GetType(), Is.EqualTo(typeof(AppInstallationCommand)));
         }
 
         [Test]

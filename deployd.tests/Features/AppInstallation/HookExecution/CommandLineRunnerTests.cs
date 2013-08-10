@@ -31,7 +31,7 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
         [Test]
         public void CopyVariablesToEnvironment_MapsApplicationMapToEnvironment()
         {
-            var map = new ApplicationMap("testApp", "c:\\full\\path");
+            var map = new ApplicationMap("testApp", "c:\\install\\path");
             _config.Setup(x => x.ApplicationMap).Returns(map);
             var startInfo = new ProcessStartInfo { FileName = HookFileName };
 
@@ -40,9 +40,8 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
             const string prefix = "Deployd.";
             var countOfDeploydKeys = startInfo.EnvironmentVariables.Keys.Cast<string>().Count(var => var.StartsWith(prefix));
 
-            Assert.That(startInfo.EnvironmentVariables[prefix + "Active"], Is.EqualTo(map.Active));
             Assert.That(startInfo.EnvironmentVariables[prefix + "AppName"], Is.EqualTo(map.AppName));
-            Assert.That(startInfo.EnvironmentVariables[prefix + "FullPath"], Is.EqualTo(map.FullPath));
+            Assert.That(startInfo.EnvironmentVariables[prefix + "InstallPath"], Is.EqualTo(map.InstallPath));
             Assert.That(startInfo.EnvironmentVariables[prefix + "Lock"], Is.EqualTo(map.Lock));
             Assert.That(startInfo.EnvironmentVariables[prefix + "Lockfile"], Is.EqualTo(map.Lockfile));
             Assert.That(startInfo.EnvironmentVariables[prefix + "Staging"], Is.EqualTo(map.Staging));

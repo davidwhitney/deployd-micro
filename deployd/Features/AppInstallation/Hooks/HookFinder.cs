@@ -39,12 +39,12 @@ namespace deployd.Features.AppInstallation.Hooks
             foreach (var hook in hooks.PostInstall.Where(x=>x.Type == HookType.File))
             {
                 hook.FileName = hook.FileName.Replace(_configuration.ApplicationMap.Staging,
-                                                      _configuration.ApplicationMap.Active);
+                                                      _configuration.ApplicationMap.InstallPath);
             }
             foreach (var hook in hooks.PostFirstInstall.Where(x => x.Type == HookType.File))
             {
                 hook.FileName = hook.FileName.Replace(_configuration.ApplicationMap.Staging,
-                                                      _configuration.ApplicationMap.Active);
+                                                      _configuration.ApplicationMap.InstallPath);
             }
 
             AddAssemblyPlugins(hooks);

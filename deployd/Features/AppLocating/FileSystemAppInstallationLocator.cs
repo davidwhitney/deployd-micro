@@ -10,32 +10,33 @@ namespace deployd.Features.AppLocating
 {
     public class FileSystemAppInstallationLocator : IAppInstallationLocator<PackagePointer>
     {
+        private readonly DeploydConfiguration _configuration;
         private readonly IFileSystem _fs;
 
-        private readonly string _packageSource;
         private readonly ILog _log;
 
         public FileSystemAppInstallationLocator(DeploydConfiguration configuration, IFileSystem fs, ILog log)
-            : this(configuration.PackageSource, fs, log)
         {
-        }
-        public FileSystemAppInstallationLocator(string packageSource, IFileSystem fs, ILog log)
-        {
+            _configuration = configuration;
             _fs = fs;
-            _packageSource = packageSource;
             _log = log;
+        }
+
+        public FileSystemAppInstallationLocator(string packageSource, IFileSystem fs, ILog log):
+            this(new DeploydConfiguration(){PackageSource = packageSource}, fs, log)
+        {
         }
 
         public bool SupportsPathType()
         {
-            return _fs.Directory.Exists(_packageSource);
+            return _fs.Directory.Exists(_configuration.PackageSource);
         }
 
         public PackageLocation<PackagePointer> CanFindPackage(string appName)
         {
             try
             {
-                var searchPath = _packageSource;
+                var searchPath = _configuration.PackageSource;
                 var matching =
                     _fs.Directory.GetFiles(searchPath, appName + ".*.zip", SearchOption.AllDirectories)
                        .OrderBy(x => x)

@@ -54,10 +54,12 @@ namespace deployd.Features.FeatureSelection
             {
                 if (string.IsNullOrEmpty(_instanceConfiguration.Environment))
                 {
-                    throw new ArgumentException("Usage:\r\ndeployd [packagename] -i -e [environment]");
+                    commandCollection.Add(_kernel.GetService<HelpCommand>());
                 }
-
-                commandCollection.Add(_kernel.GetService<UpdateCommand>());
+                else
+                {
+                    commandCollection.Add(_kernel.GetService<UpdateCommand>());
+                }
                 return commandCollection;
             }
 
@@ -72,12 +74,13 @@ namespace deployd.Features.FeatureSelection
             {
                 if (string.IsNullOrEmpty(_instanceConfiguration.Environment))
                 {
-                    throw new ArgumentException("Usage:\r\ndeployd [packagename] -i -e [environment]");
+                    commandCollection.Add(_kernel.GetService<HelpCommand>());
                 }
-
-                commandCollection.Add(_kernel.GetService<HelpCommand>());
+                else
+                {
+                    commandCollection.Add(_kernel.GetService<HelpCommand>());
+                }
                 return commandCollection;
-                    // TODO: Display info on current version of packages?
             }
 
 

@@ -4,11 +4,11 @@ namespace deployd.Infrastructure
 {
     public static class DirectoryExtensions
     {
-        public static void EnsureDirectoryExists(this IFileSystem fs, string fullPath)
+        public static void EnsureDirectoryExists(this IFileSystem fs, string path)
         {
-            if (!fs.Directory.Exists(fullPath))
+            if (!fs.Directory.Exists(path))
             {
-                fs.Directory.CreateDirectory(fullPath);
+                fs.Directory.CreateDirectory(path);
             }
         }
     }

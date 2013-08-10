@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
 using Moq;
 using NUnit.Framework;
 using deployd.Features.FeatureSelection;
@@ -13,32 +16,37 @@ namespace deployd.tests.Features.Help
         [Test]
         public void Execute_PrintsSomethingToTheLog()
         {
+            var outputStream = new MemoryStream();
             var log = new Mock<ILog>();
             log.Setup(x => x.Info(It.IsAny<string>()));
             var config = new ArgumentParser().Parse(new List<string>());
-            var cmd = new HelpCommand(config, log.Object);
+            var cmd = new HelpCommand(config, log.Object, outputStream);
 
             cmd.Execute();
-
-            log.Verify(x=>x.Info(It.IsAny<string>()));
+            string output = Encoding.UTF8.GetString(outputStream.ToArray());
+            Debug.WriteLine(output);
+            Assert.That(output, Is.Not.Empty);
         }
 
         [Test]
         public void Execute_PrintsSomethingUseful()
         {
+            var outputStream = new MemoryStream();
             var log = new Mock<ILog>();
             log.Setup(x => x.Info(It.IsAny<string>()));
 
             var config = new ArgumentParser().Parse(new List<string>());
-            var cmd = new HelpCommand(config, log.Object);
+            var cmd = new HelpCommand(config, log.Object, outputStream);
 
             cmd.Execute();
 
-            log.Verify(x=>x.Info(It.Is<string>(y=>y.Contains("-app"))));
-            log.Verify(x=>x.Info(It.Is<string>(y=>y.Contains("-v"))));
-            log.Verify(x=>x.Info(It.Is<string>(y=>y.Contains("-help"))));
-            log.Verify(x=>x.Info(It.Is<string>(y=>y.Contains("-install"))));
-            log.Verify(x=>x.Info(It.Is<string>(y=>y.Contains("-i"))));
+            string output = Encoding.UTF8.GetString(outputStream.ToArray());
+            Debug.WriteLine(output);
+            Assert.That(output, Is.StringContaining("-app"));
+            Assert.That(output, Is.StringContaining("-v"));
+            Assert.That(output, Is.StringContaining("-help"));
+            Assert.That(output, Is.StringContaining("-install"));
+            Assert.That(output, Is.StringContaining("-i"));
         }
     }
 }

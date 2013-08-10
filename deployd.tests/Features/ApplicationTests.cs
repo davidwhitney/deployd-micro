@@ -1,5 +1,8 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.IO.Abstractions;
+using System.IO.Abstractions.TestingHelpers;
 using Moq;
 using NUnit.Framework;
 using deployd.Extensibility.Configuration;
@@ -13,187 +16,239 @@ namespace deployd.tests.Features
     [TestFixture]
     public class ApplicationTests
     {
-        private Application _app;
         private Mock<IApplicationMap> _appMap;
-        private Mock<IFileSystem> _fs;
         private Mock<ILog> _log;
         private Mock<IInstallationPadLock> _installationLock;
         private IInstanceConfiguration _instanceConfig;
 
-        private const string FullPath = "c:\\fullPath";
-        private const string ActiveDir = "c:\\active";
+        private const string InstallPath = "c:\\installPath";
         private const string StagingDir = "c:\\staging";
-        private const string VersionFile = "c:\\fullPath\version";
+        private const string VersionFile = "c:\\installPath\\version";
+        private const string CacheDir = "c:\\cache";
 
         [SetUp]
         public void SetUp()
         {
             _appMap = new Mock<IApplicationMap>();
-            _appMap.Setup(x => x.FullPath).Returns(FullPath);
-            _appMap.Setup(x => x.Active).Returns(ActiveDir);
+            _appMap.Setup(x => x.InstallPath).Returns(InstallPath);
             _appMap.Setup(x => x.Staging).Returns(StagingDir);
             _appMap.Setup(x => x.VersionFile).Returns(VersionFile);
+            _appMap.Setup(x => x.CachePath).Returns(CacheDir);
 
-            _fs = new Mock<IFileSystem>();
             _log = new Mock<ILog>();
             _installationLock = new Mock<IInstallationPadLock>();
             _instanceConfig = new InstanceConfiguration();
-
-            _app = new Application(_appMap.Object, _fs.Object, _log.Object, _instanceConfig, _installationLock.Object);
         }
 
         [Test]
         public void IsInstalled_IfVersionFileExists_ReturnsTrue()
         {
-            _fs.Setup(x => x.File.Exists(VersionFile)).Returns(true);
+            var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>()
+                {
+                    {VersionFile, new MockFileData("1.0.0.0")},
+                    {Path.Combine(InstallPath, "filetocopy.txt"), new MockFileData("file contents")}
+                });
 
-            Assert.That(_app.IsInstalled, Is.True);
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
+            Assert.That(app.IsInstalled, Is.True);
         }
 
         [Test]
         public void IsInstalled_IfVersionFileDoesntExist_ReturnsFalse()
         {
-            _fs.Setup(x => x.File.Exists(VersionFile)).Returns(false);
+            var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>()
+                {
+                    {Path.Combine(InstallPath, "filetocopy.txt"), new MockFileData("file contents")}
+                });
 
-            Assert.That(_app.IsInstalled, Is.False);
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
+
+            Assert.That(app.IsInstalled, Is.False);
         }
 
         [Test]
         public void IsStaged_IfStagingDirectoryExists_ReturnsTrue()
         {
-            _fs.Setup(x => x.Directory.Exists(StagingDir)).Returns(true);
+            var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>()
+                {
+                    {Path.Combine(InstallPath, "filetocopy.txt"), new MockFileData("file contents")},
+                    {StagingDir, new MockDirectoryData()},
+                    {Path.Combine(StagingDir, "somefile.txt"), new MockFileData("sadfhsdf")},
+                });
 
-            Assert.That(_app.IsStaged, Is.True);
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
+
+            Assert.That(app.IsStaged, Is.True);
         }
 
         [Test]
         public void IsStaged_IfStagingDirectoryDoesntExist_ReturnsFalse()
         {
-            _fs.Setup(x => x.Directory.Exists(StagingDir)).Returns(false);
+            var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>()
+                {
+                    {Path.Combine(InstallPath, "filetocopy.txt"), new MockFileData("file contents")},
+                });
 
-            Assert.That(_app.IsStaged, Is.False);
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
+
+            Assert.That(app.IsStaged, Is.False);
         }
 
         [Test]
         public void ActivateStaging_MovedStagingToActiveDirectory()
         {
-            _fs.Setup(x => x.Directory.Move(StagingDir, ActiveDir));
+            var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>()
+                {
+                    {Path.Combine(InstallPath, "filetocopy.txt"), new MockFileData("file contents")},
+                    {Path.Combine(StagingDir, "SomeApplicationFile.dll"), new MockFileData(new byte[0])}
+                });
 
-            _app.ActivateStaging();
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
 
-            _fs.Verify(x=>x.Directory.Move(StagingDir, ActiveDir));
+            app.ActivateStaging();
+
+            Assert.That(fileSystem.FileExists(Path.Combine(InstallPath, "SomeApplicationFile.dll")), Is.True);
         }
 
         [Test]
         public void BackupCurrentVersion_NotCurrentlyInstalled_DoesntMoveAnyDirectories()
         {
-            _fs.Setup(x => x.File.Exists(VersionFile)).Returns(false);
+            var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>()
+                {
+                    {VersionFile, new MockFileData("1.0.0.0")},
+                    {Path.Combine(InstallPath, "filetocopy.txt"), new MockFileData("file contents")}
+                });
 
-            _app.BackupCurrentVersion();
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
 
-            _fs.Verify(x => x.Directory.Move(It.IsAny<string>(), It.IsAny<string>()), Times.Never());
+            app.BackupCurrentVersion();
+
+            Assert.That(fileSystem.FileExists(Path.Combine(CacheDir, "1.0.0.0\\filetocopy.txt")), Is.True);
         }
 
         [Test]
         public void BackupCurrentVersion_AppIsInstalled_MovesCurrentAppToVersionedBackup()
         {
-            const string versionInstalled = "1.0.0.0";
-            var backupPath = Path.Combine(FullPath, versionInstalled);
 
-            _fs.Setup(x => x.File.Exists(VersionFile)).Returns(true);
-            _fs.Setup(x => x.File.ReadAllText(VersionFile)).Returns(versionInstalled);
-            _fs.Setup(x => x.Directory.Exists(backupPath)).Returns(false); // No existing backup
-            _fs.Setup(x => x.Directory.Exists(ActiveDir)).Returns(true);
+            var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>()
+                {
+                    {VersionFile, new MockFileData("1.0.0.0")},
+                    {Path.Combine(InstallPath,"filetocopy.txt"), new MockFileData("file contents")}
+                });
 
-            _app.BackupCurrentVersion();
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
+            app.BackupCurrentVersion();
 
-            _fs.Verify(x => x.Directory.Move(ActiveDir, backupPath), Times.Once());
+            Assert.That(fileSystem.Directory.Exists(Path.Combine(CacheDir, "1.0.0.0")), Is.True);
         }
 
         [Test]
         public void BackupCurrentVersion_AlreadyABackupForThisVersion_MovesOldBackupFirst()
         {
-            const string versionInstalled = "1.0.0.0";
-            var backupPath = Path.Combine(FullPath, versionInstalled);
+            var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>()
+                {
+                    {VersionFile, new MockFileData("1.0.0.0")},
+                    {Path.Combine(InstallPath, "filetocopy.txt"), new MockFileData("file contents")},
+                    {Path.Combine(StagingDir, "SomeApplicationFile.dll"), new MockFileData(new byte[0])},
+                    {Path.Combine(CacheDir, "1.0.0.0"), new MockDirectoryData()}
+                });
 
-            _fs.Setup(x => x.File.Exists(VersionFile)).Returns(true);
-            _fs.Setup(x => x.File.ReadAllText(VersionFile)).Returns(versionInstalled);
-            _fs.Setup(x => x.Directory.Exists(backupPath)).Returns(true); // Existing backup found
-            _fs.Setup(x => x.Directory.Exists(ActiveDir)).Returns(true);
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
 
-            _app.BackupCurrentVersion();
+            app.BackupCurrentVersion();
 
-            _fs.Verify(
-                x =>
-                x.Directory.Move(backupPath, It.Is<string>(y => y.StartsWith(backupPath) && y.Contains("-duplicate-"))),
-                Times.Once());
+            Assert.That(fileSystem.DirectoryInfo.FromDirectoryName(CacheDir).GetDirectories().Length, Is.EqualTo(2));
         }
 
         [Test]
         public void PruneBackups_LessThanTenBackups_NothingHappens()
         {
-            var listOfDirectories = new[] { "App.1.0.0.0", "App.1.1.0.0" };
-            _fs.Setup(x => x.Directory.GetDirectories(FullPath)).Returns(listOfDirectories);
+            var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>()
+                {
+                    {Path.Combine(InstallPath, "filetocopy.txt"), new MockFileData("file contents")},
+                    {Path.Combine(StagingDir, "SomeApplicationFile.dll"), new MockFileData(new byte[0])},
+                    {Path.Combine(CacheDir, "1.0.0.0\\somefile.txt"), new MockFileData("file contents")},
+                    {Path.Combine(CacheDir, "1.0.0.1\\somefile.txt"), new MockFileData("file contents")},
+                    {Path.Combine(CacheDir, "1.0.0.2\\somefile.txt"), new MockFileData("file contents")},
+                    {Path.Combine(CacheDir, "1.0.0.3\\somefile.txt"), new MockFileData("file contents")},
+                });
 
-            _app.PruneBackups();
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
 
-            _fs.Verify(x => x.Directory.Delete(It.IsAny<string>(), true), Times.Never());
+            app.PruneBackups();
+
+            Assert.That(fileSystem.DirectoryInfo.FromDirectoryName(CacheDir).GetDirectories().Length, Is.EqualTo(4));
         }
 
         [Test]
         public void PruneBackups_MoreThanTenBackups_OldestItemRemoved()
         {
-            var listOfDirectories = new[]
+            var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>()
                 {
-                    "App.1.0.0.0", 
-                    "App.1.1.0.0",
-                    "App.1.2.0.0",
-                    "App.1.3.0.0",
-                    "App.1.4.0.0",
-                    "App.1.5.0.0",
-                    "App.1.6.0.0",
-                    "App.1.7.0.0",
-                    "App.1.8.0.0",
-                    "App.1.9.0.0",
-                    "App.1.10.0.0"
-                };
-            _fs.Setup(x => x.Directory.GetDirectories(FullPath)).Returns(listOfDirectories);
+                    {Path.Combine(InstallPath, "filetocopy.txt"), new MockFileData("file contents")},
+                    {Path.Combine(StagingDir, "SomeApplicationFile.dll"), new MockFileData(new byte[0])},
+                    {Path.Combine(CacheDir, "1.0.0.0\\somefile.txt"), new MockFileData("file contents")},
+                    {Path.Combine(CacheDir, "1.0.0.1\\somefile.txt"), new MockFileData("file contents")},
+                    {Path.Combine(CacheDir, "1.0.0.2\\somefile.txt"), new MockFileData("file contents")},
+                    {Path.Combine(CacheDir, "1.0.0.3\\somefile.txt"), new MockFileData("file contents")},
+                    {Path.Combine(CacheDir, "1.0.0.4\\somefile.txt"), new MockFileData("file contents")},
+                    {Path.Combine(CacheDir, "1.0.0.5\\somefile.txt"), new MockFileData("file contents")},
+                    {Path.Combine(CacheDir, "1.0.0.6\\somefile.txt"), new MockFileData("file contents")},
+                    {Path.Combine(CacheDir, "1.0.0.7\\somefile.txt"), new MockFileData("file contents")},
+                    {Path.Combine(CacheDir, "1.0.0.8\\somefile.txt"), new MockFileData("file contents")},
+                    {Path.Combine(CacheDir, "1.0.0.9\\somefile.txt"), new MockFileData("file contents")},
+                    {Path.Combine(CacheDir, "1.0.0.10\\somefile.txt"), new MockFileData("file contents")},
+                    {Path.Combine(CacheDir, "1.0.0.11\\somefile.txt"), new MockFileData("file contents")},
+                });
 
-            _app.PruneBackups();
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
 
-            _fs.Verify(x => x.Directory.Delete("App.1.0.0.0", true), Times.Once());
+            app.PruneBackups();
+
+            Assert.That(fileSystem.DirectoryInfo.FromDirectoryName(CacheDir).GetDirectories().Length, Is.EqualTo(10));
         }
 
         [Test]
         public void EnsureDataDirectoryExists_CreatesDirectoriesWhenTheyDontExist()
         {
-            _fs.Setup(x => x.Directory.Exists(FullPath)).Returns(false);
-            _fs.Setup(x => x.Directory.Exists(StagingDir)).Returns(false);
-            _fs.Setup(x => x.Directory.CreateDirectory(FullPath));
-            _fs.Setup(x => x.Directory.CreateDirectory(StagingDir));
+            var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>()
+                {
+                });
 
-            _app.EnsureDataDirectoriesExist();
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
 
-            _fs.Verify(x => x.Directory.CreateDirectory(FullPath));
-            _fs.Verify(x => x.Directory.CreateDirectory(StagingDir));
+            app.EnsureDataDirectoriesExist();
+
+            Assert.That(fileSystem.Directory.Exists(InstallPath));
+            Assert.That(fileSystem.Directory.Exists(CacheDir));
+            Assert.That(fileSystem.Directory.Exists(StagingDir));
+            Assert.That((fileSystem.DirectoryInfo.FromDirectoryName(CacheDir).Attributes & FileAttributes.Hidden), Is.EqualTo(FileAttributes.Hidden));
         }
 
         [Test]
-        public void EnsureDataDirectoryExists_ChecksIfFullPathAndStagingDirExists()
+        public void EnsureDataDirectoryExists_ChecksIfInstallPathAndStagingDirExists()
         {
-            _fs.Setup(x => x.Directory.Exists(FullPath)).Returns(true);
-            _fs.Setup(x => x.Directory.Exists(StagingDir)).Returns(true);
+            var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>()
+            {
+                {InstallPath, new MockDirectoryData()},
+                {StagingDir, new MockDirectoryData()},
+            });
 
-            _app.EnsureDataDirectoriesExist();
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
 
-            _fs.Verify(x => x.Directory.Exists(FullPath));
-            _fs.Verify(x => x.Directory.Exists(StagingDir));
+            Assert.DoesNotThrow(app.EnsureDataDirectoriesExist);
         }
 
         [Test]
         public void LockForInstall_WhenCalled_InvokesVersionLock()
         {
-            _app.LockForInstall();
+            var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>()
+            {
+            });
+
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
+
+            app.LockForInstall();
 
             _installationLock.Verify(x=>x.LockAppInstallation());
         }
@@ -202,11 +257,16 @@ namespace deployd.tests.Features
         public void WriteUpdatedManifest_WritesVersionFileWithPassedSemanticVersion()
         {
             const string version = "1.2.3.4";
-            _fs.Setup(x => x.File.WriteAllText(VersionFile, version));
+            var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>()
+            {
+            });
 
-            _app.WriteUpdatedManifest(version);
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
 
-            _fs.Verify(x => x.File.WriteAllText(VersionFile, version));
+            app.WriteUpdatedManifest(version);
+
+            Assert.That(fileSystem.FileExists(VersionFile), Is.True);
+            Assert.That(fileSystem.File.ReadAllText(VersionFile), Is.StringMatching(version));
         }
 
         [Test]
@@ -216,22 +276,20 @@ namespace deployd.tests.Features
             const string newVersion = "1.2.0.0";
             _instanceConfig.PackageLocation = new PackageLocation<object> {PackageVersion = newVersion};
 
-            // Backup
-            var backupPath = Path.Combine(FullPath, versionInstalled);
-            _fs.Setup(x => x.File.Exists(VersionFile)).Returns(true);
-            _fs.Setup(x => x.File.ReadAllText(VersionFile)).Returns(versionInstalled);
-            _fs.Setup(x => x.Directory.Exists(backupPath)).Returns(false); // No existing backup
-            _fs.Setup(x => x.Directory.Exists(ActiveDir)).Returns(true);
+            var fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>()
+            {
+                {VersionFile, new MockFileData(versionInstalled)},
+                {Path.Combine(InstallPath, "SomeApplicationFile.dll"), new MockFileData(new byte[0])}
+            });
 
-            // Move staging to active
-            _fs.Setup(x => x.Directory.Move(StagingDir, ActiveDir));
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
 
-            // Write version
-            _fs.Setup(x => x.File.WriteAllText(VersionFile, newVersion));
-            
-            _app.UpdateToLatestRevision();
+            app.EnsureDataDirectoriesExist();
 
-            _fs.VerifyAll();
+            app.UpdateToLatestRevision();
+
+            Assert.That(fileSystem.File.ReadAllText(VersionFile), Is.StringMatching(newVersion));
+            Assert.That(fileSystem.FileExists(fileSystem.Path.Combine(CacheDir, versionInstalled + "\\SomeApplicationFile.dll")),Is.True);
         }
     }
 }

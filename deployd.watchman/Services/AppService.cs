@@ -40,13 +40,13 @@ namespace deployd.watchman.Services
         {
             var map = _cfgService.AppMapFor(appName);
 
-            if (!_fs.Directory.Exists(map.FullPath))
+            if (!_fs.Directory.Exists(map.InstallPath))
             {
                 return new List<string>();
             }
 
-            return _fs.Directory.GetDirectories(map.FullPath)
-                      .Select(y => y.Replace(map.FullPath + "\\", ""))
+            return _fs.Directory.GetDirectories(map.InstallPath)
+                      .Select(y => y.Replace(map.InstallPath + "\\", ""))
                       .Where(y => y != "Active")
                       .ToList();
         } 

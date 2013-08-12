@@ -16,8 +16,6 @@ namespace deployd.Extensibility.Configuration
 
         public DeploydConfiguration LoadConfig()
         {
-            
-
             if (!_fileSystem.File.Exists(fileName))
             {
                 var configuration = new DeploydConfiguration

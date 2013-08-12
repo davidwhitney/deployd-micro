@@ -1,10 +1,11 @@
 ﻿using System;
 using System.IO;
-using System.IO.Abstractions;
 using System.Linq;
+using NuGet;
 using deployd.Extensibility;
 using deployd.Extensibility.Configuration;
 using log4net;
+using IFileSystem = System.IO.Abstractions.IFileSystem;
 
 namespace deployd.Features.AppLocating
 {
@@ -32,7 +33,7 @@ namespace deployd.Features.AppLocating
             return _fs.Directory.Exists(_configuration.PackageSource);
         }
 
-        public PackageLocation<PackagePointer> CanFindPackage(string appName)
+        public PackageLocation<PackagePointer> CanFindPackage(string appName, SemanticVersion version = null)
         {
             try
             {
@@ -63,7 +64,7 @@ namespace deployd.Features.AppLocating
             return null;
         }
 
-        public PackageLocation<object> CanFindPackageAsObject(string appName)
+        public PackageLocation<object> CanFindPackageAsObject(string appName, SemanticVersion version = null)
         {
             var inner = CanFindPackage(appName);
             return inner == null ? null : new PackageLocation<object> { PackageDetails = inner.PackageDetails };

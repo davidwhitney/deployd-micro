@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using NDesk.Options;
+using NuGet;
 using deployd.Extensibility.Configuration;
 
 namespace deployd.Features.FeatureSelection
@@ -11,6 +12,7 @@ namespace deployd.Features.FeatureSelection
         public bool Prep { get; set; }
         public bool Help { get; set; }
         public bool Verbose { get; set; }
+        public object Version { get; set; }
         
         public List<string> ExtraParams { get; set; }
         public OptionSet OptionSet { get; set; }
@@ -25,6 +27,8 @@ namespace deployd.Features.FeatureSelection
         public bool ForceDownload { get; set; }
 
         public string SetConfigurationValue { get; set; }
+
+        public SemanticVersion ApplicationVersion { get; set; }
 
         public InstanceConfiguration()
         {

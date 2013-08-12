@@ -13,6 +13,7 @@ namespace deployd.tests.Features.AppLocating
         private DeploydConfiguration _config;
         private Mock<IFileSystem> _fs;
         private Mock<IGetLatestNuGetPackageByNameQuery> _packageQuery;
+        private Mock<IGetNuGetPackageByNameAndVersionQuery> _packageByVersionQuery;
 
         [SetUp]
         public void SetUp()
@@ -20,6 +21,7 @@ namespace deployd.tests.Features.AppLocating
             _config = new DeploydConfiguration {PackageSource = string.Empty};
             _fs = new Mock<IFileSystem>();
             _packageQuery = new Mock<IGetLatestNuGetPackageByNameQuery>();
+            _packageByVersionQuery = new Mock<IGetNuGetPackageByNameAndVersionQuery>();
         }
 
         [Test]
@@ -27,7 +29,7 @@ namespace deployd.tests.Features.AppLocating
         {
             _config.PackageSource = "http://tempuri.org/blah";
 
-            var locator = new NuGetFeedAppInstallationLocator(_config, _fs.Object, _packageQuery.Object);
+            var locator = new NuGetFeedAppInstallationLocator(_config, _fs.Object, _packageQuery.Object, _packageByVersionQuery.Object);
             
             Assert.That(locator.IsHttp, Is.True);
         }
@@ -37,7 +39,7 @@ namespace deployd.tests.Features.AppLocating
         {
             _config.PackageSource = "c:\\myrepo";
 
-            var locator = new NuGetFeedAppInstallationLocator(_config, _fs.Object, _packageQuery.Object);
+            var locator = new NuGetFeedAppInstallationLocator(_config, _fs.Object, _packageQuery.Object, _packageByVersionQuery.Object);
             
             Assert.That(locator.IsHttp, Is.False);
         }
@@ -47,7 +49,7 @@ namespace deployd.tests.Features.AppLocating
         {
             _config.PackageSource = "http://tempuri.org/blah";
 
-            var locator = new NuGetFeedAppInstallationLocator(_config, _fs.Object, _packageQuery.Object);
+            var locator = new NuGetFeedAppInstallationLocator(_config, _fs.Object, _packageQuery.Object, _packageByVersionQuery.Object);
 
             Assert.That(locator.SupportsPathType(), Is.True);
         }
@@ -58,7 +60,7 @@ namespace deployd.tests.Features.AppLocating
             _config.PackageSource = "c:\\myrepo";
             _fs.Setup(x => x.Directory.Exists(_config.PackageSource)).Returns(true);
 
-            var locator = new NuGetFeedAppInstallationLocator(_config, _fs.Object, _packageQuery.Object);
+            var locator = new NuGetFeedAppInstallationLocator(_config, _fs.Object, _packageQuery.Object, _packageByVersionQuery.Object);
 
             Assert.That(locator.SupportsPathType(), Is.True);
         }
@@ -69,7 +71,7 @@ namespace deployd.tests.Features.AppLocating
             _config.PackageSource = "c:\\myrepo";
             _fs.Setup(x => x.Directory.Exists(_config.PackageSource)).Returns(false);
 
-            var locator = new NuGetFeedAppInstallationLocator(_config, _fs.Object, _packageQuery.Object);
+            var locator = new NuGetFeedAppInstallationLocator(_config, _fs.Object, _packageQuery.Object, _packageByVersionQuery.Object);
 
             Assert.That(locator.SupportsPathType(), Is.False);
         }
@@ -82,7 +84,7 @@ namespace deployd.tests.Features.AppLocating
             _packageQuery.Setup(x => x.GetLatestVersionOf(It.IsAny<string>(), _config.PackageSource))
                          .Returns(package.Object);
 
-            var locator = new NuGetFeedAppInstallationLocator(_config, _fs.Object, _packageQuery.Object);
+            var locator = new NuGetFeedAppInstallationLocator(_config, _fs.Object, _packageQuery.Object, _packageByVersionQuery.Object);
 
             var returnedPackage = locator.CanFindPackage("appName");
 
@@ -98,7 +100,7 @@ namespace deployd.tests.Features.AppLocating
             _packageQuery.Setup(x => x.GetLatestVersionOf(It.IsAny<string>(), _config.PackageSource))
                          .Returns(package.Object);
 
-            var locator = new NuGetFeedAppInstallationLocator(_config, _fs.Object, _packageQuery.Object);
+            var locator = new NuGetFeedAppInstallationLocator(_config, _fs.Object, _packageQuery.Object, _packageByVersionQuery.Object);
 
             var returnedPackage = locator.CanFindPackageAsObject("appName");
 

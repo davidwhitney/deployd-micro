@@ -98,7 +98,9 @@
     <Compile Include="Features\AppInstallation\HookExecution\InstallHookExecutor.cs" />
     <Compile Include="Features\ApplicationFactory.cs" />
     <Compile Include="Features\AppLocating\GetLatestNuGetPackageByNameQuery.cs" />
+    <Compile Include="Features\AppLocating\GetNuGetPackageByNameAndVersionQuery.cs" />
     <Compile Include="Features\AppLocating\IGetLatestNuGetPackageByNameQuery.cs" />
+    <Compile Include="Features\AppLocating\IGetNuGetPackageByNameAndVersionQuery.cs" />
     <Compile Include="Features\AppLocating\IListLatestVersionsOfPackagesQuery.cs" />
     <Compile Include="Features\AppLocating\ListLatestVersionOfPackagesQuery.cs" />
     <Compile Include="Features\AppLocating\NoPackageFoundException.cs" />

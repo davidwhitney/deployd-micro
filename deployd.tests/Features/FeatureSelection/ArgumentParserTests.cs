@@ -38,9 +38,6 @@ namespace deployd.tests.Features.FeatureSelection
             Assert.That(config.Help, Is.True);
         }
 
-        [TestCase("--v")]
-        [TestCase("-v")]
-        [TestCase("/v")]
         [TestCase("--verbose")]
         [TestCase("-verbose")]
         [TestCase("/verbose")]

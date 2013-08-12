@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NDesk.Options;
+using NuGet;
 
 namespace deployd.Features.FeatureSelection
 {
@@ -22,8 +24,21 @@ namespace deployd.Features.FeatureSelection
                     {"i|install", v => cfg.Install = v != null},
                     {"u|update", v => cfg.Update = v != null},
                     {"p|prep", v => cfg.Prep = v != null},
+                    {"v|version", version =>
+                        {
+                            if (string.IsNullOrWhiteSpace(version))
+                            {
+                                return;
+                            }
+                            SemanticVersion semanticVersion;
+                            if (!SemanticVersion.TryParse(version, out semanticVersion))
+                            {
+                                throw new ArgumentException("Version must be a valid version format", "version");
+                            }
+                            cfg.ApplicationVersion = semanticVersion;
+                        }},
                     {"e|environment=", v => cfg.Environment = v},
-                    {"v|verbose", v => cfg.Verbose = v != null},
+                    {"verbose", v => cfg.Verbose = v != null},
                     {"s|state", v => cfg.ShowState = v != null},
                     {"f|force", v => cfg.ForceDownload = v != null},
                     {"c|config=", v => cfg.SetConfigurationValue = v},

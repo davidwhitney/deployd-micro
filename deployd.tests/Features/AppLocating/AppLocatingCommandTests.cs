@@ -26,14 +26,6 @@ namespace deployd.tests.Features.AppLocating
         }
 
         [Test]
-        public void InvokedWithConfig_LogsMessageIndicatingSearchTakingPlace()
-        {
-            _cmd.Execute();
-
-            _logger.Verify(x => x.Info("Searching for package: " + _instanceConfig.AppName));
-        }
-
-        [Test]
         public void Invoked_ChecksAllApplicationLocatorsToSeeIfAnySupportConfiguredPathType()
         {
             var mockFinder = new Mock<IAppInstallationLocator>();
@@ -58,7 +50,7 @@ namespace deployd.tests.Features.AppLocating
 
             _cmd.Execute();
 
-            mockFinder.Verify(x => x.CanFindPackageAsObject(_instanceConfig.AppName));
+            mockFinder.Verify(x => x.CanFindPackageAsObject(_instanceConfig.AppName,null));
         }
 
         [Test]
@@ -69,7 +61,7 @@ namespace deployd.tests.Features.AppLocating
             _finders.Add(mockFinder.Object);
 
             mockFinder.Setup(x => x.SupportsPathType()).Returns(true);
-            mockFinder.Setup(x => x.CanFindPackageAsObject(_instanceConfig.AppName)).Returns(package);
+            mockFinder.Setup(x => x.CanFindPackageAsObject(_instanceConfig.AppName, null)).Returns(package);
 
             _cmd.Execute();
 
@@ -84,7 +76,7 @@ namespace deployd.tests.Features.AppLocating
             _finders.Add(mockFinder.Object);
 
             mockFinder.Setup(x => x.SupportsPathType()).Returns(true);
-            mockFinder.Setup(x => x.CanFindPackageAsObject(_instanceConfig.AppName)).Returns(package);
+            mockFinder.Setup(x => x.CanFindPackageAsObject(_instanceConfig.AppName, null)).Returns(package);
 
             _cmd.Execute();
 
@@ -98,7 +90,7 @@ namespace deployd.tests.Features.AppLocating
             _finders.Add(mockFinder.Object);
 
             mockFinder.Setup(x => x.SupportsPathType()).Returns(true);
-            mockFinder.Setup(x => x.CanFindPackageAsObject(_instanceConfig.AppName))
+            mockFinder.Setup(x => x.CanFindPackageAsObject(_instanceConfig.AppName, null))
                       .Returns((PackageLocation<object>) null);
 
             _cmd.Execute();

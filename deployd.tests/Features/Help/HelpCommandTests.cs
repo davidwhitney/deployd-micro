@@ -16,14 +16,15 @@ namespace deployd.tests.Features.Help
         [Test]
         public void Execute_PrintsSomethingToTheLog()
         {
-            var outputStream = new MemoryStream();
+            var sb = new StringBuilder();
+            TextWriter outputStream = new StringWriter(sb);
             var log = new Mock<ILog>();
             log.Setup(x => x.Info(It.IsAny<string>()));
             var config = new ArgumentParser().Parse(new List<string>());
             var cmd = new HelpCommand(config, log.Object, outputStream);
 
             cmd.Execute();
-            string output = Encoding.UTF8.GetString(outputStream.ToArray());
+            string output = sb.ToString();
             Debug.WriteLine(output);
             Assert.That(output, Is.Not.Empty);
         }
@@ -31,7 +32,8 @@ namespace deployd.tests.Features.Help
         [Test]
         public void Execute_PrintsSomethingUseful()
         {
-            var outputStream = new MemoryStream();
+            var sb = new StringBuilder();
+            TextWriter outputStream = new StringWriter(sb);
             var log = new Mock<ILog>();
             log.Setup(x => x.Info(It.IsAny<string>()));
 
@@ -40,7 +42,7 @@ namespace deployd.tests.Features.Help
 
             cmd.Execute();
 
-            string output = Encoding.UTF8.GetString(outputStream.ToArray());
+            string output = sb.ToString();
             Debug.WriteLine(output);
             Assert.That(output, Is.StringContaining("-app"));
             Assert.That(output, Is.StringContaining("-v"));

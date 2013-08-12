@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.IO.Abstractions;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
@@ -12,17 +13,20 @@ namespace deployd.Features.AppInstallation.HookExecution
     {
         private readonly IFileSystem _fs;
         private readonly ILog _log;
+        private readonly TextWriter _output;
 
-        public PowershellRunner(IFileSystem fs, ILog log)
+        public PowershellRunner(IFileSystem fs, ILog log, TextWriter output)
         {
             _fs = fs;
             _log = log;
+            _output = output;
         }
 
         public void ExecuteHook(HookTypeRef hookTypeRef, string arguments = null)
         {
             try
             {
+
                 using (var runspace = RunspaceFactory.CreateRunspace())
                 {
                     runspace.Open();
@@ -57,11 +61,11 @@ namespace deployd.Features.AppInstallation.HookExecution
                                     var r = value.BaseObject as ErrorRecord;
                                     if (r != null)
                                     {
-                                        //build whatever kind of message your want
-                                        _log.Info(r.InvocationInfo.MyCommand.Name + " : " + r.Exception.Message);
-                                        _log.Info(r.InvocationInfo.PositionMessage);
-                                        _log.Info(string.Format("+ CategoryInfo: {0}", r.CategoryInfo));
-                                        _log.Info(string.Format("+ FullyQualifiedErrorId: {0}", r.FullyQualifiedErrorId));
+                                        _output.WriteLine(r.InvocationInfo.MyCommand.Name + " : " +
+                                                         r.Exception.Message);
+                                        _output.WriteLine(r.InvocationInfo.PositionMessage);
+                                        _output.WriteLine("+ CategoryInfo: {0}", r.CategoryInfo);
+                                        _output.WriteLine("+ FullyQualifiedErrorId: {0}", r.FullyQualifiedErrorId);
                                     }
                                 }
                             }
@@ -72,7 +76,8 @@ namespace deployd.Features.AppInstallation.HookExecution
             }
             catch (Exception ex)
             {
-                _log.Error("error", ex);
+                _output.WriteLine(ex.Message);
+                _output.WriteLine(ex.StackTrace);
             }
         }
 

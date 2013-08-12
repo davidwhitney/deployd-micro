@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,12 +19,14 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
         private readonly Mock<ILog> _log;
         private readonly Mock<IInstanceConfiguration> _config;
         private readonly ClassHookRunner _runner;
+        private TextWriter _output;
 
         public ClassHookRunnerTests()
         {
+            _output = new StringWriter(new StringBuilder());
             _log = new Mock<ILog>();
             _config = new Mock<IInstanceConfiguration>();
-            _runner = new ClassHookRunner(_log.Object, _config.Object);
+            _runner = new ClassHookRunner(_log.Object, _config.Object, _output);
         }
 
         [Test]

@@ -10,11 +10,13 @@ namespace deployd.Features.Environment
     {
         private readonly IFileSystem _fs;
         private readonly ILog _log;
+        private readonly TextWriter _output;
 
-        public DefaultEnvironmentApplier(IFileSystem fs, ILog log)
+        public DefaultEnvironmentApplier(IFileSystem fs, ILog log, TextWriter output)
         {
             _fs = fs;
             _log = log;
+            _output = output;
         }
 
         public bool CanConfigure(object packageInfo, IInstanceConfiguration config)
@@ -29,6 +31,8 @@ namespace deployd.Features.Environment
             // enumerate all config files which have two part file names i.e: something.config
 
             var configs = stagingRoot.GetFiles("*.config", SearchOption.TopDirectoryOnly);
+            _output.WriteLine("Setting environment to '{0}'", forEnvironment);
+
             foreach (var config in configs)
             {
                 // find other files that could be transforms for this one

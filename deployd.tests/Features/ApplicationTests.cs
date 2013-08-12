@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
+using System.Text;
 using Moq;
 using NUnit.Framework;
 using deployd.Extensibility.Configuration;
@@ -18,6 +19,7 @@ namespace deployd.tests.Features
     {
         private Mock<IApplicationMap> _appMap;
         private Mock<ILog> _log;
+        private TextWriter _output = new StringWriter(new StringBuilder());
         private Mock<IInstallationPadLock> _installationLock;
         private IInstanceConfiguration _instanceConfig;
 
@@ -49,7 +51,7 @@ namespace deployd.tests.Features
                     {Path.Combine(InstallPath, "filetocopy.txt"), new MockFileData("file contents")}
                 });
 
-            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object, _output);
             Assert.That(app.IsInstalled, Is.True);
         }
 
@@ -61,7 +63,7 @@ namespace deployd.tests.Features
                     {Path.Combine(InstallPath, "filetocopy.txt"), new MockFileData("file contents")}
                 });
 
-            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object, _output);
 
             Assert.That(app.IsInstalled, Is.False);
         }
@@ -76,7 +78,7 @@ namespace deployd.tests.Features
                     {Path.Combine(StagingDir, "somefile.txt"), new MockFileData("sadfhsdf")},
                 });
 
-            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object, _output);
 
             Assert.That(app.IsStaged, Is.True);
         }
@@ -89,7 +91,7 @@ namespace deployd.tests.Features
                     {Path.Combine(InstallPath, "filetocopy.txt"), new MockFileData("file contents")},
                 });
 
-            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object, _output);
 
             Assert.That(app.IsStaged, Is.False);
         }
@@ -103,7 +105,7 @@ namespace deployd.tests.Features
                     {Path.Combine(StagingDir, "SomeApplicationFile.dll"), new MockFileData(new byte[0])}
                 });
 
-            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object, _output);
 
             app.ActivateStaging();
 
@@ -119,7 +121,7 @@ namespace deployd.tests.Features
                     {Path.Combine(InstallPath, "filetocopy.txt"), new MockFileData("file contents")}
                 });
 
-            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object, _output);
 
             app.BackupCurrentVersion();
 
@@ -136,7 +138,7 @@ namespace deployd.tests.Features
                     {Path.Combine(InstallPath,"filetocopy.txt"), new MockFileData("file contents")}
                 });
 
-            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object, _output);
             app.BackupCurrentVersion();
 
             Assert.That(fileSystem.Directory.Exists(Path.Combine(CacheDir, "1.0.0.0")), Is.True);
@@ -153,7 +155,7 @@ namespace deployd.tests.Features
                     {Path.Combine(CacheDir, "1.0.0.0"), new MockDirectoryData()}
                 });
 
-            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object, _output);
 
             app.BackupCurrentVersion();
 
@@ -173,7 +175,7 @@ namespace deployd.tests.Features
                     {Path.Combine(CacheDir, "1.0.0.3\\somefile.txt"), new MockFileData("file contents")},
                 });
 
-            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object, _output);
 
             app.PruneBackups();
 
@@ -201,7 +203,7 @@ namespace deployd.tests.Features
                     {Path.Combine(CacheDir, "1.0.0.11\\somefile.txt"), new MockFileData("file contents")},
                 });
 
-            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object, _output);
 
             app.PruneBackups();
 
@@ -215,7 +217,7 @@ namespace deployd.tests.Features
                 {
                 });
 
-            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object, _output);
 
             app.EnsureDataDirectoriesExist();
 
@@ -234,7 +236,7 @@ namespace deployd.tests.Features
                 {StagingDir, new MockDirectoryData()},
             });
 
-            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object, _output);
 
             Assert.DoesNotThrow(app.EnsureDataDirectoriesExist);
         }
@@ -246,7 +248,7 @@ namespace deployd.tests.Features
             {
             });
 
-            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object, _output);
 
             app.LockForInstall();
 
@@ -261,7 +263,7 @@ namespace deployd.tests.Features
             {
             });
 
-            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object, _output);
 
             app.WriteUpdatedManifest(version);
 
@@ -282,11 +284,11 @@ namespace deployd.tests.Features
                 {Path.Combine(InstallPath, "SomeApplicationFile.dll"), new MockFileData(new byte[0])}
             });
 
-            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object);
+            var app = new Application(_appMap.Object, fileSystem, _log.Object, _instanceConfig, _installationLock.Object, _output);
 
             app.EnsureDataDirectoriesExist();
 
-            app.UpdateToLatestRevision();
+            app.BackupAndInstall();
 
             Assert.That(fileSystem.File.ReadAllText(VersionFile), Is.StringMatching(newVersion));
             Assert.That(fileSystem.FileExists(fileSystem.Path.Combine(CacheDir, versionInstalled + "\\SomeApplicationFile.dll")),Is.True);

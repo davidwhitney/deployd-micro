@@ -10,43 +10,34 @@ namespace deployd.Features.Help
     {
         private readonly IInstanceConfiguration _config;
         private readonly ILog _log;
-        private readonly Stream _outputStream;
+        private readonly TextWriter _output;
 
-        public HelpCommand(IInstanceConfiguration config, ILog log, Stream outputStream)
+        public HelpCommand(IInstanceConfiguration config, ILog log, TextWriter output)
         {
             _config = config;
             _log = log;
-            _outputStream = outputStream;
+            _output = output;
         }
 
         public void Execute()
         {
-            var output = new StringBuilder();
-            using (var textWriter = new StringWriter(output))
-            {
-                _config.OptionSet.WriteOptionDescriptions(textWriter);
-            }
+            _config.OptionSet.WriteOptionDescriptions(_output);
 
-            output.AppendLine();
-            output.AppendLine("Configuration options");
-            output.AppendLine();
-            output.AppendLine("Usage: deployd --config [option]=[value]");
-            output.AppendLine("Sets a configuration option to the provided value");
-            output.AppendLine();
-            output.AppendLine("Usage: deployd --config [option]");
-            output.AppendLine("Displays the current value of the configuration option");
+            _output.WriteLine();
+            _output.WriteLine("Configuration options");
+            _output.WriteLine();
+            _output.WriteLine("Usage: deployd --config [option]=[value]");
+            _output.WriteLine("Sets a configuration option to the provided value");
+            _output.WriteLine();
+            _output.WriteLine("Usage: deployd --config [option]");
+            _output.WriteLine("Displays the current value of the configuration option");
             var properties = typeof(DeploydConfiguration).GetProperties();
-            output.AppendLine("Configurable options:");
+            _output.WriteLine("Configurable options:");
             foreach (var p in properties)
             {
-                output.AppendLine(p.Name);
+                _output.WriteLine(p.Name);
             }
-
-            using (var writer = new StreamWriter(_outputStream))
-            {
-                writer.Write(output);
-                writer.Flush();
-            }
+            _output.Flush();
         }
     }
 }

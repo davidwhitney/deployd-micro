@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using deployd.Extensibility.Configuration;
@@ -13,6 +14,7 @@ namespace deployd.Features.AppInstallation.HookExecution
         private readonly ILog _log;
         private readonly IInstanceConfiguration _config;
         private readonly IFileSystem _fs;
+        private readonly TextWriter _output;
 
         private static readonly Dictionary<string, string> ExecutableMap = new Dictionary<string, string>
             {
@@ -24,11 +26,12 @@ namespace deployd.Features.AppInstallation.HookExecution
                 {"js", "node"},
             };
 
-        public CommandLineRunner(ILog log, IInstanceConfiguration config, IFileSystem fs)
+        public CommandLineRunner(ILog log, IInstanceConfiguration config, IFileSystem fs, TextWriter output)
         {
             _log = log;
             _config = config;
             _fs = fs;
+            _output = output;
         }
 
         public bool SupportsHook(HookTypeRef hookTypeRef)
@@ -39,7 +42,7 @@ namespace deployd.Features.AppInstallation.HookExecution
 
         public void ExecuteHook(HookTypeRef hookTypeRef, string arguments = null)
         {
-            _log.Info("Executing package hookFileName: " + hookTypeRef.FileName);
+            _output.WriteLine("Executing package hookFileName: " + hookTypeRef.FileName);
 
             var hookFilename = hookTypeRef.FileName;
             var startInfo = new ProcessStartInfo
@@ -52,17 +55,17 @@ namespace deployd.Features.AppInstallation.HookExecution
 
             CopyVariablesToEnvironment(startInfo);
             PrefixCommonScriptRuntimes(hookFilename, startInfo);
-            StartProcess(hookFilename, startInfo);
+            StartProcess(hookFilename, startInfo, _output);
         }
 
-        private void StartProcess(string hookFileName, ProcessStartInfo startInfo)
+        private void StartProcess(string hookFileName, ProcessStartInfo startInfo, TextWriter output)
         {
             var process = Process.Start(startInfo);
 
-            using (var outputStream = process.StandardOutput)
+            using (var processOutputStream = process.StandardOutput)
             {
                 process.WaitForExit();
-                _log.Info(outputStream.ReadToEnd());
+                output.WriteLine(processOutputStream.ReadToEnd());
             }
 
             if (process.ExitCode != 0)

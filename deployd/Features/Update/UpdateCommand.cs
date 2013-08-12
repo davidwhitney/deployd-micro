@@ -85,6 +85,10 @@ namespace deployd.Features.Update
 
         private void PrepareInstall(IPackage package, bool prepareOnly)
         {
+            using (var output = new StreamWriter(_outputStream))
+            {
+                output.WriteLine("Updating {0}...", package.Id);
+            }
             var process = new Process();
             process.StartInfo.CreateNoWindow = true;
             process.StartInfo.ErrorDialog = false;

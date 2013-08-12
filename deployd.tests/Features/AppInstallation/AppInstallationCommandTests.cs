@@ -79,7 +79,7 @@ namespace deployd.tests.Features.AppInstallation
         [Test]
         public void AppIsInstalled_InstallRequested_RunsInstall()
         {
-            _app.Setup(x => x.UpdateToLatestRevision());
+            _app.Setup(x => x.BackupAndInstall());
 
             _cmd.Execute();
 
@@ -90,7 +90,7 @@ namespace deployd.tests.Features.AppInstallation
         public void AppIsNotInstalled_InstallRequested_RunsInstall()
         {
             _app.Setup(x => x.IsInstalled).Returns(false); 
-            _app.Setup(x => x.UpdateToLatestRevision());
+            _app.Setup(x => x.BackupAndInstall());
 
             _cmd.Execute();
 

@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 
 namespace deployd.Features
 {
@@ -6,7 +7,7 @@ namespace deployd.Features
     {
         bool IsInstalled { get; }
         bool IsStaged { get; }
-        void UpdateToLatestRevision();
+        void BackupAndInstall();
         void ActivateStaging();
         void BackupCurrentVersion();
         void WriteUpdatedManifest(string newVersion);

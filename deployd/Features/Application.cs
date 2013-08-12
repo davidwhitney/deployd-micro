@@ -16,21 +16,23 @@ namespace deployd.Features
         private readonly ILog _log;
         private readonly IInstanceConfiguration _config;
         private readonly IInstallationPadLock _installationLock;
+        private readonly TextWriter _output;
 
         public bool IsInstalled { get { return _fs.File.Exists(_appMap.VersionFile); } }
         public bool IsStaged { get { return _fs.Directory.Exists(_appMap.Staging); } }
         
         private const int TotalBackupsToKeep = 10;
 
-        public Application(IApplicationMap appMap, IFileSystem fs, ILog log, IInstanceConfiguration config, IInstallationPadLock installationLock)
+        public Application(IApplicationMap appMap, IFileSystem fs, ILog log, IInstanceConfiguration config, IInstallationPadLock installationLock, TextWriter output)
         {
             _fs = fs;
             _appMap = appMap;
             _log = log;
             _config = config;
             _installationLock = installationLock;
+            _output = output;
 
-            _log.Info("App directory: " + _appMap.InstallPath);
+            _output.WriteLine("App directory: " + _appMap.InstallPath);
         }
 
         public void EnsureDataDirectoriesExist()
@@ -47,7 +49,7 @@ namespace deployd.Features
             _installationLock.LockAppInstallation();            
         }
 
-        public void UpdateToLatestRevision()
+        public void BackupAndInstall()
         {
             BackupCurrentVersion();
             ActivateStaging();
@@ -56,9 +58,8 @@ namespace deployd.Features
 
         public void ActivateStaging()
         {
-            _log.InfoFormat("Activating staged install at {0}...", _appMap.InstallPath);
+             _output.WriteLine("Activating staged install at {0}...", _appMap.InstallPath);
 
-            //_fs.Directory.Move(_appMap.Staging, _appMap.Active);
             RecursiveDelete(_appMap.InstallPath);
             RecursiveCopy(_appMap.Staging, _appMap.InstallPath);
             RecursiveDelete(_appMap.Staging);
@@ -126,7 +127,7 @@ namespace deployd.Features
 
             if (_fs.Directory.Exists(_appMap.InstallPath))
             {
-                _log.Info("Backing up current installation...");
+                _output.WriteLine("Backing up current installation...");
                 RecursiveCopy(_appMap.InstallPath, backupPath);
             }
         }

@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
+using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
+using System.Text;
 using Moq;
 using NUnit.Framework;
 using deployd.Extensibility.Configuration;
@@ -17,20 +19,22 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
         private readonly Mock<ILog> _log;
         private readonly Mock<IInstanceConfiguration> _config;
         private readonly Mock<IFileSystem> _fs;
-        private readonly CommandLineRunner _runner;
+        private CommandLineRunner _runner;
         const string HookFileName = "internal-use-only.ps1";
+        private readonly TextWriter _output = new StringWriter(new StringBuilder());
 
         public CommandLineRunnerTests()
         {
             _log = new Mock<ILog>();
             _config = new Mock<IInstanceConfiguration>();
             _fs = new Mock<IFileSystem>();
-            _runner = new CommandLineRunner(_log.Object, _config.Object, _fs.Object);
+            
         }
         
         [Test]
         public void CopyVariablesToEnvironment_MapsApplicationMapToEnvironment()
         {
+            _runner = new CommandLineRunner(_log.Object, _config.Object, _fs.Object, _output);
             var map = new ApplicationMap("testApp", "c:\\install\\path");
             _config.Setup(x => x.ApplicationMap).Returns(map);
             var startInfo = new ProcessStartInfo { FileName = HookFileName };
@@ -56,6 +60,7 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
         [TestCase("js", "node")]
         public void PrefixCommonScriptRuntimes_WhenGivenKnownScript_PrefixesKnownInterpreter(string extension, string interpreterExpected)
         {
+            _runner = new CommandLineRunner(_log.Object, _config.Object, _fs.Object, _output);
             var script = "script." + extension;
             var startInfo = new ProcessStartInfo { FileName = script };
 
@@ -67,6 +72,7 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
         [Test]
         public void SupportsHook_ForFile_ReturnsTrue()
         {
+            _runner = new CommandLineRunner(_log.Object, _config.Object, _fs.Object, _output);
             var path = new Mock<PathWrapper>();
             path.Setup(p => p.GetExtension(It.IsAny<string>())).Returns(".rb");
             _fs.Setup(x => x.Path).Returns(path.Object);
@@ -78,6 +84,7 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
         [Test]
         public void SupportsHook_ForClass_ReturnsFalse()
         {
+            _runner = new CommandLineRunner(_log.Object, _config.Object, _fs.Object, _output);
             var supports = _runner.SupportsHook(new HookTypeRef(typeof(object)));
 
             Assert.That(supports, Is.False);
@@ -86,12 +93,14 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
         [Test]
         public void ExecuteHook_WhenGivenAProcessThatExitsCleanly_DoesntThrow()
         {
+            _runner = new CommandLineRunner(_log.Object, _config.Object, _fs.Object, _output);
             _runner.ExecuteHook(new HookTypeRef("cmd", HookType.File), "/c exit 0");
         }
 
         [Test]
         public void ExecuteHook_WhenGivenAProcessThatExitsWithANoneZeroCode_Throws()
         {
+            _runner = new CommandLineRunner(_log.Object, _config.Object, _fs.Object, _output);
             var ex = Assert.Throws<HookFailureException>(()=> _runner.ExecuteHook(new HookTypeRef("cmd", HookType.File), "/c exit -300"));
 
             Assert.That(ex.HookFile, Is.EqualTo("cmd"));

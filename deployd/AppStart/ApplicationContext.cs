@@ -75,7 +75,7 @@ namespace deployd.AppStart
             kernel.Bind<DeploydConfiguration>().ToMethod(x => x.Kernel.GetService<DeploydConfigurationManager>().LoadConfig()).InSingletonScope();
 
             kernel.Bind<ILog>().ToMethod(x => LogManager.GetLogger("default")).InSingletonScope();
-            kernel.Bind<Stream>().ToMethod(x=>System.Console.OpenStandardOutput());
+            kernel.Bind<TextWriter>().ToMethod(x => Console.Out);
 
             kernel.Bind<IHookFinder>().To<HookFinder>();
             kernel.Bind<IHookRunner>().To<PowershellRunner>();

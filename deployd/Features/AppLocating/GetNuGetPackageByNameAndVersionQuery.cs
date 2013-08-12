@@ -22,7 +22,9 @@ namespace deployd.Features.AppLocating
 
             try
             {
-                return repo.GetPackages().LastOrDefault(x => x.Id == appName && x.Version == version);
+                return repo.GetPackages()
+                    .ToList()
+                    .LastOrDefault(x => x.Id == appName && x.Version == version);
             }
             catch (Exception ex)
             {

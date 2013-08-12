@@ -18,10 +18,7 @@ namespace deployd.Extensibility.Configuration
         {
             if (!_fileSystem.File.Exists(fileName))
             {
-                var configuration = new DeploydConfiguration
-                    {
-                        DefaultConfiguration = true
-                    };
+                var configuration = new DeploydConfiguration();
                 using (var file = _fileSystem.File.Open(fileName, FileMode.Create, FileAccess.Write))
                 using (var streamWriter = new StreamWriter(file))
                 {

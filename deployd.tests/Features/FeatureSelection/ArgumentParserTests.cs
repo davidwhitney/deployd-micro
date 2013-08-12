@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using NuGet;
 using deployd.Features.FeatureSelection;
 
 namespace deployd.tests.Features.FeatureSelection
@@ -36,6 +37,14 @@ namespace deployd.tests.Features.FeatureSelection
             var config = _parser.Parse(new[] { "--junk", suportedHelpCommands });
 
             Assert.That(config.Help, Is.True);
+        }
+
+        [TestCase("-v 3.70.9.29")]
+        public void Parse_ArgumentsContainVersion_VersionIsParsed(string versionArgument)
+        {
+            var config = _parser.Parse(new[] {"--junk", versionArgument});
+            Assert.That(config.Version, Is.Not.Null);
+            Assert.That(config.Version, Is.EqualTo(SemanticVersion.Parse("3.70.9.29")));
         }
 
         [TestCase("--verbose")]

@@ -5,6 +5,7 @@ using System.Linq;
 using NuGet;
 using deployd.Extensibility.Configuration;
 using deployd.Features.AppLocating;
+using log4net;
 using IFileSystem = System.IO.Abstractions.IFileSystem;
 
 namespace deployd.Features.ShowState
@@ -18,6 +19,7 @@ namespace deployd.Features.ShowState
         private readonly IListLatestVersionsOfPackagesQuery _query;
         private readonly DeploydConfiguration _deployd;
         private readonly IFileSystem _fs;
+        private ILog _logger = LogManager.GetLogger(typeof (ShowStateCommand));
 
         public ShowStateCommand(IApplication app,
             Stream outputStream, IEnumerable<IAppInstallationLocator> finders, IInstanceConfiguration config,
@@ -37,31 +39,39 @@ namespace deployd.Features.ShowState
             using (var streamWriter = new StreamWriter(_outputStream))
             {
                 streamWriter.WriteLine();
-                streamWriter.WriteLine("Installed packages: (* = updates are available)");
+                
 
-                List<IPackage> installed = new List<IPackage>();
+                Dictionary<IPackage, bool> installed = new Dictionary<IPackage, bool>();
                 List<IPackage> notInstalled = new List<IPackage>();
                 var allPackages = _query.GetLatestVersions(_deployd.PackageSource);
                 foreach (var sourcePackage in allPackages)
                 {
-                    var appMap = new ApplicationMap(sourcePackage.Id, _fs.Path.Combine(_deployd.InstallRoot, sourcePackage.Id));
+                    string installPath = _fs.Path.Combine(_deployd.InstallRoot, sourcePackage.Id);
+                    _logger.DebugFormat("Checking {0}", installPath);
+                    var appMap = new ApplicationMap(sourcePackage.Id, installPath);
                     if (_fs.File.Exists(appMap.VersionFile))
                     {
+                        _logger.DebugFormat("{0} exists", installPath);
                         SemanticVersion installedVersion;
                         if (SemanticVersion.TryParse(_fs.File.ReadAllText(appMap.VersionFile), out installedVersion))
                         {
-                            streamWriter.Write("{0}", sourcePackage.Id);
-                                if (installedVersion < sourcePackage.Version)
-                                {
-                                    streamWriter.Write("*");
-                                }
-                            streamWriter.WriteLine();
-                            installed.Add(sourcePackage);
+                            installed.Add(sourcePackage, installedVersion < sourcePackage.Version);
+                        }
+                        else
+                        {
+                            notInstalled.Add(sourcePackage);
                         }
                     } else
                     {
+                        _logger.DebugFormat("{0} not found", installPath);
                         notInstalled.Add(sourcePackage);
                     }
+                }
+
+                streamWriter.WriteLine("Installed packages: (* = updates are available)");
+                foreach (var package in installed.Keys)
+                {
+                    streamWriter.WriteLine("{0}{1}", package.Id, installed[package] ? "*" : "");
                 }
 
                 streamWriter.WriteLine();

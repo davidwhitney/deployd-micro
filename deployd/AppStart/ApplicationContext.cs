@@ -98,6 +98,7 @@ namespace deployd.AppStart
 
             kernel.Bind<IListLatestVersionsOfPackagesQuery>().To<ListLatestVersionOfPackagesQuery>();
             kernel.Bind<IGetLatestNuGetPackageByNameQuery>().To<GetLatestNuGetPackageByNameQuery>();
+            kernel.Bind<IGetNuGetPackageByNameAndVersionQuery>().To<GetNuGetPackageByNameAndVersionQuery>();
         }
 
         private static bool IsServiceType(Type type)

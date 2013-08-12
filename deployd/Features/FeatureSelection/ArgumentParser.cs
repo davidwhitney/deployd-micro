@@ -24,8 +24,9 @@ namespace deployd.Features.FeatureSelection
                     {"i|install", v => cfg.Install = v != null},
                     {"u|update", v => cfg.Update = v != null},
                     {"p|prep", v => cfg.Prep = v != null},
-                    {"v|version", version =>
+                    {"v|version=", version =>
                         {
+                            version = version.Trim();
                             if (string.IsNullOrWhiteSpace(version))
                             {
                                 return;
@@ -35,7 +36,7 @@ namespace deployd.Features.FeatureSelection
                             {
                                 throw new ArgumentException("Version must be a valid version format", "version");
                             }
-                            cfg.ApplicationVersion = semanticVersion;
+                            cfg.Version = semanticVersion;
                         }},
                     {"e|environment=", v => cfg.Environment = v},
                     {"verbose", v => cfg.Verbose = v != null},

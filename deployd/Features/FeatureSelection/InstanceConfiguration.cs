@@ -28,8 +28,6 @@ namespace deployd.Features.FeatureSelection
 
         public string SetConfigurationValue { get; set; }
 
-        public SemanticVersion ApplicationVersion { get; set; }
-
         public InstanceConfiguration()
         {
             ApplicationMap = new ApplicationMap(string.Empty, string.Empty);

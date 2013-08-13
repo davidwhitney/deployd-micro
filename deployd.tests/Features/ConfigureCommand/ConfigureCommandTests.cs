@@ -31,10 +31,10 @@ namespace deployd.tests.Features.ConfigureCommand
 
             var deploydConfiguration=new DeploydConfiguration();
             var configurationManager=new DeploydConfigurationManager(fileSystem.Object);
-            Stream outputStream=new MemoryStream();
+            TextWriter output = new StringWriter(new StringBuilder());
             var command = new deployd.Features.AppConfiguration.ConfigureCommand(instanceConfiguration,
                                                                                  deploydConfiguration,
-                                                                                 configurationManager, outputStream);
+                                                                                 configurationManager, output);
             command.Execute();
 
             Assert.That(deploydConfiguration.PackageType, Is.EqualTo(PackageType.NuGet));

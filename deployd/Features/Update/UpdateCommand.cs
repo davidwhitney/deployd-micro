@@ -17,7 +17,7 @@ namespace deployd.Features.Update
     {
         private readonly IEnumerable<IAppInstallationLocator> _finders;
         private readonly IInstanceConfiguration _instanceConfiguration;
-        private readonly Stream _outputStream;
+        private readonly TextWriter _output;
         private readonly IListLatestVersionsOfPackagesQuery _query;
         private readonly DeploydConfiguration _deployd;
         private readonly IInstallationRoot _installationRoot;
@@ -25,12 +25,12 @@ namespace deployd.Features.Update
         private readonly ILog _log = LogManager.GetLogger(typeof(UpdateCommand));
 
         public UpdateCommand(IEnumerable<IAppInstallationLocator> finders, IInstanceConfiguration instanceConfiguration,
-             Stream outputStream, IListLatestVersionsOfPackagesQuery query, DeploydConfiguration deployd,
+             TextWriter output, IListLatestVersionsOfPackagesQuery query, DeploydConfiguration deployd,
             IInstallationRoot installationRoot, System.IO.Abstractions.IFileSystem fs)
         {
             _finders = finders;
             _instanceConfiguration = instanceConfiguration;
-            _outputStream = outputStream;
+            _output = output;
             _query = query;
             _deployd = deployd;
             _installationRoot = installationRoot;
@@ -40,8 +40,6 @@ namespace deployd.Features.Update
         public void Execute()
         {
             List<IPackage> packagesToUpdate = new List<IPackage>();
-            using (var streamWriter = new StreamWriter(_outputStream))
-            {
                 var activeFinders = _finders.Where(x => x.SupportsPathType()).ToList();
 
                 var location =
@@ -63,7 +61,7 @@ namespace deployd.Features.Update
                     {
                         if (package.Version > installedVersion)
                         {
-                            streamWriter.WriteLine(package.Id + " is out of date");
+                            _output.WriteLine(package.Id + " is out of date");
                             packagesToUpdate.Add(package);
                         }
                     }
@@ -71,7 +69,7 @@ namespace deployd.Features.Update
 
                 if (packagesToUpdate.Count == 0)
                 {
-                    streamWriter.WriteLine("Everything up to date");
+                    _output.WriteLine("Everything up to date");
                     return;
                 }
 
@@ -79,16 +77,11 @@ namespace deployd.Features.Update
                 {
                     PrepareInstall(package, _instanceConfiguration.Prep);
                 }
-
-            }
         }
 
         private void PrepareInstall(IPackage package, bool prepareOnly)
         {
-            using (var output = new StreamWriter(_outputStream))
-            {
-                output.WriteLine("Updating {0}...", package.Id);
-            }
+            _output.WriteLine("Updating {0}...", package.Id);
             var process = new Process();
             process.StartInfo.CreateNoWindow = true;
             process.StartInfo.ErrorDialog = false;

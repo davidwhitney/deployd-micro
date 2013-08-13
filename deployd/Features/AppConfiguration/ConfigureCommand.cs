@@ -10,17 +10,17 @@ namespace deployd.Features.AppConfiguration
         private readonly IInstanceConfiguration _config;
         private readonly DeploydConfiguration _deploydConfiguration;
         private readonly DeploydConfigurationManager _configurationManager;
-        private readonly Stream _outputStream;
+        private readonly TextWriter _output;
 
         public ConfigureCommand(IInstanceConfiguration config,
             DeploydConfiguration deploydConfiguration,
             DeploydConfigurationManager configurationManager,
-            Stream outputStream)
+            TextWriter output)
         {
             _config = config;
             _deploydConfiguration = deploydConfiguration;
             _configurationManager = configurationManager;
-            _outputStream = outputStream;
+            _output = output;
         }
 
         public void Execute()
@@ -48,19 +48,11 @@ namespace deployd.Features.AppConfiguration
                     }
                     else
                     {
-                        using (var writer = new StreamWriter(_outputStream))
-                        {
-                            writer.WriteLine("{0}={1}",split[0],property.GetValue(_deploydConfiguration, null));
-                            writer.Flush();
-                        }
+                        _output.WriteLine("{0}={1}",split[0],property.GetValue(_deploydConfiguration, null));
                     }
                     return;
                 }
-                using (var writer = new StreamWriter(_outputStream))
-                {
-                    writer.WriteLine("No such configuration option '{0}'", split[0]);
-                    writer.Flush();
-                }
+                _output.WriteLine("No such configuration option '{0}'", split[0]);
                 return;
             }
 

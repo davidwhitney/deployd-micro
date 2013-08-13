@@ -71,7 +71,8 @@ namespace deployd.Features.AppInstallation.HookExecution
         {
             foreach (var extension in ExecutableMap.Where(ext => hookFileName.EndsWith("." + ext.Key)))
             {
-                startInfo.FileName = extension.Value + " " + startInfo.FileName;
+                startInfo.FileName = extension.Value;
+                startInfo.Arguments = hookFileName;
             }
         }
 

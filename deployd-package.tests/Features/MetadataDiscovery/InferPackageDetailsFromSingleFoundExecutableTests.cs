@@ -63,6 +63,18 @@ namespace deployd_package.tests.Features.MetadataDiscovery
         public void PackageMetadata_WhenNoExesFoundButSingleDll_CallsMapperToMapFromThatDll()
         {
             var meta = new PackageMetadata();
+            _dllFilesOnDisk.Add(_rootDir + "\\bin\\something-else.dll");
+            _dllFilesOnDisk.Add(_rootDir + "\\bin\\package-source-dir.dll");
+
+            _ipdfsfe.DiscoverMetadataProperties(meta, _rootDir);
+
+            _mapper.Verify(x => x.MapAssemblyInfoToPackage(_rootDir + "\\bin\\package-source-dir.dll", It.IsAny<PackageMetadata>()));
+        }
+
+        [Test]
+        public void PackageMetadata_WhenNoExesFoundButManyDllsExist_FindsDllMatchingUpperDirectoryName()
+        {
+            var meta = new PackageMetadata();
             _dllFilesOnDisk.Add(_rootDir + "\\file.dll");
 
             _ipdfsfe.DiscoverMetadataProperties(meta, _rootDir);

@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace deployd_package.Features.MetadataDiscovery
 {
@@ -35,6 +35,24 @@ namespace deployd_package.Features.MetadataDiscovery
             if (dllsFound.Count == 1)
             {
                 _fromAssemblyMapper.MapAssemblyInfoToPackage(dllsFound[0], discoveredMetadata);
+            }
+
+            foreach (var dll in dllsFound)
+            {
+                var captures = Regex.Matches(dll, @"\\(.*?)\\bin\\(.*?).dll");
+                if (captures.Count == 0 || captures[0].Groups.Count < 3)
+                {
+                    continue;
+                }
+
+                var directoryStub = captures[0].Groups[1].Value;
+                var dllName = captures[0].Groups[2].Value;
+
+                if (directoryStub.EndsWith(dllName))
+                {
+                    _fromAssemblyMapper.MapAssemblyInfoToPackage(dll, discoveredMetadata);
+                    break;
+                }
             }
         }
     }

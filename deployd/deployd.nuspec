@@ -18,5 +18,6 @@
 	  <file src="bin\Release\*.config" target="tools" />
 	  <file src="bin\Release\*.xml" target="tools" />
 	  <file src="bin\Release\*.pdb" target="tools" />
+	  <file src="bin\Release\*.json" target="tools" />
 	</files> 
 </package>

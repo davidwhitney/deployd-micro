@@ -7,10 +7,10 @@
     <owners>$author$</owners>
     <projectUrl>https://github.com/davidwhitney/deployd-micro</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-	<summary>deployd bootstrapper for target servers - CD for Windows</summary>
+	<summary>deployd deployd-package bootstrapper for target servers - CD for Windows</summary>
     <description>$description$</description>
     <copyright>Copyright 2013</copyright>
-    <tags>deployd deployd-micro cd continuous delivery</tags>
+    <tags>deployd deployd-micro cd continuous delivery package packager packing nuget</tags>
   </metadata>
 	<files>
 	  <file src="bin\Release\*.*" />

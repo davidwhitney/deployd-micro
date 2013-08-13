@@ -39,7 +39,7 @@ namespace deployd_package.Features.MetadataDiscovery
 
             foreach (var dll in dllsFound)
             {
-                var captures = Regex.Matches(dll, @"\\(.*?)\\bin\\(.*?).dll");
+                var captures = Regex.Matches(dll, @"(.*?)\\bin\\(.*?).dll");
                 if (captures.Count == 0 || captures[0].Groups.Count < 3)
                 {
                     continue;

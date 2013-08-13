@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
+using log4net;
 using Moq;
 using NUnit.Framework;
 using deployd_package.Features.MetadataDiscovery;
@@ -32,7 +33,7 @@ namespace deployd_package.tests.Features.MetadataDiscovery
             _mapper.Setup(x => x.MapAssemblyInfoToPackage(It.IsAny<string>(), It.IsAny<PackageMetadata>()))
                 .Callback((string s, PackageMetadata md)=> md.Description = "Updated");
 
-            _ipdfsfe = new InferPackageDetailsFromSingleFoundExecutable(_fs.Object, _mapper.Object);
+            _ipdfsfe = new InferPackageDetailsFromSingleFoundExecutable(_fs.Object, _mapper.Object, new Mock<ILog>().Object);
         }
 
         [Test]

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <authors>David Whitney</authors>
+    <owners>$author$</owners>
+    <projectUrl>https://github.com/davidwhitney/deployd</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+	<summary>deployd bootstrapper for target servers - CD for Windows</summary>
+    <description>$description$</description>
+    <copyright>Copyright 2013</copyright>
+    <tags>deployd deployd-micro cd continuous delivery</tags>
+  </metadata>
+	<files>
+	  <file src="bin\Release\*.*" />
+	</files> 
+</package>

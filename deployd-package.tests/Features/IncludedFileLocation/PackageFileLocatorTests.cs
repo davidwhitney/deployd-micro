@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
+using log4net;
 using Moq;
 using NUnit.Framework;
 using deployd_package.Features.IncludedFileLocation;
@@ -31,7 +32,7 @@ namespace deployd_package.tests.Features.IncludedFileLocation
             _fs.Setup(x => x.Directory.GetFiles(It.IsAny<string>()))
                .Returns((string param) => _filesOnDisk.ContainsKey(param) ? _filesOnDisk[param].ToArray() : new string[0]);
             
-            _pfl = new PackageFileLocator(_fs.Object);
+            _pfl = new PackageFileLocator(_fs.Object, new Mock<ILog>().Object);
         }
 
         [Test]

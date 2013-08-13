@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using log4net;
 using NuGet;
 using IFileSystem = System.IO.Abstractions.IFileSystem;
 
@@ -8,10 +9,12 @@ namespace deployd_package.Features.IncludedFileLocation
     public class PackageFileLocator
     {
         private readonly IFileSystem _fs;
+        private readonly ILog _log;
 
-        public PackageFileLocator(IFileSystem fs)
+        public PackageFileLocator(IFileSystem fs, ILog log)
         {
             _fs = fs;
+            _log = log;
         }
 
         public IEnumerable<IPackageFile> IncludedFiles(string rootDirectory)

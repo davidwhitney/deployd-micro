@@ -11,6 +11,7 @@ namespace deployd_package.Features.Configuration
         public string SourceDirectory { get; private set; }
         public string OutputDirectory { get; private set; }
         public bool ShowHelp { get; private set; }
+        public bool Verbose { get; private set; }
 
         public Configuration(string[] args)
         {
@@ -19,6 +20,7 @@ namespace deployd_package.Features.Configuration
                     {"source=", v => SourceDirectory = v},
                     {"target=", v => OutputDirectory = v},
                     {"help|h|?", v => ShowHelp = v != null},
+                    {"v|verbose", v => Verbose = v != null},
                 };
             Options.Parse(args);
 

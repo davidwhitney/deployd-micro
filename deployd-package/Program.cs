@@ -16,9 +16,9 @@ namespace deployd_package
             { 
                 cfg.Options.WriteOptionDescriptions(Console.Out);
             }
-
+            
             var packager = context.Kernel.Get<Packager>();
-            packager.Package(cfg.SourceDirectory, cfg.OutputDirectory);
+            packager.Package(cfg.SourceDirectory, cfg.OutputDirectory, cfg.Verbose);
         }     
     }
 }

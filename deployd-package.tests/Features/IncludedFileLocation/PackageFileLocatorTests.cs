@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using log4net;
@@ -27,10 +28,9 @@ namespace deployd_package.tests.Features.IncludedFileLocation
                     {_rootDir + "\\sub-1", new[] {_rootDir + "\\sub-1\\one.txt", _rootDir + "\\sub-1\\two.txt"}},
                     {_rootDir + "\\sub-2", new[] {_rootDir + "\\sub-2\\three.txt", _rootDir + "\\sub-2\\four.txt"}}
                 };
-
-            _fs.Setup(x => x.Directory.GetDirectories(_rootDir)).Returns(_filesOnDisk.Keys.ToArray());
-            _fs.Setup(x => x.Directory.GetFiles(It.IsAny<string>()))
-               .Returns((string param) => _filesOnDisk.ContainsKey(param) ? _filesOnDisk[param].ToArray() : new string[0]);
+            
+            var di = new StubDirectoryInfo(_filesOnDisk);
+            _fs.Setup(x => x.DirectoryInfo).Returns(new DiFactoryStub(di));
             
             _pfl = new PackageFileLocator(_fs.Object, new Mock<ILog>().Object);
         }

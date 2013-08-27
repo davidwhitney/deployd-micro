@@ -60,7 +60,8 @@ namespace deployd.tests.Features.AppInstallation.HookExecution
 
             _runner.PrefixCommonScriptRuntimes(script, startInfo);
 
-            Assert.That(startInfo.FileName, Is.EqualTo(interpreterExpected + " " + script));
+            Assert.That(startInfo.FileName, Is.EqualTo(interpreterExpected));
+            Assert.That(startInfo.Arguments, Is.EqualTo(script));
         }
 
         [Test]

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using log4net;
 using NuGet;
@@ -19,21 +20,16 @@ namespace deployd_package.Features.IncludedFileLocation
 
         public IEnumerable<IPackageFile> IncludedFiles(string rootDirectory)
         {
-            var directories = _fs.Directory.GetDirectories(rootDirectory).ToList();
-            directories.Add(rootDirectory);
+            var di = _fs.DirectoryInfo.FromDirectoryName(rootDirectory);
+            var files = di.GetFiles("*", SearchOption.AllDirectories);
 
-            foreach (var directory in directories)
+            foreach (var file in files)
             {
-                var files = _fs.Directory.GetFiles(directory);
-                
-                foreach (var file in files)
+                yield return new PhysicalPackageFile
                 {
-                    yield return new PhysicalPackageFile
-                        {
-                            SourcePath = file,
-                            TargetPath = file.Replace(rootDirectory + "\\", string.Empty),
-                        };
-                }
+                    SourcePath = file.FullName,
+                    TargetPath = file.FullName.Replace(rootDirectory + "\\", string.Empty),
+                };
             }
         }
     }

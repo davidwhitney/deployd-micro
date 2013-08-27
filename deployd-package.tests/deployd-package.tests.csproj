@@ -67,7 +67,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Features\IncludedFileLocation\DiFactoryStub.cs" />
+    <Compile Include="Features\IncludedFileLocation\FiBaseStub.cs" />
     <Compile Include="Features\IncludedFileLocation\PackageFileLocatorTests.cs" />
+    <Compile Include="Features\IncludedFileLocation\StubDirectoryInfo.cs" />
     <Compile Include="Features\MetadataDiscovery\DefaultMetadataDiscoveryHeuristicTests.cs" />
     <Compile Include="Features\MetadataDiscovery\DiscoverPackageConfigurationMetadataFileTests.cs" />
     <Compile Include="Features\MetadataDiscovery\InferPackageDetailsFromSingleFoundExecutableTests.cs" />

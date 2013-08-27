@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("deployd bootstrapper for target servers - CD for Windows")]
 [assembly: AssemblyConfiguration("")]
 
-[assembly: AssemblyVersion("0.2.0.*")]
-[assembly: AssemblyFileVersion("0.2.0.*")]
+[assembly: AssemblyVersion("0.2.1.*")]
+[assembly: AssemblyFileVersion("0.2.1.*")]
 
 [assembly: AssemblyCompany("David Whitney")]
 [assembly: AssemblyProduct("deployd")]

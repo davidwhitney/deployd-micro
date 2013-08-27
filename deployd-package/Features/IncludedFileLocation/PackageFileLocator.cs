@@ -21,6 +21,7 @@ namespace deployd_package.Features.IncludedFileLocation
         public IEnumerable<IPackageFile> IncludedFiles(string rootDirectory)
         {
             var di = _fs.DirectoryInfo.FromDirectoryName(rootDirectory);
+            var rootDirName = di.FullName;
             var files = di.GetFiles("*", SearchOption.AllDirectories);
 
             foreach (var file in files)
@@ -28,7 +29,7 @@ namespace deployd_package.Features.IncludedFileLocation
                 yield return new PhysicalPackageFile
                 {
                     SourcePath = file.FullName,
-                    TargetPath = file.FullName.Replace(rootDirectory + "\\", string.Empty),
+                    TargetPath = file.FullName.Replace(rootDirName + "\\", string.Empty),
                 };
             }
         }

@@ -36,7 +36,6 @@ namespace deployd.tests.Features.ConfigureCommand
             var configurationManager = new DeploydConfigurationManager(fileSystem.Object, appFolderLocator.Object);
             TextWriter output = new StringWriter(new StringBuilder());
             var command = new deployd.Features.AppConfiguration.ConfigureCommand(instanceConfiguration,
-                                                                                 deploydConfiguration,
                                                                                  configurationManager, output);
             command.Execute();
 

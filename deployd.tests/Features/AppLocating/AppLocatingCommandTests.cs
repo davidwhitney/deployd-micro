@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using Moq;
 using NUnit.Framework;
 using deployd.Extensibility.Configuration;
@@ -15,6 +17,7 @@ namespace deployd.tests.Features.AppLocating
         private AppLocatingCommand _cmd;
         private Mock<ILog> _logger;
         private IInstanceConfiguration _instanceConfig;
+        private TextWriter _output = new StringWriter(new StringBuilder());
 
         [SetUp]
         public void SetUp()
@@ -22,7 +25,7 @@ namespace deployd.tests.Features.AppLocating
             _logger = new Mock<ILog>();
             _finders = new List<IAppInstallationLocator>();
             _instanceConfig = new InstanceConfiguration {AppName = "MyApp"};
-            _cmd = new AppLocatingCommand(_finders, _logger.Object, _instanceConfig);
+            _cmd = new AppLocatingCommand(_finders, _logger.Object, _instanceConfig, _output);
         }
 
         [Test]

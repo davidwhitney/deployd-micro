@@ -11,12 +11,15 @@ namespace deployd.Features.AppExtraction
         private readonly System.IO.Abstractions.IFileSystem _fs;
         private readonly ILog _log;
         private readonly IPackageCache _packageCache;
+        private readonly TextWriter _output;
 
-        public NuGetPackageExtractor(System.IO.Abstractions.IFileSystem fs, ILog log, IPackageCache packageCache)
+        public NuGetPackageExtractor(System.IO.Abstractions.IFileSystem fs, ILog log, IPackageCache packageCache,
+            TextWriter output)
         {
             _fs = fs;
             _log = log;
             _packageCache = packageCache;
+            _output = output;
         }
 
         public bool CanUnpack(object packageInfo)
@@ -31,7 +34,7 @@ namespace deployd.Features.AppExtraction
                 throw new InvalidOperationException("Somehow selected the wrong unpacker");
             }
 
-            _log.Info("Unpacking NuGet package...");
+            _output.WriteLine("Unpacking NuGet package...");
 
             var nugetPackage = packageInfo as IPackage;
             nugetPackage = _packageCache.CachePackage(nugetPackage);

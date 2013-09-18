@@ -8,17 +8,14 @@ namespace deployd.Features.AppConfiguration
     public class ConfigureCommand : IFeatureCommand
     {
         private readonly IInstanceConfiguration _config;
-        private readonly DeploydConfiguration _deploydConfiguration;
         private readonly DeploydConfigurationManager _configurationManager;
         private readonly TextWriter _output;
 
         public ConfigureCommand(IInstanceConfiguration config,
-            DeploydConfiguration deploydConfiguration,
             DeploydConfigurationManager configurationManager,
             TextWriter output)
         {
             _config = config;
-            _deploydConfiguration = deploydConfiguration;
             _configurationManager = configurationManager;
             _output = output;
         }
@@ -28,6 +25,7 @@ namespace deployd.Features.AppConfiguration
             string settingAndValue = _config.SetConfigurationValue;
             string[] split = settingAndValue.Split('=');
 
+            var deploydConfiguration = _configurationManager.LoadConfig();
             if (split.Length == 1 || split.Length == 2)
             {
                 var property = typeof(DeploydConfiguration).GetProperty(split[0]);
@@ -38,17 +36,17 @@ namespace deployd.Features.AppConfiguration
                     {
                         if (property.PropertyType.IsEnum)
                         {
-                            property.SetValue(_deploydConfiguration, Enum.Parse(property.PropertyType, split[1], true), null);
+                            property.SetValue(deploydConfiguration, Enum.Parse(property.PropertyType, split[1], true), null);
                         }
                         else
                         {
-                            property.SetValue(_deploydConfiguration, Convert.ChangeType(split[1], property.PropertyType), null);
+                            property.SetValue(deploydConfiguration, Convert.ChangeType(split[1], property.PropertyType), null);
                         }
-                        _configurationManager.SaveConfig(_deploydConfiguration);
+                        _configurationManager.SaveConfig(deploydConfiguration);
                     }
                     else
                     {
-                        _output.WriteLine("{0}={1}",split[0],property.GetValue(_deploydConfiguration, null));
+                        _output.WriteLine("{0}={1}",split[0],property.GetValue(deploydConfiguration, null));
                     }
                     return;
                 }

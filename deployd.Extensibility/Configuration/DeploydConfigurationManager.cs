@@ -21,7 +21,7 @@ namespace deployd.Extensibility.Configuration
 
         public DeploydConfiguration LoadConfig()
         {
-            if (!_fileSystem.File.Exists(fileName))
+            if (!_fileSystem.File.Exists(_filePath))
             {
                 var configuration = new DeploydConfiguration();
                 using (var file = _fileSystem.File.Open(_filePath, FileMode.Create, FileAccess.Write))

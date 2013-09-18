@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using NuGet;
 using deployd.Extensibility.Configuration;
@@ -10,18 +11,21 @@ namespace deployd.Features.AppLocating
     {
         private readonly ILog _log;
         private readonly IInstanceConfiguration _config;
+        private readonly TextWriter _output;
         private readonly IEnumerable<IAppInstallationLocator> _finders;
         
-        public AppLocatingCommand(IEnumerable<IAppInstallationLocator> finders, ILog log, IInstanceConfiguration config)
+        public AppLocatingCommand(IEnumerable<IAppInstallationLocator> finders, ILog log, IInstanceConfiguration config,
+            TextWriter output)
         {
             _log = log;
             _config = config;
+            _output = output;
             _finders = finders;
         }
 
         public void Execute()
         {
-            _log.InfoFormat("Searching for package {0} ({1})", _config.AppName, _config.Version ?? "latest");
+            _output.WriteLine("Searching for package {0} ({1})", _config.AppName, _config.Version ?? "latest");
 
             var activeFinders = _finders.Where(x => x.SupportsPathType()).ToList();
 
@@ -38,17 +42,18 @@ namespace deployd.Features.AppLocating
                              .FirstOrDefault(result => result != null);
                     if (location != null)
                     {
-                        _log.InfoFormat("The specific version was not found, but the repository does have other version of the package. Latest available is {0}.", location.PackageVersion);
+                        _output.WriteLine("The specific version was not found, but the repository does have other version of the package. Latest available is {0}.", location.PackageVersion);
                         return;
-                    } 
-                    
-                    _log.Info("Package not found.");
+                    }
+
+                    _output.WriteLine("Package not found.");
                 }
                 
                 return;
             }
 
-            _log.Info("Package found.");
+            _output.WriteLine("Package v{0} found", location.PackageVersion);
+            _config.Version = location.PackageVersion;
             _config.PackageLocation = location;
         }
     }

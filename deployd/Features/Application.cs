@@ -31,8 +31,6 @@ namespace deployd.Features
             _config = config;
             _installationLock = installationLock;
             _output = output;
-
-            _output.WriteLine("App directory: " + _appMap.InstallPath);
         }
 
         public void EnsureDataDirectoriesExist()
@@ -46,6 +44,7 @@ namespace deployd.Features
 
         public void LockForInstall()
         {
+            _output.WriteLine("Locking directory " + _appMap.InstallPath + " for installation...");
             _installationLock.LockAppInstallation();            
         }
 
@@ -63,6 +62,8 @@ namespace deployd.Features
             RecursiveDelete(_appMap.InstallPath);
             RecursiveCopy(_appMap.Staging, _appMap.InstallPath);
             RecursiveDelete(_appMap.Staging);
+
+            _output.WriteLine("{0} version {1} activated", _appMap.AppName, _config.Version);
         }
 
         private void RecursiveDelete(string path)

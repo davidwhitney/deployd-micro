@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.IO.Abstractions;
 using deployd.Extensibility.Configuration;
 using log4net;
@@ -13,14 +14,16 @@ namespace deployd.Features.FeatureSelection
         private readonly IApplicationMap _appMap;
         private readonly IInstanceConfiguration _config;
         private readonly ILog _log;
+        private readonly TextWriter _output;
 
-        public SetEnvironmentCommand(IFileSystem fs, IApplication app, IApplicationMap appMap, IInstanceConfiguration config, ILog log)
+        public SetEnvironmentCommand(IFileSystem fs, IApplication app, IApplicationMap appMap, IInstanceConfiguration config, ILog log, TextWriter output)
         {
             _fs = fs;
             _app = app;
             _appMap = appMap;
             _config = config;
             _log = log;
+            _output = output;
         }
 
         public void Execute()
@@ -42,11 +45,10 @@ namespace deployd.Features.FeatureSelection
                 if (_fs.File.Exists(expectedTransformFilePath))
                 {
                     // found a transform for this config
-                    _log.InfoFormat("Setting {0} environment", _config.Environment);
+                    _output.WriteLine("Activating {0} configuration", _config.Environment);
                     Transform(sourceConfigPath, expectedTransformFilePath);
                 }
             }
-
         }
 
         private void Transform(string sourceConfigPath, string transformFilePath)

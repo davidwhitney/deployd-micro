@@ -13,14 +13,17 @@ namespace deployd.Features.AppExtraction
         private readonly ILog _log;
         private readonly IInstanceConfiguration _instanceConfiguration;
         private readonly IApplicationMap _applicationMap;
+        private readonly TextWriter _output;
 
         public PackageCache(System.IO.Abstractions.IFileSystem fs, ILog log, 
-            IInstanceConfiguration instanceConfiguration, IApplicationMap applicationMap)
+            IInstanceConfiguration instanceConfiguration, IApplicationMap applicationMap,
+            TextWriter output)
         {
             _fs = fs;
             _log = log;
             _instanceConfiguration = instanceConfiguration;
             _applicationMap = applicationMap;
+            _output = output;
         }
 
         private const int DownloadChunkSize = 4096;
@@ -36,7 +39,7 @@ namespace deployd.Features.AppExtraction
             if (!PackageIsCached(_applicationMap, package)
                 || _instanceConfiguration.ForceDownload)
             {
-                _log.Info("Downloading package from source...");
+                _output.WriteLine("Downloading package from source...");
                 using (
                     var fileStream = _fs.File.Open(packagePath, FileMode.Create, FileAccess.Write, FileShare.None)
                     )
@@ -49,7 +52,7 @@ namespace deployd.Features.AppExtraction
             }
             else
             {
-                _log.Info("Using cached copy of package...");
+                _output.WriteLine("Using cached copy of package...");
             }
             _log.DebugFormat("Local copy is {0}", packagePath);
             return new ZipPackage(packagePath);

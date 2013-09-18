@@ -83,7 +83,7 @@ namespace deployd.tests.Features.AppLocating
 
             _cmd.Execute();
 
-            _logger.Verify(x => x.Info("Package found."));
+            Assert.That(_output.ToString(), Is.StringContaining("Found " + package.PackageDetails));
         }
         
         [Test]

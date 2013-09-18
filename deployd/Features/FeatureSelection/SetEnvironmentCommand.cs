@@ -49,6 +49,29 @@ namespace deployd.Features.FeatureSelection
                     Transform(sourceConfigPath, expectedTransformFilePath);
                 }
             }
+
+            // web specific things
+            if (_fs.File.Exists(_fs.Path.Combine(_appMap.Staging, _config.Environment+".htaccess"))
+                && _fs.File.Exists(_fs.Path.Combine(_appMap.Staging, ".htaccess")))
+            {
+                _output.WriteLine("Activating {0} .htaccess", _config.Environment);
+                using (var file = _fs.File.Open(_fs.Path.Combine(_appMap.Staging, ".htaccess"), FileMode.Create, FileAccess.Write))
+                using (var writer = new StreamWriter(file))
+                {
+                    writer.Write(_fs.File.ReadAllText(_fs.Path.Combine(_appMap.Staging, _config.Environment + ".htaccess")));
+                }
+            }
+
+            if (_fs.File.Exists(_fs.Path.Combine(_appMap.Staging, "robots."+_config.Environment + ".txt"))
+                && _fs.File.Exists(_fs.Path.Combine(_appMap.Staging, "robots.txt")))
+            {
+                _output.WriteLine("Activating {0} robots.txt", _config.Environment);
+                using (var file = _fs.File.Open(_fs.Path.Combine(_appMap.Staging, "robots.txt"), FileMode.Create, FileAccess.Write))
+                using (var writer = new StreamWriter(file))
+                {
+                    writer.Write(_fs.File.ReadAllText(_fs.Path.Combine(_appMap.Staging, "robots." + _config.Environment + ".txt")));
+                }
+            }
         }
 
         private void Transform(string sourceConfigPath, string transformFilePath)

@@ -14,6 +14,7 @@ namespace deployd.Features.AppExtraction
         private readonly IApplicationFactory _appFactory;
         private readonly IInstallationRoot _installRoot;
         private readonly IEnumerable<IEnvironmentApplier> _configurators;
+        private readonly TextWriter _output;
         private readonly IList<IPackageExtractor> _extractors;
         private readonly IInstanceConfiguration _config;
 
@@ -21,11 +22,13 @@ namespace deployd.Features.AppExtraction
             IInstanceConfiguration config,
             IApplicationFactory appFactory, 
             IInstallationRoot installRoot,
-            IEnumerable<IEnvironmentApplier> configurators )
+            IEnumerable<IEnvironmentApplier> configurators,
+            TextWriter output)
         {
             _appFactory = appFactory;
             _installRoot = installRoot;
             _configurators = configurators;
+            _output = output;
             _extractors = extractors.ToList();
             _config = config;
 
@@ -56,6 +59,8 @@ namespace deployd.Features.AppExtraction
             {
                 environmentApplier.Apply(_config.ApplicationMap.Staging, packageInfo, _config.Environment);
             }
+
+            _output.WriteLine("{0} {1} extracted to staging folder", _config.AppName, _config.Version);
         }
 
         private IEnvironmentApplier GetEnvironmentApplierFor(object packageInfo)

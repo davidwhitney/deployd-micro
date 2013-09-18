@@ -52,7 +52,7 @@ namespace deployd.Features.AppLocating
                 return;
             }
 
-            _output.WriteLine("Found {0} v{1}", location.PackageDetails, location.PackageVersion);
+            _output.WriteLine("Found {0}", location.PackageDetails);
             _config.Version = location.PackageVersion;
             _config.PackageLocation = location;
         }

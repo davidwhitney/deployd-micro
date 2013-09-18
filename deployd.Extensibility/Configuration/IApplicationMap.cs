@@ -11,6 +11,7 @@ namespace deployd.Extensibility.Configuration
         string VersionFile { get; set; }
         Stream Lock { get; set; }
         string CachePath { get; set; }
+        string StagingVersionFile { get; set; }
         IApplicationMap Configure(string appName, string installPath);
     }
 }

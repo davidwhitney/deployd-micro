@@ -39,14 +39,6 @@ namespace deployd.Features.AppExtraction
                 throw new InvalidOperationException("Somehow selected the wrong unpacker");
             }
 
-            if (!UnpackIsRequired()
-                 && !_instanceConfiguration.ForceUnpack)
-            {
-                _output.WriteLine("Skipping package unpacking as version {0} is already staged. Force unpack by specifying the -fu argument.",
-                    _instanceConfiguration.Version);
-                return;
-            }
-
             _output.WriteLine("Unpacking NuGet package...");
 
             var nugetPackage = packageInfo as IPackage;
@@ -66,14 +58,6 @@ namespace deployd.Features.AppExtraction
             }
         }
 
-        private bool UnpackIsRequired()
-        {
-            string existingVersion = _fs.File.ReadAllText(_applicationMap.VersionFile);
-            if (_instanceConfiguration.Version.Equals(existingVersion))
-            {
-                return false;
-            }
-            return true;
-        }
+        
     }
 }

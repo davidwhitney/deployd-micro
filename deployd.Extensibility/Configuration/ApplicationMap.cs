@@ -11,6 +11,7 @@ namespace deployd.Extensibility.Configuration
         public string Lockfile { get; set; }
         public string VersionFile { get; set; }
         public string CachePath { get; set; }
+        public string StagingVersionFile { get; set; }
 
         public Stream Lock { get; set; }
 
@@ -29,6 +30,7 @@ namespace deployd.Extensibility.Configuration
             //Active = Path.Combine(fullPath, "Active").ToAbsolutePath();
             Lockfile = Path.Combine(CachePath, "installing.deployd").ToAbsolutePath();
             VersionFile = Path.Combine(CachePath, "version.deployd").ToAbsolutePath();
+            StagingVersionFile = Path.Combine(CachePath, "staging.version.deployd").ToAbsolutePath();
             return this;
         }
     }

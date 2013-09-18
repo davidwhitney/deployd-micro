@@ -97,8 +97,8 @@ namespace deployd.Features.Update
                 prepareOnly ? "p" : "i",
                 _instanceConfiguration.ForceDownload ? "-f" : "");
             _log.DebugFormat("{0} {1}", process.StartInfo.FileName, process.StartInfo.Arguments);
-            process.OutputDataReceived += (sender, args) => _log.Info(args.Data);
-            process.ErrorDataReceived += (sender, args) => _log.Warn(args.Data);
+            process.OutputDataReceived += (sender, args) => _output.WriteLine(args.Data);
+            process.ErrorDataReceived += (sender, args) => _output.WriteLine(args.Data);
             process.Exited += (sender, args) => _log.DebugFormat("Process exited with code {0}", process.ExitCode);
             process.Start();
             process.BeginOutputReadLine();

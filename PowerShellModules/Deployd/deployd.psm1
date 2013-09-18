@@ -12,42 +12,75 @@ function Install-DeploydApplications(
 [parameter(Mandatory=$true)]
 [string]$Environment,
 [string]$Applications,
-[string]$ApplicationVersion) 
+[string]$ApplicationVersion,
+[switch]$Prepare=$false,
+[switch]$ForceDownload=$false,
+[switch]$ForceUnpack=$false) 
 {
     $jobs = @()
     $sessions = @()
 
     $installScriptBlock = [scriptblock]{
-                param([string]$Environment,[string]$Applications,[string]$ApplicationVersion)
+                param([string]$Environment,[string]$Applications,[string]$ApplicationVersion,[bool]$Prepare,[bool]$ForceDownload,[bool]$ForceUnpack)
                 $Applications.split(",") | ForEach {
-                    $command =$("deployd -i -e "+$Environment+" --app "+$_)
+                    $command =$("deployd -e "+$Environment+" --app "+$_)
                     if ($ApplicationVersion)
                     {
                         $command += " --version $ApplicationVersion"
                     }
+                    if ($Prepare -eq $true)
+                    {
+                        $command += " -p";
+                    } else {
+                        $command += " -i";
+                    }
+                    if ($ForceDownload -eq $true)
+                    {
+                        $command += " -fd";
+                    }
+                    if ($ForceUnpack -eq $true)
+                    {
+                        $command += " -fu";
+                    }
+
                     iex $command
                 }
             };
 
-    Execute-Jobs -Computers $Computers -Environment $Environment -ScriptBlock $installScriptBlock -ArgumentList $Environment,$Applications,$ApplicationVersion
+    Execute-Jobs -Computers $Computers -Environment $Environment -ScriptBlock $installScriptBlock -ArgumentList $Environment,$Applications,$ApplicationVersion,$Prepare,$ForceDownload,$ForceUnpack
 }
 
 function Update-DeploydApplications(
 [parameter(Mandatory=$true,ValueFromPipeLine=$true)]
 [string]$Computers,
 [parameter(Mandatory=$true)]
-[string]$Environment) 
+[string]$Environment,
+[switch]$Prepare=$false,
+[switch]$ForceDownload=$false,
+[switch]$ForceUnpack=$false) 
 {
     $jobs = @()
     $sessions = @()
 
     $updateScriptBlock = [scriptblock]{
-                param($Environment)
+                param([parameter(Mandatory=$true)][string]$Environment,[bool]$Prepare,[bool]$ForceDownload,[bool]$ForceUnpack)
                 $command =$("deployd -u -e "+$Environment)
+                if ($Prepare -eq $true)
+                {
+                    $command += " -p";
+                }
+                if ($ForceDownload -eq $true)
+                    {
+                        $command += " -fd";
+                    }
+                    if ($ForceUnpack -eq $true)
+                    {
+                        $command += " -fu";
+                    }
                 iex $command
             };
 
-    Execute-Jobs -Computers $Computers -Environment $Environment -ScriptBlock $updateScriptBlock -ArgumentList $Environment
+    Execute-Jobs -Computers $Computers -Environment $Environment -ScriptBlock $updateScriptBlock -ArgumentList $Environment,$Prepare,$ForceDownload,$ForceUnpack
 }
 
 function Execute-Jobs([string]$Computers,[string]$Environment,[scriptblock]$ScriptBlock,$ArgumentList)

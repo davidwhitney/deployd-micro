@@ -29,9 +29,9 @@ namespace deployd.AppStart
 
             log4net.Config.XmlConfigurator.Configure(new FileInfo("log4net.config"));
 
-            var log = Kernel.GetService<ILog>();
-            log.Info("deployd-mini");
-            log.Info("version: " + GetType().Assembly.GetName().Version);
+            var output = Kernel.GetService<TextWriter>();
+            output.WriteLine("deployd-mini");
+            output.WriteLine("version: " + GetType().Assembly.GetName().Version);
         }
 
         private IKernel CreateKernel()

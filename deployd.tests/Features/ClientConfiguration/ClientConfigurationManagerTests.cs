@@ -14,12 +14,17 @@ namespace deployd.tests.Features.ClientConfiguration
     {
         private Mock<IFileSystem> _fs;
         private DeploydConfigurationManager _cfgManager;
+        private Mock<IApplicationFolderLocator> _appFolderLocator;
 
         [SetUp]
         public void SetUp()
         {
             _fs = new Mock<IFileSystem>();
-            _cfgManager = new DeploydConfigurationManager(_fs.Object);
+            IMockFileDataAccessor fileData=new MockFileSystem(new Dictionary<string, MockFileData>());
+            _fs.SetupGet(x => x.Path).Returns(new MockPath(fileData));
+            _appFolderLocator = new Mock<IApplicationFolderLocator>();
+            _appFolderLocator.SetupGet(x => x.ApplicationFolder).Returns("");
+            _cfgManager = new DeploydConfigurationManager(_fs.Object, _appFolderLocator.Object);
         }
 
         [Test]

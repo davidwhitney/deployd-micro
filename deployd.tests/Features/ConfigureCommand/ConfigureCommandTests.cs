@@ -22,6 +22,9 @@ namespace deployd.tests.Features.ConfigureCommand
         {
             var configFileStream = new MemoryStream();
             var fileSystem = new Mock<IFileSystem>();
+            fileSystem.SetupGet(x => x.Path).Returns(new MockPath(new MockFileSystem()));
+            var appFolderLocator = new Mock<IApplicationFolderLocator>();
+            appFolderLocator.SetupGet(x=>x.ApplicationFolder).Returns("c:\\");
             fileSystem.Setup(x => x.File.Open(It.IsAny<string>(), FileMode.Create, FileAccess.Write)).Returns(configFileStream);
 
             IInstanceConfiguration instanceConfiguration=new InstanceConfiguration()
@@ -30,7 +33,7 @@ namespace deployd.tests.Features.ConfigureCommand
                 };
 
             var deploydConfiguration=new DeploydConfiguration();
-            var configurationManager=new DeploydConfigurationManager(fileSystem.Object);
+            var configurationManager = new DeploydConfigurationManager(fileSystem.Object, appFolderLocator.Object);
             TextWriter output = new StringWriter(new StringBuilder());
             var command = new deployd.Features.AppConfiguration.ConfigureCommand(instanceConfiguration,
                                                                                  deploydConfiguration,

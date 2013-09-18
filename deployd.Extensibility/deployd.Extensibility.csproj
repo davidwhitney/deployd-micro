@@ -56,6 +56,7 @@
     <Compile Include="Configuration\ApplicationMap.cs" />
     <Compile Include="Configuration\DeploydConfiguration.cs" />
     <Compile Include="Configuration\DeploydConfigurationManager.cs" />
+    <Compile Include="Configuration\IApplicationFolderLocator.cs" />
     <Compile Include="Configuration\IApplicationMap.cs" />
     <Compile Include="Configuration\IInstanceConfiguration.cs" />
     <Compile Include="Configuration\PackageLocation.cs" />

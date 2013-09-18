@@ -52,7 +52,7 @@ namespace deployd.AppStart
             kernel.Bind(scanner => scanner.FromAssemblyContaining<IPackageRepositoryFactory>().Select(IsServiceType).BindDefaultInterfaces());
              */
             BindEverything(kernel);
-
+            kernel.Bind<IApplicationFolderLocator>().To<ApplicationFolderLocator>();
             kernel.Bind<IApplicationFactory>().To<ApplicationFactory>();
             kernel.Bind<IInstallationRoot>().To<InstallationRoot>();
             kernel.Bind<IInstallHookExecutor>().To<InstallHookExecutor>();

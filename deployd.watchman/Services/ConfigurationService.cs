@@ -11,7 +11,7 @@ namespace deployd.watchman.Services
 
         public ConfigurationService()
         {
-            _cfgManager = new DeploydConfigurationManager(new FileSystem());
+            _cfgManager = new DeploydConfigurationManager(new FileSystem(), new ApplicationFolderLocator());
         }
 
         public DeploydConfiguration LoadConfiguration()

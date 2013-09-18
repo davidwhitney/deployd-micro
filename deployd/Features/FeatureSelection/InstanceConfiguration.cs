@@ -28,6 +28,8 @@ namespace deployd.Features.FeatureSelection
 
         public string SetConfigurationValue { get; set; }
 
+        public bool ForceUnpack { get; set; }
+
         public InstanceConfiguration()
         {
             ApplicationMap = new ApplicationMap(string.Empty, string.Empty);

@@ -41,7 +41,8 @@ namespace deployd.Features.FeatureSelection
                     {"e|environment=", v => cfg.Environment = v},
                     {"verbose", v => cfg.Verbose = v != null},
                     {"s|state", v => cfg.ShowState = v != null},
-                    {"f|force", v => cfg.ForceDownload = v != null},
+                    {"fd|forceDownload", v => cfg.ForceDownload = v != null},
+                    {"fu|forceUnpack", v => cfg.ForceUnpack = v != null},
                     {"c|config=", v => cfg.SetConfigurationValue = v},
                     {"h|?|help", v => cfg.Help = v != null},
                 };

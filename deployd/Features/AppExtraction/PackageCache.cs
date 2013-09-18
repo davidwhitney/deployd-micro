@@ -52,7 +52,7 @@ namespace deployd.Features.AppExtraction
             }
             else
             {
-                _output.WriteLine("Using cached copy of package...");
+                _output.WriteLine("Using cached copy of package. Force downloading the package by specifying the -fd argument.");
             }
             _log.DebugFormat("Local copy is {0}", packagePath);
             return new ZipPackage(packagePath);

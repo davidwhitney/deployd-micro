@@ -24,5 +24,6 @@ namespace deployd.Extensibility.Configuration
         bool ForceDownload { get; set; }
         string SetConfigurationValue { get; set; }
         object Version { get; set; }
+        bool ForceUnpack { get; set; }
     }
 }

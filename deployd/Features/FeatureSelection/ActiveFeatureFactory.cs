@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using deployd.AppStart;
 using deployd.Extensibility.Configuration;
 using deployd.Features.AppConfiguration;
@@ -20,13 +21,15 @@ namespace deployd.Features.FeatureSelection
         private readonly IInstanceConfiguration _instanceConfiguration;
         private readonly ILog _log;
         private readonly ILoggingConfiguration _loggingConfiguration;
+        private readonly TextWriter _output;
 
-        public ActiveFeatureFactory(IKernel kernel, IInstanceConfiguration instanceConfiguration, ILog log, ILoggingConfiguration loggingConfiguration)
+        public ActiveFeatureFactory(IKernel kernel, IInstanceConfiguration instanceConfiguration, ILog log, ILoggingConfiguration loggingConfiguration, TextWriter output)
         {
             _kernel = kernel;
             _instanceConfiguration = instanceConfiguration;
             _log = log;
             _loggingConfiguration = loggingConfiguration;
+            _output = output;
         }
 
         public CommandCollection BuildCommands()
@@ -83,6 +86,10 @@ namespace deployd.Features.FeatureSelection
                 return commandCollection;
             }
 
+            if (_instanceConfiguration.Install && _instanceConfiguration.Prep)
+            {
+                throw new ArgumentException("You can specify the install (-i) or prepare (-p) arguments, but not both");
+            }
 
             if (_instanceConfiguration.Install || _instanceConfiguration.Prep)
             {
@@ -91,8 +98,13 @@ namespace deployd.Features.FeatureSelection
 
                 if (_instanceConfiguration.Install)
                 {
+                    _output.WriteLine("Application will be installed");
                     commandCollection.Add(_kernel.GetService<SetEnvironmentCommand>());
                     commandCollection.Add(_kernel.GetService<AppInstallationCommand>());
+                }
+                else
+                {
+                    _output.WriteLine("Application will be prepared for installation only");
                 }
 
                 commandCollection.Add(_kernel.GetService<PurgeOldBackupsCommand>());

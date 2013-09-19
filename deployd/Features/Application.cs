@@ -61,7 +61,7 @@ namespace deployd.Features
 
             RecursiveDelete(_appMap.InstallPath);
             RecursiveCopy(_appMap.Staging, _appMap.InstallPath);
-            RecursiveDelete(_appMap.Staging);
+            //RecursiveDelete(_appMap.Staging);
 
             _output.WriteLine("{0} version {1} activated", _appMap.AppName, _config.Version);
         }

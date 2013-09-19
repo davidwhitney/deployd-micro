@@ -4,6 +4,7 @@ using System.IO.Abstractions;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Security.Principal;
+using System.Text;
 using deployd.Features.AppInstallation.Hooks;
 using log4net;
 
@@ -24,6 +25,17 @@ namespace deployd.Features.AppInstallation.HookExecution
 
         public void ExecuteHook(HookTypeRef hookTypeRef, string arguments = null)
         {
+            _output.WriteLine("Running {0} hook {1}", hookTypeRef.Type, hookTypeRef.FileName);
+            string scriptContent = "";
+            using (var file = _fs.File.Open(hookTypeRef.FileName, FileMode.Open, FileAccess.Read))
+            using (var reader = new StreamReader(file))
+            {
+                scriptContent = reader.ReadToEnd();
+                file.Close();
+            }
+
+            scriptContent = ReplaceString(scriptContent, "write-host", "write-output", StringComparison.InvariantCultureIgnoreCase);
+
             try
             {
 
@@ -35,17 +47,21 @@ namespace deployd.Features.AppInstallation.HookExecution
                     runSpaceInvoker.Invoke("Set-ExecutionPolicy Unrestricted -Scope Process");
                     using (var pipeline = runspace.CreatePipeline())
                     {
-                        var command = new Command(hookTypeRef.FileName);
-                        pipeline.Commands.Add(command);
-                        var results = pipeline.Invoke();
+                        var script = PowerShell.Create();
+                        script.Runspace = runspace;
+                        script.AddScript(scriptContent);
+                        //var command = new Command(hookTypeRef.FileName, true);
+                        //pipeline.Commands.Add(command);
+
+                        var results = script.Invoke();
                         foreach (var result in results)
                         {
-                            _log.Info(result);
+                            _output.WriteLine(result);
                         }
 
                         if (pipeline.PipelineStateInfo.State != PipelineState.Completed)
                         {
-                            _log.InfoFormat("{0}", pipeline.PipelineStateInfo.Reason);
+                            _output.WriteLine("{0}", pipeline.PipelineStateInfo.Reason);
                         }
 
                         if (pipeline.Error.Count > 0)
@@ -86,5 +102,27 @@ namespace deployd.Features.AppInstallation.HookExecution
             return hookTypeRef.Type == HookType.File
                    && _fs.Path.GetExtension(hookTypeRef.FileName)==".ps1";
         }
+
+        public static string ReplaceString(string str, string oldValue, string newValue, StringComparison comparison)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            int previousIndex = 0;
+            int index = str.IndexOf(oldValue, comparison);
+            while (index != -1)
+            {
+                sb.Append(str.Substring(previousIndex, index - previousIndex));
+                sb.Append(newValue);
+                index += oldValue.Length;
+
+                previousIndex = index;
+                index = str.IndexOf(oldValue, index, comparison);
+            }
+            sb.Append(str.Substring(previousIndex));
+
+            return sb.ToString();
+        }
     }
+
+    
 }

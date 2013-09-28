@@ -12,10 +12,12 @@ namespace deployd.Features
 
         public string Path { get; private set; }
 
-        public InstallationRoot(DeploydConfiguration deploydConfiguration, IFileSystem fs)
+        public InstallationRoot(DeploydConfiguration deploydConfiguration, 
+            IInstanceConfiguration instanceConfiguration,
+            IFileSystem fs)
         {
             _fs = fs;
-            Path = deploydConfiguration.InstallRoot;
+            Path = _fs.Path.Combine(deploydConfiguration.InstallRoot,instanceConfiguration.InstallationSubPath);
             _absolutePath = Path.ToAbsolutePath();
         }
 

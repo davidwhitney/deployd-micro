@@ -25,5 +25,6 @@ namespace deployd.Extensibility.Configuration
         string SetConfigurationValue { get; set; }
         object Version { get; set; }
         bool ForceUnpack { get; set; }
+        string InstallationSubPath { get; set; }
     }
 }

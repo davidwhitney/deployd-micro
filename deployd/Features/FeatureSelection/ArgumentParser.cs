@@ -45,6 +45,7 @@ namespace deployd.Features.FeatureSelection
                     {"fu|forceUnpack", v => cfg.ForceUnpack = v != null},
                     {"c|config=", v => cfg.SetConfigurationValue = v},
                     {"h|?|help", v => cfg.Help = v != null},
+                    {"installationSubPath=", v => cfg.InstallationSubPath = v},
                 };
             cfg.OptionSet = p;
 

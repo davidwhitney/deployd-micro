@@ -40,9 +40,7 @@ namespace deployd.Features.AppExtraction
                 || _instanceConfiguration.ForceDownload)
             {
                 _output.WriteLine("Downloading package from source...");
-                using (
-                    var fileStream = _fs.File.Open(packagePath, FileMode.Create, FileAccess.Write, FileShare.None)
-                    )
+                using (var fileStream = _fs.File.Open(packagePath, FileMode.Create, FileAccess.Write, FileShare.None))
                 {
                     var packageData = package.GetStream().ReadAllBytes();
                     fileStream.Write(packageData, 0, packageData.Length);

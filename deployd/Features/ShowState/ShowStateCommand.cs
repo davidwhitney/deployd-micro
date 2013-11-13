@@ -17,26 +17,27 @@ namespace deployd.Features.ShowState
         private readonly IEnumerable<IAppInstallationLocator> _finders;
         private readonly IInstanceConfiguration _config;
         private readonly IListLatestVersionsOfPackagesQuery _query;
-        private readonly DeploydConfiguration _deployd;
         private readonly IFileSystem _fs;
         private readonly IPackageSourceConfiguration _packageSourceConfiguration;
+        private readonly IInstallationRoot _installationRoot;
         private ILog _logger = LogManager.GetLogger(typeof (ShowStateCommand));
 
         public ShowStateCommand(IApplication app,
                                 TextWriter output, IEnumerable<IAppInstallationLocator> finders,
                                 IInstanceConfiguration config,
-                                IListLatestVersionsOfPackagesQuery query, DeploydConfiguration deployd,
+                                IListLatestVersionsOfPackagesQuery query,
                                 System.IO.Abstractions.IFileSystem fs,
-            IPackageSourceConfiguration packageSourceConfiguration)
+            IPackageSourceConfiguration packageSourceConfiguration,
+            IInstallationRoot installationRoot)
         {
             _app = app;
             _output = output;
             _finders = finders;
             _config = config;
             _query = query;
-            _deployd = deployd;
             _fs = fs;
             _packageSourceConfiguration = packageSourceConfiguration;
+            _installationRoot = installationRoot;
         }
 
         public void Execute()
@@ -48,7 +49,7 @@ namespace deployd.Features.ShowState
             var allPackages = _query.GetLatestVersions(_packageSourceConfiguration.PackageSource);
             foreach (var sourcePackage in allPackages)
             {
-                string installPath = _fs.Path.Combine(_deployd.InstallRoot, sourcePackage.Id);
+                string installPath = _fs.Path.Combine(_installationRoot.Path, sourcePackage.Id);
                 _logger.DebugFormat("Checking {0}", installPath);
                 var appMap = new ApplicationMap(sourcePackage.Id, installPath);
                 if (_fs.File.Exists(appMap.VersionFile))

@@ -17,13 +17,16 @@ namespace deployd.Features.AppInstallation.HookExecution
         private readonly ILog _log;
         private readonly TextWriter _output;
         private readonly IInstanceConfiguration _instanceConfiguration;
+        private readonly IInstallationRoot _installationRoot;
 
-        public PowershellRunner(IFileSystem fs, ILog log, TextWriter output, IInstanceConfiguration instanceConfiguration)
+        public PowershellRunner(IFileSystem fs, ILog log, TextWriter output, IInstanceConfiguration instanceConfiguration,
+            IInstallationRoot installationRoot)
         {
             _fs = fs;
             _log = log;
             _output = output;
             _instanceConfiguration = instanceConfiguration;
+            _installationRoot = installationRoot;
         }
 
         public void ExecuteHook(HookTypeRef hookTypeRef, string arguments = null)
@@ -56,6 +59,7 @@ namespace deployd.Features.AppInstallation.HookExecution
                         //var command = new Command(hookTypeRef.FileName, true);
                         //pipeline.Commands.Add(command);
                         script.AddParameter("Environment", _instanceConfiguration.Environment);
+                        script.AddParameter("InstallationRoot", _installationRoot.Path);
 
                         var results = script.Invoke();
                         foreach (var result in results)

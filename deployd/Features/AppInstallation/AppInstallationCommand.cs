@@ -21,7 +21,8 @@ namespace deployd.Features.AppInstallation
                 throw new InvalidOperationException("Application isn't staged. Can't install.");
             }
 
-            if (!_app.IsInstalled)
+            bool firstInstall = !_app.IsInstalled;
+            if (firstInstall)
             {
                 _hookExecutor.ExecuteFirstInstall();
             }
@@ -29,7 +30,11 @@ namespace deployd.Features.AppInstallation
             _hookExecutor.ExecutePreInstall();
             _app.BackupAndInstall();
             _hookExecutor.ExecutePostInstall();
-            _hookExecutor.ExecuteFirstPostInstall();
+
+            if (firstInstall)
+            {
+                _hookExecutor.ExecuteFirstPostInstall();
+            }
         }
     }
 }

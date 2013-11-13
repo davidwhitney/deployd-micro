@@ -23,7 +23,7 @@ namespace deployd.Features.AppLocating
             try
             {
                 var all = repo.GetPackages()
-                              .Where(x => x.Id == appName && x.IsLatestVersion)
+                              .Where(x => x.Id == appName/* && x.IsLatestVersion*/)
                               .ToList();
                 all.Reverse();
                 return all.FirstOrDefault();

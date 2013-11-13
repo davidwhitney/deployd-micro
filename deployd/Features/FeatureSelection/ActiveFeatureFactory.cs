@@ -93,6 +93,13 @@ namespace deployd.Features.FeatureSelection
 
             if (_instanceConfiguration.Install || _instanceConfiguration.Prep)
             {
+                if (string.IsNullOrEmpty(_instanceConfiguration.Environment))
+                {
+                    _output.WriteLine("Specify an environment");
+                    commandCollection.Clear();
+                    return commandCollection;
+                }
+                
                 commandCollection.Add(_kernel.GetService<AppLocatingCommand>());
                 commandCollection.Add(_kernel.GetService<AppExtractionCommand>());
 

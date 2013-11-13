@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using deployd.Features.AppInstallation;
 using deployd.Features.AppLocating;
 using log4net;
@@ -10,11 +11,13 @@ namespace deployd.Features.FeatureSelection
     {
         private readonly ILog _log;
         private readonly IInstallationPadLock _padlock;
+        private readonly TextWriter _output;
 
-        public CommandCollection(ILog log, IInstallationPadLock padlock)
+        public CommandCollection(ILog log, IInstallationPadLock padlock, TextWriter output)
         {
             _log = log;
             _padlock = padlock;
+            _output = output;
         }
 
         public int RunAll()
@@ -28,17 +31,17 @@ namespace deployd.Features.FeatureSelection
             }
             catch (NoPackageFoundException ex)
             {
-                _log.Info(ex.Message);
+                _output.WriteLine(ex.Message);
                 return -2;
             }
             catch (HookFailureException hookFailure)
             {
-                _log.Fatal(hookFailure.ToString());
+                _output.WriteLine(hookFailure.ToString());
                 return hookFailure.ExitCode;
             }
             catch (Exception ex)
             {
-                _log.Fatal(ex.ToString());
+                _output.WriteLine(ex.ToString());
                 return -1;
             }
             finally

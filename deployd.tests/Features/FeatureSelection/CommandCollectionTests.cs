@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 using Moq;
 using NUnit.Framework;
 using deployd.Features;
@@ -22,7 +24,8 @@ namespace deployd.tests.Features.FeatureSelection
         {
             _log = new Mock<ILog>();
             _padlock = new Mock<IInstallationPadLock>();
-            _collection = new CommandCollection(_log.Object, _padlock.Object);
+            TextWriter output = new StringWriter(new StringBuilder());
+            _collection = new CommandCollection(_log.Object, _padlock.Object, output);
 
             _command = new Mock<IFeatureCommand>();
         }

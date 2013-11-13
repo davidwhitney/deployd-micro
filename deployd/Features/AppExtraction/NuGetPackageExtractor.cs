@@ -54,7 +54,33 @@ namespace deployd.Features.AppExtraction
                
                 var directoryPath = Path.GetDirectoryName(fileOutputPath);
                 _fs.EnsureDirectoryExists(directoryPath);
-                _fs.File.WriteAllBytes(fileOutputPath, file.GetStream().ReadAllBytes());
+
+                byte[] fileData = null;
+
+                using (var readStream = file.GetStream())
+                {
+                    try
+                    {
+                        fileData = readStream.ReadAllBytes();
+                    }
+                    finally
+                    {
+                        readStream.Close();
+                    }
+                }
+
+                using (var writeStream = _fs.File.Open(fileOutputPath, FileMode.Create, FileAccess.Write))
+                {
+                    try
+                    {
+                        writeStream.Write(fileData, 0, fileData.Length);
+                        writeStream.Flush();
+                    }
+                    finally
+                    {
+                        writeStream.Close();
+                    }
+                }
             }
         }
 

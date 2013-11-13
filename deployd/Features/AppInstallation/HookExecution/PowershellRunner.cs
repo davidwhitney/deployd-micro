@@ -5,6 +5,7 @@ using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Security.Principal;
 using System.Text;
+using deployd.Extensibility.Configuration;
 using deployd.Features.AppInstallation.Hooks;
 using log4net;
 
@@ -15,12 +16,14 @@ namespace deployd.Features.AppInstallation.HookExecution
         private readonly IFileSystem _fs;
         private readonly ILog _log;
         private readonly TextWriter _output;
+        private readonly IInstanceConfiguration _instanceConfiguration;
 
-        public PowershellRunner(IFileSystem fs, ILog log, TextWriter output)
+        public PowershellRunner(IFileSystem fs, ILog log, TextWriter output, IInstanceConfiguration instanceConfiguration)
         {
             _fs = fs;
             _log = log;
             _output = output;
+            _instanceConfiguration = instanceConfiguration;
         }
 
         public void ExecuteHook(HookTypeRef hookTypeRef, string arguments = null)
@@ -52,6 +55,7 @@ namespace deployd.Features.AppInstallation.HookExecution
                         script.AddScript(scriptContent);
                         //var command = new Command(hookTypeRef.FileName, true);
                         //pipeline.Commands.Add(command);
+                        script.AddParameter("Environment", _instanceConfiguration.Environment);
 
                         var results = script.Invoke();
                         foreach (var result in results)

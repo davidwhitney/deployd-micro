@@ -156,6 +156,18 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+    <Content Include="SampleHooks\Powershell\hook-first-install.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleHooks\Powershell\hook-post-first-install.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleHooks\Powershell\hook-post-install.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleHooks\Powershell\hook-pre-install.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\deployd.Extensibility\deployd.Extensibility.csproj">

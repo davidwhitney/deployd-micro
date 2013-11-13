@@ -101,3 +101,58 @@ Design decisions
 - Each part operates in conjunction with it's peers, but doesn't depend on them.
 - deployd itself does a single locked install per instance.
 - You must be able to execute any element of deployd by hand
+
+Usage
+=====
+
+Packaging
+---------
+'''
+deployd-package.exe --source c:\path\to\my\application --target c:\path\to\packages\folder
+'''
+
+Deploying
+---------
+
+From a http NuGet feed:
+'''
+deployd.exe -i -a MyApplicationName--from http://url/of/nuget/feed --to d:\where\to\install
+'''
+
+From a file-system NuGet feed:
+'''
+deployd.exe -i -a MyApplicationName --from \\path\to\my\nuget\feed --to d:\where\to\install
+'''
+
+Deploy a specific version
+'''
+deployd.exe -i -a MyApplicationName --from http://url/of/nuget/feed --to d:\where\to\install --version 1.1.0.0
+'''
+
+Prepare a package for installation. This will download the package if necessary and stage it for installation. This makes the actual installation
+
+Help
+----
+Show a list of available commands:
+'''
+deployd.exe
+'''
+
+See what packages are available from the source, what is currently installed (including 'staged' versions):
+'''
+deployd.exe --status --from http://url/of/nuget/feed --to d:\where\to\install
+'''
+
+Configuration
+-------------
+You can set configuration values so that you don't have to specify them explicitly each time.
+To set a default installation folder:
+
+'''
+deployd.exe --config InstallRoot c:\path\to\install\folder
+'''
+
+To set a default package source
+'''
+deployd.exe --config PackageSource http://url/of/package/source
+'''

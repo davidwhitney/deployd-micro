@@ -19,13 +19,15 @@ namespace deployd.Features.ShowState
         private readonly IListLatestVersionsOfPackagesQuery _query;
         private readonly DeploydConfiguration _deployd;
         private readonly IFileSystem _fs;
+        private readonly IPackageSourceConfiguration _packageSourceConfiguration;
         private ILog _logger = LogManager.GetLogger(typeof (ShowStateCommand));
 
         public ShowStateCommand(IApplication app,
                                 TextWriter output, IEnumerable<IAppInstallationLocator> finders,
                                 IInstanceConfiguration config,
                                 IListLatestVersionsOfPackagesQuery query, DeploydConfiguration deployd,
-                                System.IO.Abstractions.IFileSystem fs)
+                                System.IO.Abstractions.IFileSystem fs,
+            IPackageSourceConfiguration packageSourceConfiguration)
         {
             _app = app;
             _output = output;
@@ -34,6 +36,7 @@ namespace deployd.Features.ShowState
             _query = query;
             _deployd = deployd;
             _fs = fs;
+            _packageSourceConfiguration = packageSourceConfiguration;
         }
 
         public void Execute()
@@ -42,7 +45,7 @@ namespace deployd.Features.ShowState
 
             Dictionary<IPackage, bool> installed = new Dictionary<IPackage, bool>();
             List<IPackage> notInstalled = new List<IPackage>();
-            var allPackages = _query.GetLatestVersions(_deployd.PackageSource);
+            var allPackages = _query.GetLatestVersions(_packageSourceConfiguration.PackageSource);
             foreach (var sourcePackage in allPackages)
             {
                 string installPath = _fs.Path.Combine(_deployd.InstallRoot, sourcePackage.Id);

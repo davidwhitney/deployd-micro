@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
+using deployd.Features.FeatureSelection;
 using Moq;
 using NUnit.Framework;
 using deployd.Extensibility.Configuration;
@@ -14,6 +15,7 @@ namespace deployd.tests.Features.AppLocating
     public class FileSystemAppInstallationLocatorTests
     {
         private DeploydConfiguration _config;
+        private readonly Mock<IPackageSourceConfiguration> _packageSourceConfiguration = new Mock<IPackageSourceConfiguration>();
         private Mock<IFileSystem> _fs;
         private Mock<ILog> _log;
         private FileSystemAppInstallationLocator _locator;
@@ -22,20 +24,19 @@ namespace deployd.tests.Features.AppLocating
         [SetUp]
         public void SetUp()
         {
-            _config = new DeploydConfiguration {PackageSource = string.Empty};
             _log = new Mock<ILog>();
             _fs = new Mock<IFileSystem>();
             _packageList = new List<string>();
             _fs.Setup(x => x.Directory.GetFiles(It.IsAny<string>(), It.IsAny<string>(), SearchOption.AllDirectories))
                .Returns(_packageList.ToArray);
-            _locator = new FileSystemAppInstallationLocator(_config, _fs.Object, _log.Object);
+            _locator = new FileSystemAppInstallationLocator(_packageSourceConfiguration.Object, _fs.Object, _log.Object);
         }
 
         [Test]
         public void SupportsPathType_WhenPackageSourceIsDirectoryAndDirectoryExists_ReturnsTrue()
         {
-            _config.PackageSource = "c:\\myrepo";
-            _fs.Setup(x => x.Directory.Exists(_config.PackageSource)).Returns(true);
+            _packageSourceConfiguration.Setup(x => x.PackageSource).Returns("c:\\myrepo");
+            _fs.Setup(x => x.Directory.Exists("c:\\myrepo")).Returns(true);
 
             Assert.That(_locator.SupportsPathType(), Is.True);
         }
@@ -43,8 +44,8 @@ namespace deployd.tests.Features.AppLocating
         [Test]
         public void SupportsPathType_WhenPackageSourceIsDirectoryAndDirectoryDoesntExists_ReturnsFalse()
         {
-            _config.PackageSource = "c:\\myrepo";
-            _fs.Setup(x => x.Directory.Exists(_config.PackageSource)).Returns(false);
+            _packageSourceConfiguration.Setup(x => x.PackageSource).Returns("c:\\myrepo");
+            _fs.Setup(x => x.Directory.Exists("c:\\myrepo")).Returns(false);
             
             Assert.That(_locator.SupportsPathType(), Is.False);
         }
@@ -88,7 +89,7 @@ namespace deployd.tests.Features.AppLocating
         public void CanFindPackage_FileSystemThrowsException_LogsErrorAndReturnsNull()
         {
             var ex = new Exception();
-            _config.PackageSource = "c:\\myrepo";
+            _packageSourceConfiguration.Setup(x => x.PackageSource).Returns("c:\\myrepo");
             _fs.Setup(x => x.Directory.GetFiles(It.IsAny<string>(), It.IsAny<string>(), SearchOption.AllDirectories))
                .Throws(ex);
 
@@ -101,7 +102,7 @@ namespace deployd.tests.Features.AppLocating
         [Test]
         public void CanFindPackage_DirectorySearchReturnsNull_ReturnsNull()
         {
-            _config.PackageSource = "c:\\myrepo";
+            _packageSourceConfiguration.Setup(x => x.PackageSource).Returns("c:\\myrepo");
             _fs.Setup(x => x.Directory.GetFiles(It.IsAny<string>(), It.IsAny<string>(), SearchOption.AllDirectories))
                .Returns((string[])null);
 
@@ -113,7 +114,7 @@ namespace deployd.tests.Features.AppLocating
         [Test]
         public void CanFindPackage_DirectorySearchReturnsEmptyCollection_ReturnsNull()
         {
-            _config.PackageSource = "c:\\myrepo";
+            _packageSourceConfiguration.Setup(x => x.PackageSource).Returns("c:\\myrepo");
             _fs.Setup(x => x.Directory.GetFiles(It.IsAny<string>(), It.IsAny<string>(), SearchOption.AllDirectories))
                .Returns(new string[0]);
 

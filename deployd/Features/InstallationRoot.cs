@@ -17,7 +17,7 @@ namespace deployd.Features
             IFileSystem fs)
         {
             _fs = fs;
-            Path = _fs.Path.Combine(deploydConfiguration.InstallRoot,instanceConfiguration.InstallationSubPath);
+            Path = _fs.Path.Combine(deploydConfiguration.InstallRoot,instanceConfiguration.InstallPath??"");
             _absolutePath = Path.ToAbsolutePath();
         }
 

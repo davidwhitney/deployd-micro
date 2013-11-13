@@ -7,36 +7,22 @@ namespace deployd.Features.AppLocating
 {
     public class NuGetFeedAppInstallationLocator : IAppInstallationLocator<IPackage>
     {
+        private readonly IPackageSourceConfiguration _packageSourceConfiguration;
         private readonly IFileSystem _fs;
         private readonly IGetLatestNuGetPackageByNameQuery _latestPackageQuery;
         private readonly IGetNuGetPackageByNameAndVersionQuery _packageByNameAndVersionQuery;
-        private readonly string _packageLocation;
 
-        public bool IsHttp { get { return _packageLocation.StartsWith("http"); } }
-        public string PackageLocation { get { return _packageLocation; } }
+        public bool IsHttp { get { return _packageSourceConfiguration.PackageSource.StartsWith("http"); } }
+        public string PackageLocation { get { return _packageSourceConfiguration.PackageSource; } }
 
-        public NuGetFeedAppInstallationLocator(DeploydConfiguration clientConfig, IFileSystem fs, IGetLatestNuGetPackageByNameQuery latestPackageQuery,
-            IGetNuGetPackageByNameAndVersionQuery packageByNameAndVersionQuery)
-            :this(clientConfig.PackageSource, fs, latestPackageQuery, packageByNameAndVersionQuery)
-        {
-        }
-
-        public NuGetFeedAppInstallationLocator(string packageSource, IFileSystem fs,
+        public NuGetFeedAppInstallationLocator(IPackageSourceConfiguration packageSourceConfiguration, IFileSystem fs,
                                                IGetLatestNuGetPackageByNameQuery latestPackageQuery,
                                                 IGetNuGetPackageByNameAndVersionQuery packageByNameAndVersionQuery)
         {
+            _packageSourceConfiguration = packageSourceConfiguration;
             _fs = fs;
             _latestPackageQuery = latestPackageQuery;
             _packageByNameAndVersionQuery = packageByNameAndVersionQuery;
-
-            if (packageSource.StartsWith("http"))
-            {
-                _packageLocation = packageSource;
-            }
-            else
-            {
-                _packageLocation = packageSource.ToAbsolutePath();
-            }
         }
         
         public bool SupportsPathType()

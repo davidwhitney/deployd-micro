@@ -29,7 +29,8 @@ namespace deployd.Features.FeatureSelection
         public string SetConfigurationValue { get; set; }
 
         public bool ForceUnpack { get; set; }
-        public string InstallationSubPath { get; set; }
+        public string InstallPath { get; set; }
+        public string PackageSource { get; set; }
 
         public InstanceConfiguration()
         {

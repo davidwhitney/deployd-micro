@@ -105,6 +105,7 @@
     <Compile Include="Features\AppLocating\ListLatestVersionOfPackagesQuery.cs" />
     <Compile Include="Features\AppLocating\NoPackageFoundException.cs" />
     <Compile Include="Features\AppLocating\PackagePointer.cs" />
+    <Compile Include="Features\AppLocating\PackageSourceConfiguration.cs" />
     <Compile Include="Features\Environment\DefaultEnvironmentApplier.cs" />
     <Compile Include="Features\Environment\IEnvironmentApplier.cs" />
     <Compile Include="Features\FeatureSelection\ActiveFeatureFactory.cs" />

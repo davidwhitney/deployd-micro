@@ -1,5 +1,5 @@
 ﻿<#
-Deployd module
+Deploy module
 
 
 
@@ -14,30 +14,31 @@ function Install-DeploydApplications(
 [switch]$Prepare=$false,
 [switch]$ForceDownload=$false,
 [switch]$ForceUnpack=$false,
-[string]$PackageSource="") 
+[string]$PackageSource="",
+[string]$InstallPath="") 
 {
     $jobs = @()
     $sessions = @()
 
     $installScriptBlock = [scriptblock]{
-                param([string]$Environment,[string]$Applications,[string]$ApplicationVersion,[bool]$Prepare,[bool]$ForceDownload,[bool]$ForceUnpack,[string]$PackageSource)
+                param([string]$Environment,[string]$Applications,[string]$ApplicationVersion,[bool]$Prepare,[bool]$ForceDownload,[bool]$ForceUnpack,[string]$PackageSource,[string]$InstallPath)
                 $Applications.split(",") | ForEach {
                     $appName = $_
-                    $installPath=""
+                    $_installPath=$InstallPath
 
                     if ($appName.Contains("|"))
                     {
                         $appNameSplit=$appName.Split("|")
 
                         $appName=$appNameSplit[0]
-                        $installPath=$appNameSplit[1]
+                        $_installPath=$appNameSplit[1]
 
-                    }
+                    } 
                     $command =$("deployd -e "+$Environment+" --app "+$appName)
 
-                    if ($installPath -ne "")
+                    if ($_installPath -ne "")
                     {
-                        $command += " --to $installPath"
+                        $command += " --to $_installPath"
                     }
                     if ($ApplicationVersion)
                     {
@@ -66,7 +67,7 @@ function Install-DeploydApplications(
                 }
             };
 
-    Execute-Jobs -Computers $Computers -Environment $Environment -ScriptBlock $installScriptBlock -ArgumentList $Environment,$Applications,$ApplicationVersion,$Prepare,$ForceDownload,$ForceUnpack,$PackageSource
+    Execute-Jobs -Computers $Computers -Environment $Environment -ScriptBlock $installScriptBlock -ArgumentList $Environment,$Applications,$ApplicationVersion,$Prepare,$ForceDownload,$ForceUnpack,$PackageSource,$InstallPath
 }
 
 function Update-DeploydApplications(

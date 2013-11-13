@@ -107,69 +107,48 @@ Usage
 
 Packaging
 ---------
-'''
-deployd-package.exe --source c:\path\to\my\application --target c:\path\to\packages\folder
-'''
+    deployd-package.exe --source c:\path\to\my\application --target c:\path\to\packages\folder
 
 Deploying
 ---------
 
 From a http NuGet feed:
-'''
-deployd.exe --install --app MyApplicationName--from http://url/of/nuget/feed --to d:\where\to\install
-'''
+    deployd.exe --install --app MyApplicationName--from http://url/of/nuget/feed --to d:\where\to\install
 
 From a file-system NuGet feed:
-'''
-deployd.exe --install --app MyApplicationName --from \\path\to\my\nuget\feed --to d:\where\to\install
-'''
+    deployd.exe --install --app MyApplicationName --from \\path\to\my\nuget\feed --to d:\where\to\install
 
 Deploy a specific version
-'''
-deployd.exe --install --app MyApplicationName --from http://url/of/nuget/feed --to d:\where\to\install --version 1.1.0.0
-'''
+    deployd.exe --install --app MyApplicationName --from http://url/of/nuget/feed --to d:\where\to\install --version 1.1.0.0
 
 Prepare a package for installation. This will download the package if necessary and stage it for installation. The actual installation will be much quicker because only the activation step needs to be performed.
-'''
-deployd.exe --prepare --app MyApplicationName --from http://url/of/nuget/feed --to d:\where\to\install --version 1.1.0.0
-'''
+    deployd.exe --prepare --app MyApplicationName --from http://url/of/nuget/feed --to d:\where\to\install --version 1.1.0.0
 
 Most commands have a short form:
-'''
-deployd.exe -i -a MyApplicationName -f http://url/of/nuget/feed -t d:\where\to\install -v 1.1.0.0
-deployd.exe -p -a MyApplicationName -f http://url/of/nuget/feed -t d:\where\to\install -v 1.1.0.0
-'''
+    deployd.exe -i -a MyApplicationName -f http://url/of/nuget/feed -t d:\where\to\install -v 1.1.0.0
+    deployd.exe -p -a MyApplicationName -f http://url/of/nuget/feed -t d:\where\to\install -v 1.1.0.0
 
 You can also have deployd update all installed applications to their latest available version.
-'''
-deployd.exe --update -f http://url/of/nuget/feed -t d:\where\to\install
-'''
+    deployd.exe --update -f http://url/of/nuget/feed -t d:\where\to\install
 
 Help
 ----
 Show a list of available commands:
-'''
-deployd.exe
-'''
+    deployd.exe
 
 See what packages are available from the source, what is currently installed (including 'staged' versions):
-'''
-deployd.exe --status --from http://url/of/nuget/feed --to d:\where\to\install
-'''
+    deployd.exe --status --from http://url/of/nuget/feed --to d:\where\to\install
 
 Configuration
 -------------
 You can set configuration values so that you don't have to specify them explicitly each time.
+
 To set a default installation folder:
 
-'''
-deployd.exe --config InstallRoot c:\path\to\install\folder
-'''
+    deployd.exe --config InstallRoot c:\path\to\install\folder
 
 To set a default package source
-'''
-deployd.exe --config PackageSource http://url/of/package/source
-'''
+    deployd.exe --config PackageSource http://url/of/package/source
 
 Using deployd remotely
 ======================
@@ -191,26 +170,16 @@ Running deployd remotely
 Using the deployd Powershell module you can specify any number of target computers and applications to install. Each application specified will be installed on each computer specified. A log file will be created for each target computer named [computername].log.
 
 To install a single application to a single computer:
-'''
-Install-DeploydApplications -Environment Staging -Computers computer1 -Applications "MyApplication" -PackageSource http://url/of/package/source -InstallPath c:\install\path\on\remote\computer
-'''
+    Install-DeploydApplications -Environment Staging -Computers computer1 -Applications "MyApplication" -PackageSource http://url/of/package/source -InstallPath c:\install\path\on\remote\computer
 
 You can specify multiple computers in comma-delimited format:
-'''
-Install-DeploydApplications -Environment Staging -Computers computer1,computer2,computer3 -Applications "MyApplication" -PackageSource http://url/of/package/source -InstallPath c:\install\path\on\remote\computer
-'''
+    Install-DeploydApplications -Environment Staging -Computers computer1,computer2,computer3 -Applications "MyApplication" -PackageSource http://url/of/package/source -InstallPath c:\install\path\on\remote\computer
 
 You can also specify multiple applications in comma-delimited format. Each application will be installed on each computer.
-'''
-Install-DeploydApplications -Environment Staging -Computers computer1,computer2,computer3 -Applications "MyApplication1,myApplication2,MyApplication3" -PackageSource http://url/of/package/source -InstallPath c:\install\path\on\remote\computer
-'''
+    Install-DeploydApplications -Environment Staging -Computers computer1,computer2,computer3 -Applications "MyApplication1,myApplication2,MyApplication3" -PackageSource http://url/of/package/source -InstallPath c:\install\path\on\remote\computer
 
 If you need to install an application in a specific folder you can do this in the following way:
-'''
-Install-DeploydApplications -Environment Staging -Computers computer1,computer2,computer3 -Applications "MyApplication1|c:\specific\install\path,myApplication2,MyApplication3" -PackageSource http://url/of/package/source -InstallPath c:\install\path\on\remote\computer
-'''
+    Install-DeploydApplications -Environment Staging -Computers computer1,computer2,computer3 -Applications "MyApplication1|c:\specific\install\path,myApplication2,MyApplication3" -PackageSource http://url/of/package/source -InstallPath c:\install\path\on\remote\computer
 
 Update all applications on remote computers
-'''
-Update-DeploydApplications -Environment Staging -Computers computer1,computer2,computer3 -PackageSource http://url/of/package/source -InstallPath c:\install\path\on\remote\computer
-'''
+    Update-DeploydApplications -Environment Staging -Computers computer1,computer2,computer3 -PackageSource http://url/of/package/source -InstallPath c:\install\path\on\remote\computer

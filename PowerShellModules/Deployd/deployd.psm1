@@ -1,5 +1,5 @@
 ﻿<#
-Deploy module
+Deployd module
 
 
 
@@ -7,23 +7,38 @@ Deploy module
 
 
 function Install-DeploydApplications(
-[parameter(Mandatory=$true,ValueFromPipeLine=$true)]
-[string]$Computers,
-[parameter(Mandatory=$true)]
-[string]$Environment,
-[string]$Applications,
+[parameter(Mandatory=$true,ValueFromPipeLine=$true)][string]$Computers,
+[parameter(Mandatory=$true)][string]$Environment,
+[parameter(Mandatory=$true,HelpMessage="Names of applications to install separated by commas. Specify installation path by adding |path e.g: GG.Web.Website|d:\wwwroot")][string]$Applications,
 [string]$ApplicationVersion,
 [switch]$Prepare=$false,
 [switch]$ForceDownload=$false,
-[switch]$ForceUnpack=$false) 
+[switch]$ForceUnpack=$false,
+[string]$PackageSource="") 
 {
     $jobs = @()
     $sessions = @()
 
     $installScriptBlock = [scriptblock]{
-                param([string]$Environment,[string]$Applications,[string]$ApplicationVersion,[bool]$Prepare,[bool]$ForceDownload,[bool]$ForceUnpack)
+                param([string]$Environment,[string]$Applications,[string]$ApplicationVersion,[bool]$Prepare,[bool]$ForceDownload,[bool]$ForceUnpack,[string]$PackageSource)
                 $Applications.split(",") | ForEach {
-                    $command =$("deployd -e "+$Environment+" --app "+$_)
+                    $appName = $_
+                    $installPath=""
+
+                    if ($appName.Contains("|"))
+                    {
+                        $appNameSplit=$appName.Split("|")
+
+                        $appName=$appNameSplit[0]
+                        $installPath=$appNameSplit[1]
+
+                    }
+                    $command =$("deployd -e "+$Environment+" --app "+$appName)
+
+                    if ($installPath -ne "")
+                    {
+                        $command += " --to $installPath"
+                    }
                     if ($ApplicationVersion)
                     {
                         $command += " --version $ApplicationVersion"
@@ -42,19 +57,22 @@ function Install-DeploydApplications(
                     {
                         $command += " -fu";
                     }
+                    if ($PackageSource -ne "")
+                    {
+                        $command += " --from $PackageSource"
+                    }
 
                     iex $command
                 }
             };
 
-    Execute-Jobs -Computers $Computers -Environment $Environment -ScriptBlock $installScriptBlock -ArgumentList $Environment,$Applications,$ApplicationVersion,$Prepare,$ForceDownload,$ForceUnpack
+    Execute-Jobs -Computers $Computers -Environment $Environment -ScriptBlock $installScriptBlock -ArgumentList $Environment,$Applications,$ApplicationVersion,$Prepare,$ForceDownload,$ForceUnpack,$PackageSource
 }
 
 function Update-DeploydApplications(
-[parameter(Mandatory=$true,ValueFromPipeLine=$true)]
-[string]$Computers,
-[parameter(Mandatory=$true)]
-[string]$Environment,
+[parameter(Mandatory=$true,ValueFromPipeLine=$true)][string]$Computers,
+[parameter(Mandatory=$true)][string]$Environment,
+[string]$InstallPath,
 [switch]$Prepare=$false,
 [switch]$ForceDownload=$false,
 [switch]$ForceUnpack=$false) 
@@ -65,6 +83,10 @@ function Update-DeploydApplications(
     $updateScriptBlock = [scriptblock]{
                 param([parameter(Mandatory=$true)][string]$Environment,[bool]$Prepare,[bool]$ForceDownload,[bool]$ForceUnpack)
                 $command =$("deployd -u -e "+$Environment)
+                if ($InstallPath)
+                {
+                    $command += " --to $InstallPath"
+                }
                 if ($Prepare -eq $true)
                 {
                     $command += " -p";

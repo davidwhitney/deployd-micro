@@ -164,5 +164,13 @@ namespace deployd.Features
         {
             throw new NotImplementedException();
         }
+
+        public Version GetStagedVersion()
+        {
+            if (_fs.File.Exists(_appMap.StagingVersionFile))
+                return new Version(_fs.File.ReadAllText(_appMap.StagingVersionFile));
+
+            return null;
+        }
     }
 }

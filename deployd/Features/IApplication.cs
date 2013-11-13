@@ -14,5 +14,6 @@ namespace deployd.Features
         void PruneBackups();
         Version GetInstalledVersion();
         Version GetLatestAvailableVersion();
+        Version GetStagedVersion();
     }
 }

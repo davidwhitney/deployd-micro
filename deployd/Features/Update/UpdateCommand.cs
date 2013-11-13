@@ -22,11 +22,13 @@ namespace deployd.Features.Update
         private readonly DeploydConfiguration _deployd;
         private readonly IInstallationRoot _installationRoot;
         private readonly IFileSystem _fs;
+        private readonly IPackageSourceConfiguration _packageSourceConfiguration;
         private readonly ILog _log = LogManager.GetLogger(typeof(UpdateCommand));
 
         public UpdateCommand(IEnumerable<IAppInstallationLocator> finders, IInstanceConfiguration instanceConfiguration,
              TextWriter output, IListLatestVersionsOfPackagesQuery query, DeploydConfiguration deployd,
-            IInstallationRoot installationRoot, System.IO.Abstractions.IFileSystem fs)
+            IInstallationRoot installationRoot, System.IO.Abstractions.IFileSystem fs,
+            IPackageSourceConfiguration packageSourceConfiguration)
         {
             _finders = finders;
             _instanceConfiguration = instanceConfiguration;
@@ -35,6 +37,7 @@ namespace deployd.Features.Update
             _deployd = deployd;
             _installationRoot = installationRoot;
             _fs = fs;
+            _packageSourceConfiguration = packageSourceConfiguration;
         }
 
         public void Execute()
@@ -91,11 +94,13 @@ namespace deployd.Features.Update
             process.StartInfo.RedirectStandardOutput = true;
             process.EnableRaisingEvents = true;
             process.StartInfo.FileName = "deployd.exe";
-            process.StartInfo.Arguments = string.Format("-{2} -app=\"{0}\" -e=\"{1}\" {3}",
+            process.StartInfo.Arguments = string.Format("-{2} -app=\"{0}\" -e=\"{1}\" {3} --from {4} --to {5}",
                 package.Id,
                 _instanceConfiguration.Environment,
                 prepareOnly ? "p" : "i",
-                _instanceConfiguration.ForceDownload ? "-f" : "");
+                _instanceConfiguration.ForceDownload ? "-f" : "",
+                _packageSourceConfiguration.PackageSource,
+                _installationRoot.Path);
             _log.DebugFormat("{0} {1}", process.StartInfo.FileName, process.StartInfo.Arguments);
             process.OutputDataReceived += (sender, args) => _output.WriteLine(args.Data);
             process.ErrorDataReceived += (sender, args) => _output.WriteLine(args.Data);

@@ -48,3 +48,12 @@ if ($website)
 
 	Write-Host "Site returned status code $stat"
 }
+
+# service management
+if (get-service $($ApplicationName+"*") -Include $ApplicationName)
+{
+    Write-Host "Starting $ApplicationName ..."
+    Start-Service $ApplicationName
+} else {
+    Write-Host "Service $ApplicationName does not exist - not starting"
+}

@@ -32,3 +32,13 @@ if ($website)
 		Stop-WebAppPool "$websiteName AppPool"
 	}
 }
+
+# service management
+$service = $(get-service $($ApplicationName+"*") -Include $ApplicationName)
+if ($service)
+{
+    Write-Host "Stopping $ApplicationName..."
+    Stop-Service $ApplicationName
+} else {
+    Write-Host "Service $ApplicationName does not exist - not stopping"
+}

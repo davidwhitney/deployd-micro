@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using NuGet;
 using log4net;
@@ -10,11 +11,13 @@ namespace deployd.Features.AppLocating
     {
         private readonly IPackageRepositoryFactory _packageRepositoryFactory;
         private readonly ILog _log;
+        private readonly TextWriter _output;
 
-        public ListLatestVersionOfPackagesQuery(IPackageRepositoryFactory packageRepositoryFactory, ILog log)
+        public ListLatestVersionOfPackagesQuery(IPackageRepositoryFactory packageRepositoryFactory, ILog log, TextWriter output)
         {
             _packageRepositoryFactory = packageRepositoryFactory;
             _log = log;
+            _output = output;
         }
 
         public IEnumerable<IPackage> GetLatestVersions(string repoLocation)
@@ -31,7 +34,7 @@ namespace deployd.Features.AppLocating
             }
             catch (Exception ex)
             {
-                _log.Error("Could not get packages", ex);
+                _output.WriteLine("No packages could be found at {0}. Is the path or url correct?", repoLocation);
                 return null;
             }
         }

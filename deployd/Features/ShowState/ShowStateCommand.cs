@@ -48,6 +48,13 @@ namespace deployd.Features.ShowState
             var installed = new Dictionary<IPackage, Application>();
             var notInstalled = new List<IPackage>();
             var allPackages = _query.GetLatestVersions(_packageSourceConfiguration.PackageSource);
+
+            if (allPackages == null)
+            {
+                _output.WriteLine("Could not determine status for feed");
+                return;
+            }
+            
             foreach (var sourcePackage in allPackages)
             {
                 string installPath = _fs.Path.Combine(_installationRoot.Path, sourcePackage.Id);

@@ -15,17 +15,17 @@ function Install-DeploydApplications(
 [switch]$ForceDownload=$false,
 [switch]$ForceUnpack=$false,
 [string]$PackageSource="",
-[string]$InstallPath="",
+[string]$InstallRoot="",
 [string]$LogFileFolder=".\") 
 {
     $jobs = @()
     $sessions = @()
 
     $installScriptBlock = [scriptblock]{
-                param([string]$Environment,[string]$Applications,[string]$ApplicationVersion,[bool]$Prepare,[bool]$ForceDownload,[bool]$ForceUnpack,[string]$PackageSource,[string]$InstallPath)
+                param([string]$Environment,[string]$Applications,[string]$ApplicationVersion,[bool]$Prepare,[bool]$ForceDownload,[bool]$ForceUnpack,[string]$PackageSource,[string]$InstallRoot)
                 $Applications.split(",") | ForEach {
                     $appName = $_
-                    $_installPath=$InstallPath
+                    $_installPath=Join-Path $InstallRoot -ChildPath $appName
 
                     if ($appName.Contains("|"))
                     {
@@ -68,13 +68,13 @@ function Install-DeploydApplications(
                 }
             };
 
-    Execute-Jobs -Computers $Computers -Environment $Environment -ScriptBlock $installScriptBlock -LogFileFolder $LogFileFolder -ArgumentList $Environment,$Applications,$ApplicationVersion,$Prepare,$ForceDownload,$ForceUnpack,$PackageSource,$InstallPath
+    Execute-Jobs -Computers $Computers -Environment $Environment -ScriptBlock $installScriptBlock -LogFileFolder $LogFileFolder -ArgumentList $Environment,$Applications,$ApplicationVersion,$Prepare,$ForceDownload,$ForceUnpack,$PackageSource,$InstallRoot
 }
 
 function Update-DeploydApplications(
 [parameter(Mandatory=$true,ValueFromPipeLine=$true)][string]$Computers,
 [parameter(Mandatory=$true)][string]$Environment,
-[string]$InstallPath,
+[string]$InstallRoot,
 [switch]$Prepare=$false,
 [switch]$ForceDownload=$false,
 [switch]$ForceUnpack=$false,
@@ -85,11 +85,11 @@ function Update-DeploydApplications(
     $sessions = @()
 
     $updateScriptBlock = [scriptblock]{
-                param([parameter(Mandatory=$true)][string]$Environment,[bool]$Prepare,[bool]$ForceDownload,[bool]$ForceUnpack,[string]$PackageSource,[string]$InstallPath)
+                param([parameter(Mandatory=$true)][string]$Environment,[bool]$Prepare,[bool]$ForceDownload,[bool]$ForceUnpack,[string]$PackageSource,[string]$InstallRoot)
                 $command =$("deployd -u -e "+$Environment)
-                if ($InstallPath)
+                if ($InstallRoot)
                 {
-                    $command += " --to $InstallPath"
+                    $command += " --to $InstallRoot"
                 }
                 if ($Prepare -eq $true)
                 {
@@ -110,7 +110,7 @@ function Update-DeploydApplications(
                 iex $command
             };
 
-    Execute-Jobs -Computers $Computers -Environment $Environment -ScriptBlock $updateScriptBlock -LogFileFolder $LogFileFolder -ArgumentList $Environment,$Prepare,$ForceDownload,$ForceUnpack,$PackageSource,$InstallPath
+    Execute-Jobs -Computers $Computers -Environment $Environment -ScriptBlock $updateScriptBlock -LogFileFolder $LogFileFolder -ArgumentList $Environment,$Prepare,$ForceDownload,$ForceUnpack,$PackageSource,$InstallRoot
 }
 
 function Execute-Jobs([string]$Computers,[string]$Environment,[scriptblock]$ScriptBlock,[string]$LogFileFolder,$ArgumentList)

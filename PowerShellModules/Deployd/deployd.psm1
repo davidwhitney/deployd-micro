@@ -15,7 +15,8 @@ function Install-DeploydApplications(
 [switch]$ForceDownload=$false,
 [switch]$ForceUnpack=$false,
 [string]$PackageSource="",
-[string]$InstallPath="") 
+[string]$InstallPath="",
+[string]$LogFileFolder=".\") 
 {
     $jobs = @()
     $sessions = @()
@@ -67,7 +68,7 @@ function Install-DeploydApplications(
                 }
             };
 
-    Execute-Jobs -Computers $Computers -Environment $Environment -ScriptBlock $installScriptBlock -ArgumentList $Environment,$Applications,$ApplicationVersion,$Prepare,$ForceDownload,$ForceUnpack,$PackageSource,$InstallPath
+    Execute-Jobs -Computers $Computers -Environment $Environment -ScriptBlock $installScriptBlock -LogFileFolder $LogFileFolder -ArgumentList $Environment,$Applications,$ApplicationVersion,$Prepare,$ForceDownload,$ForceUnpack,$PackageSource,$InstallPath
 }
 
 function Update-DeploydApplications(
@@ -77,7 +78,8 @@ function Update-DeploydApplications(
 [switch]$Prepare=$false,
 [switch]$ForceDownload=$false,
 [switch]$ForceUnpack=$false,
-[string]$PackageSource="") 
+[string]$PackageSource="",
+[string]$LogFileFolder=".\") 
 {
     $jobs = @()
     $sessions = @()
@@ -108,10 +110,10 @@ function Update-DeploydApplications(
                 iex $command
             };
 
-    Execute-Jobs -Computers $Computers -Environment $Environment -ScriptBlock $updateScriptBlock -ArgumentList $Environment,$Prepare,$ForceDownload,$ForceUnpack,$PackageSource,$InstallPath
+    Execute-Jobs -Computers $Computers -Environment $Environment -ScriptBlock $updateScriptBlock -LogFileFolder $LogFileFolder -ArgumentList $Environment,$Prepare,$ForceDownload,$ForceUnpack,$PackageSource,$InstallPath
 }
 
-function Execute-Jobs([string]$Computers,[string]$Environment,[scriptblock]$ScriptBlock,$ArgumentList)
+function Execute-Jobs([string]$Computers,[string]$Environment,[scriptblock]$ScriptBlock,[string]$LogFileFolder,$ArgumentList)
 {
     $Computers.Split(",") | ForEach {
         $session = New-PSSession -ComputerName $_
@@ -133,8 +135,9 @@ function Execute-Jobs([string]$Computers,[string]$Environment,[scriptblock]$Scri
 
     $jobs | ForEach {
 		$timestamp = get-date -format yyyy.MM.d.HH.mm.ss
-        Receive-Job -Job $_ | Out-File $($_.Name+"."+$timestamp+".log")
-        $("Took " + $($_.PSEndTime - $_.PSBeginTime)) | Out-File $($_.Name+".log") -Append
+		$logFilePath = Join-Path $LogFileFolder -ChildPath $($_.Name+"."+$timestamp+".log")
+        Receive-Job -Job $_ | Out-File $logFilePath
+        $("Took " + $($_.PSEndTime - $_.PSBeginTime)) | Out-File $logFilePath -Append
     }
 
     $sessions | ForEach {

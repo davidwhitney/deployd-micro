@@ -26,7 +26,7 @@ namespace deployd.Features
                     }
                     else
                     {
-                        _installPath = _fs.Path.Combine(_deploydConfiguration.InstallRoot, _instanceConfiguration.InstallPath ?? "");
+                        _installPath = _fs.Path.Combine(_deploydConfiguration.InstallRoot, _instanceConfiguration.InstallPath ?? _instanceConfiguration.AppName);
                     }
                 }
 

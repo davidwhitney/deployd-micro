@@ -46,8 +46,7 @@ namespace deployd.Features.AppExtraction
                 throw new NoPackageFoundException(_config.AppName);
             }
 
-            var appDirectory = Path.Combine(_installRoot.Path, _config.AppName).ToAbsolutePath();
-            _config.ApplicationMap.Configure(_config.AppName, appDirectory);
+            _config.ApplicationMap.Configure(_config.AppName, _installRoot.Path);
             
             var currentApp = _appFactory.GetCurrent();
             currentApp.EnsureDataDirectoriesExist();

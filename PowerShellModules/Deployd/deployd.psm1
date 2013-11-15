@@ -132,7 +132,8 @@ function Execute-Jobs([string]$Computers,[string]$Environment,[scriptblock]$Scri
     $jobs | Wait-Job
 
     $jobs | ForEach {
-        Receive-Job -Job $_ | Out-File $($_.Name+".log")
+		$timestamp = get-date -format yyyy.MM.d.HH.mm.ss
+        Receive-Job -Job $_ | Out-File $($_.Name+"."+$timestamp+".log")
         $("Took " + $($_.PSEndTime - $_.PSBeginTime)) | Out-File $($_.Name+".log") -Append
     }
 

@@ -76,13 +76,15 @@ function Update-DeploydApplications(
 [string]$InstallPath,
 [switch]$Prepare=$false,
 [switch]$ForceDownload=$false,
-[switch]$ForceUnpack=$false) 
+[switch]$ForceUnpack=$false,
+[string]$PackageSource="",
+[string]$InstallPath="") 
 {
     $jobs = @()
     $sessions = @()
 
     $updateScriptBlock = [scriptblock]{
-                param([parameter(Mandatory=$true)][string]$Environment,[bool]$Prepare,[bool]$ForceDownload,[bool]$ForceUnpack)
+                param([parameter(Mandatory=$true)][string]$Environment,[bool]$Prepare,[bool]$ForceDownload,[bool]$ForceUnpack,[string]$PackageSource,[string]$InstallPath)
                 $command =$("deployd -u -e "+$Environment)
                 if ($InstallPath)
                 {
@@ -93,17 +95,21 @@ function Update-DeploydApplications(
                     $command += " -p";
                 }
                 if ($ForceDownload -eq $true)
-                    {
-                        $command += " -fd";
-                    }
-                    if ($ForceUnpack -eq $true)
-                    {
-                        $command += " -fu";
-                    }
+				{
+					$command += " -fd";
+				}
+				if ($ForceUnpack -eq $true)
+				{
+					$command += " -fu";
+				}
+				if ($PackageSource -ne "")
+				{
+					$command += " --from $PackageSource"
+				}
                 iex $command
             };
 
-    Execute-Jobs -Computers $Computers -Environment $Environment -ScriptBlock $updateScriptBlock -ArgumentList $Environment,$Prepare,$ForceDownload,$ForceUnpack
+    Execute-Jobs -Computers $Computers -Environment $Environment -ScriptBlock $updateScriptBlock -ArgumentList $Environment,$Prepare,$ForceDownload,$ForceUnpack,$PackageSource,$InstallPath
 }
 
 function Execute-Jobs([string]$Computers,[string]$Environment,[scriptblock]$ScriptBlock,$ArgumentList)

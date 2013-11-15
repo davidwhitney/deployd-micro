@@ -49,7 +49,7 @@ namespace deployd.Features.Update
                     activeFinders.Select(locator => locator.CanFindPackageAsObject(_instanceConfiguration.AppName))
                         .FirstOrDefault(result => result != null);
 
-                var allPackages = _query.GetLatestVersions(_deployd.PackageSource);
+                var allPackages = _query.GetLatestVersions(_packageSourceConfiguration.PackageSource);
                 foreach (var package in allPackages)
                 {
                     var appmap = new ApplicationMap(package.Id, _fs.Path.Combine(_installationRoot.Path, package.Id));

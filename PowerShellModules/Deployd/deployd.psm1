@@ -77,8 +77,7 @@ function Update-DeploydApplications(
 [switch]$Prepare=$false,
 [switch]$ForceDownload=$false,
 [switch]$ForceUnpack=$false,
-[string]$PackageSource="",
-[string]$InstallPath="") 
+[string]$PackageSource="") 
 {
     $jobs = @()
     $sessions = @()

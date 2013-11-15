@@ -24,8 +24,9 @@ namespace deployd.Features.AppLocating
             {
                 var all = repo.GetPackages()
                               .Where(x => x.Id == appName/* && x.IsLatestVersion*/)
+                              .OrderByDescending(x=>x.Version)
                               .ToList();
-                all.Reverse();
+                
                 return all.FirstOrDefault();
             }
             catch (Exception ex)

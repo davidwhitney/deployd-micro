@@ -69,6 +69,7 @@ namespace deployd.tests.Features.FeatureSelection
         {
             _instanceConfig.AppName = "MyApp";
             _instanceConfig.Install = true;
+            _instanceConfig.Environment = "Staging";
 
             var commands = _factory.BuildCommands().ToList();
 

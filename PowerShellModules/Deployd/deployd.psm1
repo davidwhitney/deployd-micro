@@ -115,7 +115,7 @@ function Update-DeploydApplications(
 
 function Execute-Jobs([string]$Computers,[string]$Environment,[scriptblock]$ScriptBlock,[string]$LogFileFolder,$ArgumentList)
 {
-	if (!Test-Path $LogFileFolder)
+	if (!(Test-Path $LogFileFolder))
 	{
 		New-Item $LogFileFolder -ItemType directory
 	}

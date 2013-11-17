@@ -36,11 +36,21 @@ namespace deployd.Features.FeatureSelection
                 string sourceConfigFileName = _fs.Path.GetFileName(sourceConfigPath);
                 _log.DebugFormat("searching for transforms for {0}", sourceConfigFileName);
                 string[] split = sourceConfigFileName.Split('.');
-                if (split.Length != 2)
-                    continue;
+                //if (split.Length != 2)
+                //    continue;
 
-                string expectedTransformFilename = string.Join(".", split[0], _config.Environment, split[1]);
+                string expectedTransformFilename = string.Format("{0}.{1}{2}", 
+                    _fs.Path.GetFileNameWithoutExtension(sourceConfigPath), 
+                    _config.Environment,
+                    _fs.Path.GetExtension(sourceConfigPath));
+
+                if (sourceConfigFileName.StartsWith(_appMap.AppName, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    expectedTransformFilename = string.Format("App.{0}.config", _config.Environment);
+                }
+
                 string expectedTransformFilePath = _fs.Path.Combine(_appMap.Staging, expectedTransformFilename);
+
                 _log.DebugFormat("looking for {0}", expectedTransformFilename);
                 if (_fs.File.Exists(expectedTransformFilePath))
                 {
@@ -74,23 +84,31 @@ namespace deployd.Features.FeatureSelection
             }
         }
 
-        private void Transform(string sourceConfigPath, string transformFilePath)
+        private void Transform(string sourceConfigPath, string transformFilePath, string outputFileName=null)
         {
+
             var tempFilePath = _fs.Path.Combine(_fs.Path.GetDirectoryName(sourceConfigPath), Guid.NewGuid().ToString());
-            _fs.File.Move(sourceConfigPath,tempFilePath);
             var process = new Process();
             process.StartInfo.FileName = "TransformVsConfiguration.exe";
             process.StartInfo.Arguments=string.Format("--source={0} --transform={1} --destination={2}",
-                tempFilePath, transformFilePath, sourceConfigPath);
+                sourceConfigPath, transformFilePath, tempFilePath);
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.UseShellExecute = false;
             process.Start();
             string output = process.StandardOutput.ReadToEnd();
             process.WaitForExit();
+
+            outputFileName = outputFileName ?? sourceConfigPath;
+            if (_fs.File.Exists(outputFileName))
+            {
+                _fs.File.Delete(outputFileName);
+            }
+            _fs.File.Move(tempFilePath, outputFileName);
             _log.DebugFormat("Transform process exited with code {0}", process.ExitCode);
             _log.Debug(output);
-
+            _log.InfoFormat("Config transform: {0} -> {1}", _fs.Path.GetFileName(transformFilePath), _fs.Path.GetFileName(outputFileName));
+            _output.WriteLine("Config transform: {0} -> {1}", _fs.Path.GetFileName(transformFilePath), _fs.Path.GetFileName(outputFileName));
         }
     }
 }

@@ -78,11 +78,12 @@ namespace deployd.Features.Update
 
                 foreach (var package in packagesToUpdate)
                 {
-                    PrepareInstall(package, _instanceConfiguration.Prep);
+                    var appmap = new ApplicationMap(package.Id, _fs.Path.Combine(_installationRoot.Path, package.Id));
+                    PrepareInstall(package,appmap, _instanceConfiguration.Prep);
                 }
         }
 
-        private void PrepareInstall(IPackage package, bool prepareOnly)
+        private void PrepareInstall(IPackage package, ApplicationMap applicationMap, bool prepareOnly)
         {
             _output.WriteLine("Updating {0}...", package.Id);
             var process = new Process();
@@ -100,7 +101,7 @@ namespace deployd.Features.Update
                 prepareOnly ? "p" : "i",
                 _instanceConfiguration.ForceDownload ? "-f" : "",
                 _packageSourceConfiguration.PackageSource,
-                _installationRoot.Path);
+                applicationMap.InstallPath);
             _log.DebugFormat("{0} {1}", process.StartInfo.FileName, process.StartInfo.Arguments);
             process.OutputDataReceived += (sender, args) => _output.WriteLine(args.Data);
             process.ErrorDataReceived += (sender, args) => _output.WriteLine(args.Data);

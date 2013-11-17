@@ -34,6 +34,11 @@ namespace deployd.Features.FeatureSelection
             foreach (var sourceConfigPath in allConfigPaths)
             {
                 string sourceConfigFileName = _fs.Path.GetFileName(sourceConfigPath);
+
+                // ignore app.config file
+                if (sourceConfigFileName.Equals("app.config", StringComparison.InvariantCultureIgnoreCase))
+                    continue;
+
                 _log.DebugFormat("searching for transforms for {0}", sourceConfigFileName);
                 string[] split = sourceConfigFileName.Split('.');
                 //if (split.Length != 2)

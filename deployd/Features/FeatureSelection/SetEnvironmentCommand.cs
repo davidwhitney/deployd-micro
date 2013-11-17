@@ -40,9 +40,6 @@ namespace deployd.Features.FeatureSelection
                     continue;
 
                 _log.DebugFormat("searching for transforms for {0}", sourceConfigFileName);
-                string[] split = sourceConfigFileName.Split('.');
-                //if (split.Length != 2)
-                //    continue;
 
                 string expectedTransformFilename = string.Format("{0}.{1}{2}", 
                     _fs.Path.GetFileNameWithoutExtension(sourceConfigPath), 

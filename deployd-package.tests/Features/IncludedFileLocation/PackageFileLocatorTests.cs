@@ -28,8 +28,8 @@ namespace deployd_package.tests.Features.IncludedFileLocation
                     {_rootDir + "\\sub-1", new[] {_rootDir + "\\sub-1\\one.txt", _rootDir + "\\sub-1\\two.txt"}},
                     {_rootDir + "\\sub-2", new[] {_rootDir + "\\sub-2\\three.txt", _rootDir + "\\sub-2\\four.txt"}}
                 };
-            
-            var di = new StubDirectoryInfo(_filesOnDisk);
+
+            var di = new StubDirectoryInfo(_rootDir, _filesOnDisk);
             _fs.Setup(x => x.DirectoryInfo).Returns(new DiFactoryStub(di));
             
             _pfl = new PackageFileLocator(_fs.Object, new Mock<ILog>().Object);

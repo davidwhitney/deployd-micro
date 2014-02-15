@@ -8,10 +8,12 @@ namespace deployd_package.tests.Features.IncludedFileLocation
 {
     public class StubDirectoryInfo : DirectoryInfoBase
     {
+        private readonly string _rootDir;
         private readonly Dictionary<string, string[]> _filesOnDisk;
 
-        public StubDirectoryInfo(Dictionary<string, string[]> filesOnDisk)
+        public StubDirectoryInfo(string rootDir, Dictionary<string, string[]> filesOnDisk)
         {
+            _rootDir = rootDir;
             _filesOnDisk = filesOnDisk;
         }
 
@@ -57,7 +59,7 @@ namespace deployd_package.tests.Features.IncludedFileLocation
 
         public override string FullName
         {
-            get { throw new NotImplementedException(); }
+            get { return _rootDir; }
         }
 
         public override DateTime LastAccessTime { get; set; }

@@ -1,6 +1,8 @@
 deployd-micro - continuous deployment for windows
 =============
 
+[![Build status](https://ci.appveyor.com/api/projects/status?id=pbok35wfeedsfi36)](https://ci.appveyor.com/project/deployd-micro)
+
 Deployment on Windows is harder than it should be.
 
 Every Windows shop that manages its own servers does deployment their own way. Sometimes this involves an developer or ops staffer copying files to servers by hand. Other times it involves MSDeploy and pushing from a copy of Visual Studio. These processes are error prone, none repeatable and cause friction.
